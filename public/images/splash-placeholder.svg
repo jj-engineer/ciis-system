@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <rect width="1080" height="1920" fill="#ffffff" />
+  <circle cx="540" cy="780" r="160" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="6" />
+  <rect x="440" y="700" width="200" height="130" rx="12" fill="#be185d" />
+  <rect x="456" y="716" width="168" height="98" rx="6" fill="#ffffff" />
+  <path d="M500 830 L580 830 L590 860 L490 860 Z" fill="#be185d" />
+  <rect x="470" y="860" width="140" height="10" rx="5" fill="#be185d" />
+  <text x="540" y="1050" font-family="system-ui, sans-serif" font-size="44" font-weight="800" fill="#be185d" text-anchor="middle">EduTech LMS</text>
+  <text x="540" y="1100" font-family="system-ui, sans-serif" font-size="24" font-weight="500" fill="#64748b" text-anchor="middle">Computer Science &amp; Digital Skills Platform</text>
+  <rect x="340" y="1250" width="400" height="60" rx="30" fill="#fce7f3" stroke="#fbcfe8" />
+  <text x="540" y="1288" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#9d174d" text-anchor="middle">SPLASH PLACEHOLDER</text>
+</svg>

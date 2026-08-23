@@ -1,0 +1,592 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pink-50: #fdf2f8;
+  --color-pink-100: #fce7f3;
+  --color-pink-200: #fbcfe8;
+  --color-pink-300: #f472b6;
+  --color-pink-400: #e11d48;
+  --color-pink-500: #db2777;
+  --color-pink-600: #be185d;
+  --color-pink-700: #9d174d;
+  --color-pink-800: #831843;
+  --color-pink-900: #500724;
+  --color-pink-950: #350417;
+
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 10px 25px -5px rgba(190, 24, 93, 0.12), 0 8px 10px -6px rgba(190, 24, 93, 0.08);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  --font-sans: 'Kantumruy Pro', 'Inter', 'Battambang', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-monkeytype: 'Roboto Mono', 'Vazirmatn', 'Roboto Mono', monospace;
+  --font-bayon: 'Bayon', 'Koulen', cursive, sans-serif;
+  --font-kantumruy: 'Kantumruy Pro', 'Battambang', system-ui, -apple-system, sans-serif;
+  --font-moul: 'Moul', cursive, serif;
+  --font-koulen: 'Koulen', cursive, sans-serif;
+  --font-battambang: 'Battambang', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    min-height: 100vh;
+    font-family: 'Kantumruy Pro', 'Battambang', 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+  }
+
+  /* When Khmer language is selected: Use Bayon for titles/headings and Kantumruy Pro for body text */
+  html[lang="km"] body,
+  .lang-km,
+  .lang-km body {
+    font-family: 'Kantumruy Pro', 'Battambang', 'Khmer OS Content', system-ui, -apple-system, sans-serif;
+    line-height: 1.65;
+  }
+
+  html[lang="km"] h1,
+  html[lang="km"] h2,
+  html[lang="km"] h3,
+  html[lang="km"] .khmer-title,
+  .lang-km h1,
+  .lang-km h2,
+  .lang-km h3,
+  .font-khmer-title,
+  .font-bayon {
+    font-family: 'Bayon', 'Koulen', cursive, sans-serif !important;
+    letter-spacing: 0.015em;
+    line-height: 1.4;
+  }
+
+  html[lang="km"] h4,
+  html[lang="km"] h5,
+  html[lang="km"] h6 {
+    font-family: 'Bayon', 'Kantumruy Pro', 'Battambang', sans-serif !important;
+    letter-spacing: 0.015em;
+  }
+
+  html[lang="km"] p,
+  html[lang="km"] span,
+  html[lang="km"] div,
+  html[lang="km"] button,
+  html[lang="km"] input,
+  html[lang="km"] textarea,
+  html[lang="km"] select,
+  html[lang="km"] table,
+  html[lang="km"] label,
+  html[lang="km"] a,
+  html[lang="km"] li,
+  .lang-km p,
+  .lang-km span,
+  .lang-km button,
+  .font-khmer-body,
+  .font-kantumruy {
+    font-family: 'Kantumruy Pro', 'Battambang', system-ui, -apple-system, sans-serif !important;
+  }
+
+  .font-moul {
+    font-family: 'Moul', cursive, serif !important;
+  }
+
+  .font-koulen {
+    font-family: 'Koulen', cursive, sans-serif !important;
+  }
+
+  .font-battambang {
+    font-family: 'Battambang', system-ui, sans-serif !important;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom subtle dark pink & zinc scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #09090b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #831843;
+  }
+}
+
+/* ========================================================================= */
+/* KEYFRAME ANIMATIONS FOR SMOOTH SCROLL, ENTRANCES & HOVER MOTIONS          */
+/* ========================================================================= */
+@keyframes indeterminate-bar {
+  0% {
+    transform: translateX(-100%) scaleX(0.2);
+  }
+  50% {
+    transform: translateX(0%) scaleX(0.6);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.2);
+  }
+}
+
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-indeterminate-bar {
+  animation: indeterminate-bar 1.5s infinite ease-in-out;
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.animate-fade-slide-up {
+  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ========================================================================= */
+/* SCROLL REVEAL & INTERSECTION MOTION SYSTEM                                */
+/* ========================================================================= */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: translateY(22px) scale(0.975);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-scale.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger delay utilities */
+.delay-75 { transition-delay: 75ms; }
+.delay-100 { transition-delay: 100ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-250 { transition-delay: 250ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal-scale,
+  .animate-float-subtle,
+  .animate-pulse-subtle,
+  .animate-fade-slide-up,
+  .card-hover-effect {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Universal Smooth Motion Transitions */
+button, a, input, select, textarea, [role="button"], .interactive-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:active, [role="button"]:active {
+  transform: scale(0.975);
+}
+
+/* Card Hover Elevation & Dynamic Glow */
+.card-hover-effect {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(80, 7, 36, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  border-color: rgba(157, 23, 77, 0.35);
+}
+
+/* Sidebar Item Hover Effect */
+.nav-item-effect {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-item-effect:hover:not(.active-nav) {
+  transform: translateX(5px);
+  background-color: rgba(80, 7, 36, 0.08);
+  color: #831843;
+}
+
+/* Navbar Buttons Hover Effect */
+.nav-btn-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-btn-hover:hover {
+  transform: translateY(-2px);
+  border-color: #fbcfe8;
+  box-shadow: 0 6px 16px -2px rgba(80, 7, 36, 0.12);
+}
+
+/* Button Pulse & Lift Effect */
+.btn-primary-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary-hover:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 8px 24px -2px rgba(80, 7, 36, 0.35);
+}
+/* Powerful System Reveal Animations (After 4s Loading Screen) */
+@keyframes systemPowerReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    filter: blur(10px);
+  }
+  65% {
+    opacity: 0.96;
+    transform: scale(1.006) translateY(-2px);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes heroPowerEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(28px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes powerCardCascade {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes beamSweep {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-system-hero {
+  animation: heroPowerEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-system-actions {
+  animation: powerCardCascade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.animate-system-cards {
+  animation: powerCardCascade 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.animate-system-footer {
+  animation: powerCardCascade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.power-light-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.power-light-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  animation: beamSweep 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s 1;
+  pointer-events: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Print styles for reports & practical exams */
+@media print {
+  aside, nav, .no-print, header, .role-switcher {
+    display: none !important;
+  }
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .card-print {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}
+
+/* ========================================================================= */
+/* CYBERNETIC CIRCUIT BOARD & HUD LOADING SCREEN ANIMATIONS                  */
+/* ========================================================================= */
+@keyframes cyberCircuitFlow {
+  0% {
+    stroke-dashoffset: 800;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes cyberCircuitFlowReverse {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 800;
+  }
+}
+
+@keyframes cyberSpinClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cyberSpinCounterClockwise {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes cyberRadarSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cyberLaserScan {
+  0%, 100% {
+    top: 0%;
+    opacity: 0.3;
+  }
+  50% {
+    top: 95%;
+    opacity: 1;
+  }
+}
+
+@keyframes cyberFlicker {
+  0%, 100% { opacity: 1; }
+  42% { opacity: 0.85; }
+  43% { opacity: 0.4; }
+  45% { opacity: 1; }
+  78% { opacity: 0.9; }
+  80% { opacity: 0.5; }
+}
+
+@keyframes cyberGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.5)) drop-shadow(0 0 16px rgba(225, 29, 72, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.9)) drop-shadow(0 0 28px rgba(244, 63, 94, 0.6));
+  }
+}
+
+.animate-cyber-flow {
+  animation: cyberCircuitFlow 6s linear infinite;
+}
+
+.animate-cyber-flow-fast {
+  animation: cyberCircuitFlow 2.8s linear infinite;
+}
+
+.animate-cyber-flow-rev {
+  animation: cyberCircuitFlowReverse 4.5s linear infinite;
+}
+
+.animate-cyber-spin-slow {
+  animation: cyberSpinClockwise 24s linear infinite;
+}
+
+.animate-cyber-spin-medium {
+  animation: cyberSpinClockwise 12s linear infinite;
+}
+
+.animate-cyber-spin-rev {
+  animation: cyberSpinCounterClockwise 16s linear infinite;
+}
+
+.animate-cyber-radar {
+  animation: cyberRadarSweep 3.5s linear infinite;
+}
+
+.animate-cyber-laser {
+  animation: cyberLaserScan 2s ease-in-out infinite;
+}
+
+.animate-cyber-flicker {
+  animation: cyberFlicker 3s ease-in-out infinite;
+}
+
+.animate-cyber-glow {
+  animation: cyberGlowPulse 2.8s ease-in-out infinite;
+}
+
+/* ========================================================================= */
+/* MONKEYTYPE TOKEN FOUNDATIONS & SPECIALIZED STYLES                         */
+/* ========================================================================= */
+.font-monkeytype {
+  font-family: 'Roboto Mono', 'Vazirmatn', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+@keyframes monkeytypeCaretBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes monkeytypeSmoothPulse {
+  0%, 100% { opacity: 0.9; transform: scaleY(1); }
+  50% { opacity: 0.4; transform: scaleY(0.95); }
+}
+
+.animate-monkeytype-caret {
+  animation: monkeytypeCaretBlink 1s ease-in-out infinite;
+}
+
+.animate-monkeytype-smooth-caret {
+  animation: monkeytypeSmoothPulse 1.2s ease-in-out infinite;
+}
+
+/* Monkeytype Custom Scrollbar for Text & Table Windows */
+.monkeytype-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.monkeytype-scroll::-webkit-scrollbar-track {
+  background: #2c2e31;
+  border-radius: 8px;
+}
+.monkeytype-scroll::-webkit-scrollbar-thumb {
+  background: #646669;
+  border-radius: 8px;
+}
+.monkeytype-scroll::-webkit-scrollbar-thumb:hover {
+  background: #e2b714;
+}
+
+

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="favDarkPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#be185d" />
+      <stop offset="50%" stop-color="#9d174d" />
+      <stop offset="100%" stop-color="#500724" />
+    </linearGradient>
+  </defs>
+  <!-- Outer circle -->
+  <circle cx="50" cy="50" r="48" fill="#500724" />
+  <circle cx="50" cy="50" r="45" fill="url(#favDarkPink)" />
+  <circle cx="50" cy="50" r="42" fill="none" stroke="#ffffff" stroke-width="1.5" />
+  <!-- Top Khmer -->
+  <text x="50" y="25" text-anchor="middle" fill="#ffffff" font-family="'Bayon', 'Kantumruy Pro', sans-serif" font-size="9" font-weight="bold">សាលារៀន</text>
+  <!-- Center symbol simplified -->
+  <g transform="translate(50, 48) scale(0.35)">
+    <path d="M -22,-15 C -22,-24 -15,-30 0,-30 C 12,-30 20,-24 20,-15 C 20,-5 5,-2 -15,2 C -24,4 -30,10 -30,18 C -30,28 -18,34 0,34 C 15,34 26,26 26,18" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <circle cx="-5" cy="-20" r="4" fill="#ffffff" />
+  </g>
+  <!-- Bottom CIIS -->
+  <text x="50" y="80" text-anchor="middle" fill="#ffffff" font-family="'Inter', sans-serif" font-size="16" font-weight="900" letter-spacing="1">CIIS</text>
+</svg>

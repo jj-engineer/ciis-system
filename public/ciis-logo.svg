@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="100%" height="100%">
+  <defs>
+    <!-- Deep Elegant Dark Pink Gradient (Matching System Design Palette) -->
+    <linearGradient id="ciisDarkPinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#be185d" />
+      <stop offset="45%" stop-color="#9d174d" />
+      <stop offset="80%" stop-color="#831843" />
+      <stop offset="100%" stop-color="#500724" />
+    </linearGradient>
+
+    <!-- Outer Rim Accent Gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#be185d" />
+      <stop offset="100%" stop-color="#831843" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+
+    <path id="textArcTop" d="M 68,128 A 98,98 0 0,1 252,128" fill="none" />
+  </defs>
+
+  <!-- Outer Ring with Dark Pink Rim -->
+  <circle cx="160" cy="160" r="154" fill="none" stroke="url(#rimGrad)" stroke-width="4.5" />
+
+  <!-- Main Circular Badge in Dark Gradient Pink -->
+  <circle cx="160" cy="160" r="146" fill="url(#ciisDarkPinkGrad)" />
+
+  <!-- Inner Pure White Precision Border -->
+  <circle cx="160" cy="160" r="139" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.9" />
+
+  <!-- Arched Top Khmer Text: សាលារៀន (School) -->
+  <text fill="#ffffff" font-family="'Bayon', 'Khmer OS Muol Light', 'Kantumruy Pro', 'Arial', sans-serif" font-size="28" font-weight="bold" letter-spacing="2" filter="url(#softGlow)">
+    <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
+      សាលារៀន
+    </textPath>
+  </text>
+
+  <!-- Center Stylized CIIS Graphic (C + Tech Beacon + Student Torch + Dynamic Flow Path) -->
+  <g transform="translate(160, 154)" filter="url(#softGlow)">
+    <!-- Stylized 'C' on Left -->
+    <path 
+      d="M -76,-10 C -76,-26 -62,-38 -42,-38 C -27,-38 -17,-30 -12,-20 L -26,-14 C -29,-20 -35,-24 -41,-24 C -51,-24 -58,-17 -58,-10 C -58,-3 -51,4 -41,4 C -35,4 -29,0 -26,-6 L -12,0 C -17,10 -27,18 -42,18 C -62,18 -76,6 -76,-10 Z" 
+      fill="#ffffff" 
+    />
+
+    <!-- Tech Antenna / Beacon Transmitter at Center Top -->
+    <path d="M -32,-46 L -22,-46 L -24,-34 L -30,-34 Z" fill="#ffffff" />
+    <path d="M -37,-52 C -32,-56 -22,-56 -17,-52" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <path d="M -42,-57 C -34,-63 -20,-63 -12,-57" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" />
+
+    <!-- Center Figure Head -->
+    <circle cx="-13" cy="-33" r="7.5" fill="#ffffff" />
+    
+    <!-- Figure Body / Knowledge Torch Connection -->
+    <path d="M -18,-22 C -13,-22 -7,-26 -3,-18 L 10,8 L -3,8 L -11,-10 Z" fill="#ffffff" />
+
+    <!-- Dynamic Flowing 'S' Shape & Swoop Highway -->
+    <path 
+      d="M 14,-38 C 38,-40 60,-30 70,-14 C 77,1 67,19 47,23 C 22,27 -20,29 -72,29 C -86,29 -96,25 -92,21 C -72,17 0,17 36,13 C 53,11 56,3 51,-4 C 46,-11 31,-17 16,-17 C 6,-17 -1,-13 -4,-9 L -18,-14 C -13,-27 0,-38 14,-38 Z" 
+      fill="#ffffff" 
+    />
+  </g>
+
+  <!-- Bottom Bold Acronym: CIIS -->
+  <text 
+    x="160" 
+    y="262" 
+    text-anchor="middle" 
+    fill="#ffffff" 
+    font-family="'Inter', 'Montserrat', 'Arial Black', sans-serif" 
+    font-size="46" 
+    font-weight="900" 
+    letter-spacing="5"
+    filter="url(#softGlow)"
+  >
+    CIIS
+  </text>
+</svg>
