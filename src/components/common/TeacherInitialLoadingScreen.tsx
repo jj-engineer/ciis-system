@@ -143,7 +143,7 @@ export const TeacherInitialLoadingScreen: React.FC<TeacherInitialLoadingScreenPr
                   CIIS ACADEMIC LMS
                 </span>
                 <p className="text-xs sm:text-sm font-black text-white font-khmer-title tracking-tight leading-tight">
-                  {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL'}
+                  {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
                 </p>
               </div>
             </div>

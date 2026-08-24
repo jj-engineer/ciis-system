@@ -424,7 +424,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           </span>
           <span className="text-zinc-600 hidden sm:inline">•</span>
           <span className={`text-zinc-300 truncate hidden sm:inline ${isKhmer ? 'font-kantumruy' : 'font-mono tracking-wider'}`}>
-            {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស • រាជធានីភ្នំពេញ' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL • PHNOM PENH'}
+            {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស • រាជធានីភ្នំពេញ' : 'CIIS INTERNATIONAL SCHOOL • PHNOM PENH'}
           </span>
         </div>
 
@@ -480,7 +480,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             </div>
             <div className="min-w-0">
               <h1 className={`text-xs sm:text-base lg:text-lg font-black text-zinc-950 leading-tight truncate ${isKhmer ? 'font-khmer-title' : 'uppercase tracking-tight font-mono'}`}>
-                {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL'}
+                {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
               </h1>
               <p className={`text-[9.5px] sm:text-[11.5px] text-pink-900 font-bold truncate ${isKhmer ? 'font-kantumruy tracking-normal' : 'uppercase tracking-wide font-mono'}`}>
                 {isKhmer ? 'ថ្នាក់រៀនកុំព្យូទ័រអនុវត្តជាក់ស្តែង • CIIS Computer Lab 1' : 'Practical Computer Lab Portal • CIIS Lab 1'}
@@ -557,7 +557,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               >
                 <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-200 shrink-0" />
                 <span className="whitespace-nowrap">
-                  {isTeacher 
+                  {isTeacher
                     ? (isKhmer ? 'គ្រប់គ្រងសិស្ស' : 'Manage Students')
                     : (isKhmer ? 'ការសិក្សារបស់អ្នក' : 'Your Studies')
                   }
@@ -720,9 +720,9 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               <h2 className="text-3xl sm:text-5xl lg:text-[54px] font-black text-zinc-950 tracking-tight leading-[1.2] font-khmer-title drop-shadow-xs">
                 {isKhmer ? (
                   <>
-                    ផ្ដោតលើការរៀន និងអនុវត្តផ្ទាល់  <br />
+                    ផ្ដោតលើការរៀន និងអនុវត្តផ្ទាល់ <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-900 via-pink-700 to-rose-600 font-khmer-title">
-                      ជំនាញកុំព្យូទ័រក្នុងបន្ទប់ Lab
+                      ជាក់ស្តែងទៅលើជំនាញកុំព្យូទ័រ
                     </span>
                   </>
                 ) : (
@@ -950,9 +950,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               <div
                 key={idx}
                 onClick={() => setSelectedGalleryItem(item)}
-                className={`scroll-reveal-scale md:col-span-4 group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-sm hover:shadow-xl hover:border-pink-400 transition-all duration-300 cursor-pointer flex flex-col justify-end min-h-[320px] ${
-                  idx === 0 ? 'delay-100' : idx === 1 ? 'delay-200' : 'delay-300'
-                }`}
+                className={`scroll-reveal-scale md:col-span-4 group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-sm hover:shadow-xl hover:border-pink-400 transition-all duration-300 cursor-pointer flex flex-col justify-end min-h-[320px] ${idx === 0 ? 'delay-100' : idx === 1 ? 'delay-200' : 'delay-300'
+                  }`}
               >
                 <img
                   src={item.src}
@@ -1091,14 +1090,14 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 idx === 0
                   ? 'delay-75'
                   : idx === 1
-                  ? 'delay-100'
-                  : idx === 2
-                  ? 'delay-150'
-                  : idx === 3
-                  ? 'delay-200'
-                  : idx === 4
-                  ? 'delay-250'
-                  : 'delay-300';
+                    ? 'delay-100'
+                    : idx === 2
+                      ? 'delay-150'
+                      : idx === 3
+                        ? 'delay-200'
+                        : idx === 4
+                          ? 'delay-250'
+                          : 'delay-300';
 
               return (
                 <div
@@ -1221,16 +1220,14 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     {/* Top Level Index Pill & Age Tag */}
                     <div className="flex items-center justify-between">
                       <span
-                        className={`w-9 h-9 rounded-2xl flex items-center justify-center font-black text-xs transition-all duration-300 ${
-                          isKhmer ? 'font-kantumruy' : 'font-mono'
-                        } bg-pink-950/5 group-hover:bg-gradient-to-br group-hover:from-pink-800 group-hover:to-pink-950 text-pink-950 group-hover:text-white border border-pink-200/80 group-hover:border-pink-700 shadow-2xs`}
+                        className={`w-9 h-9 rounded-2xl flex items-center justify-center font-black text-xs transition-all duration-300 ${isKhmer ? 'font-kantumruy' : 'font-mono'
+                          } bg-pink-950/5 group-hover:bg-gradient-to-br group-hover:from-pink-800 group-hover:to-pink-950 text-pink-950 group-hover:text-white border border-pink-200/80 group-hover:border-pink-700 shadow-2xs`}
                       >
                         {isKhmer ? item.index : item.indexEn}
                       </span>
                       <span
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-colors ${
-                          isKhmer ? 'font-kantumruy' : 'font-mono'
-                        } bg-zinc-50 border border-zinc-200 text-zinc-600 group-hover:border-pink-200 group-hover:bg-pink-50/50 group-hover:text-pink-950`}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-colors ${isKhmer ? 'font-kantumruy' : 'font-mono'
+                          } bg-zinc-50 border border-zinc-200 text-zinc-600 group-hover:border-pink-200 group-hover:bg-pink-50/50 group-hover:text-pink-950`}
                       >
                         {isKhmer ? item.ageKh : item.ageEn}
                       </span>
@@ -1451,13 +1448,13 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* 9. ABOUT THE DEVELOPER — CHOEURN TEKCHAS (JAME / JJ-DEV)                   */}
       {/* ========================================================================= */}
       <section id="developer-section" className="py-14 sm:py-20 bg-[#08040a] text-white border-b border-zinc-800/80 relative overflow-hidden select-none">
-        
+
         {/* Subtle Ambient Backdrops */}
         <div className="absolute top-1/3 -left-32 w-96 h-96 bg-pink-950/20 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute bottom-10 -right-32 w-96 h-96 bg-rose-950/20 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          
+
           {/* Section Header / Eyebrow */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/60 pb-5 text-left">
             <div className="space-y-1">
@@ -1534,12 +1531,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           ) : (
             /* FULL MASTERPIECE 2-COLUMN DEVELOPER SHOWCASE */
             <div className="p-6 sm:p-10 rounded-3xl bg-zinc-950/90 border border-pink-500/30 shadow-2xl space-y-10">
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start text-left">
-                
+
                 {/* LEFT COLUMN: Developer Portrait & Personal Stat Cards */}
                 <div className="lg:col-span-5 space-y-6">
-                  
+
                   {/* Portrait Container */}
                   <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl group max-w-sm mx-auto lg:max-w-none">
                     <img
@@ -1547,7 +1544,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                       alt="Choeurn Tekchas"
                       className="w-full h-80 sm:h-96 object-cover object-top group-hover:scale-103 transition-transform duration-700 ease-out"
                     />
-                    
+
                     {/* Live Building Badge Overlay */}
                     <div className="absolute top-4 left-4">
                       <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold shadow-md">
@@ -1606,7 +1603,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
                 {/* RIGHT COLUMN: Journey Narrative, Approach Visual, Focus Tags & Actions */}
                 <div className="lg:col-span-7 space-y-7">
-                  
+
                   {/* Headline */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -1750,22 +1747,22 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* 9.5. CONTACT ADMIN & GET IN TOUCH (Match Sample Luxury Dark Design)        */}
       {/* ========================================================================= */}
       <section id="contact-admin-section" className="py-20 sm:py-28 bg-[#09050d] text-white relative overflow-hidden select-none border-t border-zinc-800/80">
-        
+
         {/* Layered Atmospheric Glows (Blue ambient glow left + Vibrant warm flare right) */}
         <div className="absolute top-1/4 -left-20 w-[450px] h-[450px] bg-blue-900/20 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute top-1/2 left-1/4 w-[350px] h-[350px] bg-sky-950/25 rounded-full blur-[120px] pointer-events-none" />
-        
+
         {/* Right Abstract Light Flare (Matches sample image glowing colored plume) */}
         <div className="absolute top-1/3 right-10 sm:right-24 w-40 sm:w-52 h-64 sm:h-80 bg-gradient-to-t from-pink-500 via-rose-600 to-amber-300 rounded-full blur-[75px] opacity-60 pointer-events-none" />
         <div className="absolute bottom-10 right-1/4 w-[400px] h-[300px] bg-rose-950/30 rounded-full blur-[130px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            
+
             {/* LEFT COLUMN: Main Typography Headline & Dot Matrix Grid */}
             <div className="scroll-reveal-left lg:col-span-6 space-y-8 text-left">
-              
+
               <div className="space-y-3">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-950/80 text-pink-300 border border-pink-500/30 text-xs font-mono font-bold uppercase tracking-wider">
                   <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
@@ -1823,7 +1820,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
             {/* RIGHT COLUMN: Contact Details (Address, Phone, Mail, Follow Us) */}
             <div className="scroll-reveal-right delay-150 lg:col-span-6 space-y-8 text-left">
-              
+
               {/* 1. ADDRESS */}
               <div className="flex items-start gap-4 group">
                 <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-pink-400 group-hover:border-pink-500/50 group-hover:bg-pink-950/40 transition-all shrink-0 shadow-lg">
@@ -1848,7 +1845,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
                     {isKhmer ? 'លេខទូរស័ព្ទទំនាក់ទំនង' : 'Phone'}
                   </h3>
-                  
+
                   {/* Carrier Contact Pills with Rounded Logos */}
                   <div className="flex flex-wrap gap-2.5 pt-0.5">
                     {/* Smart */}
@@ -1920,7 +1917,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
                     {isKhmer ? 'តាមដានបណ្តាញសង្គម' : 'Follow Us'}
                   </h3>
-                  
+
                   {/* 2 Facebook Links */}
                   <div className="flex flex-col sm:flex-row gap-2.5 pt-0.5">
                     {/* Facebook Page 1 */}
@@ -1998,7 +1995,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-white uppercase tracking-wider font-khmer-title">
-                    {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL'}
+                    {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
                   </h4>
                   <p className="text-[10px] text-pink-400 font-mono">CIIS LMS ACADEMIC NETWORK</p>
                 </div>
@@ -2068,7 +2065,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-zinc-500">
-            <p>© 2026-2027 COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS). All rights reserved.</p>
+            <p>© 2026-2027 CIIS INTERNATIONAL SCHOOL (សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស). All rights reserved.</p>
             <p>
               Engineered with pride by{' '}
               <a
@@ -2144,7 +2141,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             {/* Modal Footer CTA */}
             <div className="px-6 py-4 border-t border-zinc-800/80 bg-zinc-900/50 flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-[11px] text-zinc-400 font-mono">
-                COMMUNITY INTERNAL INSPIRATION SCHOOL • CIIS LMS
+                CIIS INTERNATIONAL SCHOOL • CIIS LMS
               </span>
               <button
                 type="button"

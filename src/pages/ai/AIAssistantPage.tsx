@@ -28,8 +28,8 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
     {
       sender: 'ai',
       text: isKhmer
-        ? `សួស្តីលោកគ្រូ ${currentUser.fullName}! ខ្ញុំជា **ជំនួយការ AI សាលារៀនស៊ី អាយ អាយ អេស (CIIS)** សម្រាប់គ្រូបង្រៀន។ ខ្ញុំអាចជួយវិភាគវត្តមានសិស្ស បង្កើតលំហាត់ Excel ពិនិត្យកិច្ចការដែលមិនទាន់បានប្រគល់ និងពន្យល់រូបមន្តកុំព្យូទ័រជាភាសាខ្មែរ។`
-        : `Hello Teacher ${currentUser.fullName}! I am your **CIIS AI Teaching Assistant** (Community Internal Inspiration School). I can help you analyze student attendance trends, generate Excel exercises, check pending submissions, and explain formulas in Khmer.`
+        ? `សួស្តីលោកគ្រូ ${currentUser.fullName}! ខ្ញុំជា **ជំនួយការ AI សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)** សម្រាប់គ្រូបង្រៀន។ ខ្ញុំអាចជួយវិភាគវត្តមានសិស្ស បង្កើតលំហាត់ Excel ពិនិត្យកិច្ចការដែលមិនទាន់បានប្រគល់ និងពន្យល់រូបមន្តកុំព្យូទ័រជាភាសាខ្មែរ។`
+        : `Hello Teacher ${currentUser.fullName}! I am your **CIIS AI Teaching Assistant** (CIIS International School). I can help you analyze student attendance trends, generate Excel exercises, check pending submissions, and explain formulas in Khmer.`
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);

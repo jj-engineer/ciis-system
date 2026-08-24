@@ -1,4 +1,4 @@
-// TypeScript definitions for COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS) LMS
+// TypeScript definitions for សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS) LMS
 
 export type UserRole = 'teacher' | 'student' | 'admin' | 'assistant_teacher';
 export type AttendanceStatus = 'present' | 'absent' | 'late' | 'permission' | 'sick';

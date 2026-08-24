@@ -291,7 +291,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
             <div>
               <h4 className="text-xs font-black tracking-wider text-white uppercase font-sans">
-                {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស' : 'CIIS SCHOOL'}
+                {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS SCHOOL'}
               </h4>
               <p className="text-[9.5px] text-pink-300 font-mono font-bold">
                 {isTeacherMode ? 'FACULTY PORTAL' : 'STUDENT PORTAL'}

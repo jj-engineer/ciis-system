@@ -153,7 +153,7 @@ export const AttendancePage: React.FC = () => {
     });
 
     downloadAttendancePdf({
-      schoolName: isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+      schoolName: isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)' : 'CIIS International School',
       reportTitle: 'Official Student Attendance Sheet',
       className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
       date: selectedDate,
@@ -191,7 +191,7 @@ export const AttendancePage: React.FC = () => {
     });
 
     downloadProfessionalAttendanceExcel({
-      schoolName: isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+      schoolName: isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)' : 'CIIS International School',
       reportTitle: 'តារាងស្រង់វត្តមានសិស្សផ្លូវការ (OFFICIAL ATTENDANCE SHEET)',
       className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
       date: selectedDate,

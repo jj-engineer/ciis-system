@@ -22,15 +22,56 @@ export interface AttendancePdfOptions {
 }
 
 /**
+ * Cleanly formats teacher names for standard PDF document generation.
+ * Strips raw Khmer Unicode that causes Mojibake glyph corruption (e.g. ‡¿“ •Á‡È) in standard Helvetica font.
+ */
+export const formatTeacherNameForPdf = (rawName?: string): string => {
+  if (!rawName) return 'Choeurn Tekchas';
+
+  // Map known teachers to clear, professional titles
+  if (/choeurn|tekchas|jame/i.test(rawName)) {
+    return 'Choeurn Tekchas (Assistant Teacher)';
+  }
+  if (/nun|langdy/i.test(rawName)) {
+    return 'Nun Langdy (Head Teacher)';
+  }
+  if (/ten|chandara/i.test(rawName)) {
+    return 'Ten Chandara (Senior Teacher)';
+  }
+
+  // Remove Khmer script in parentheses e.g. "(ជឿន តេជៈ)" or "(នុន លាងឌី)"
+  const cleaned = rawName
+    .replace(/\([\u1780-\u17FF\s]+\)/g, '')
+    .replace(/[\u1780-\u17FF]/g, '')
+    .replace(/\(\s*\)/g, '')
+    .trim();
+
+  return cleaned || 'Teacher / CIIS Faculty';
+};
+
+/**
+ * Universal text sanitizer for jsPDF standard fonts.
+ * Ensures non-Latin-1 Khmer characters do not generate corrupted byte symbols.
+ */
+export const sanitizeForPdf = (text?: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/\([\u1780-\u17FF\s]+\)/g, '')
+    .replace(/[\u1780-\u17FF]/g, '')
+    .replace(/\(\s*\)/g, '')
+    .trim();
+};
+
+/**
  * Downloads a professional, cleanly styled Attendance PDF document (.pdf)
  * Centered table with equal balanced margins and clean styling.
  */
 export const downloadAttendancePdf = ({
-  schoolName = 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+  schoolName = 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
   reportTitle = 'Official Student Attendance Report',
   className,
   date,
-  teacherName = 'Nun Langdy (នុន លាងឌី)',
+  teacherName = 'Choeurn Tekchas',
   academicYear = '2026-2027',
   records
 }: AttendancePdfOptions) => {
@@ -48,6 +89,11 @@ export const downloadAttendancePdf = ({
   const totalSick = records.filter(r => r.isSick).length;
   const attendanceRate = totalStudents > 0 ? Math.round((totalPresent / totalStudents) * 100) : 100;
 
+  const cleanTeacher = formatTeacherNameForPdf(teacherName);
+  const cleanClass = sanitizeForPdf(className) || className;
+  const cleanDate = sanitizeForPdf(date) || date;
+  const cleanYear = sanitizeForPdf(academicYear) || academicYear;
+
   // Header Banner in Dark Gradient Pink (#831843)
   doc.setFillColor(131, 24, 67);
   doc.rect(0, 0, 210, 24, 'F');
@@ -56,7 +102,7 @@ export const downloadAttendancePdf = ({
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)', 105, 10, { align: 'center' });
+  doc.text('CIIS INTERNATIONAL SCHOOL', 105, 10, { align: 'center' });
 
   doc.setFontSize(9.5);
   doc.setFont('helvetica', 'normal');
@@ -66,12 +112,12 @@ export const downloadAttendancePdf = ({
   doc.setTextColor(39, 39, 42); // Zinc-800
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text(`Class: ${className}`, 14, 32);
-  doc.text(`Date: ${date}`, 78, 32);
-  doc.text(`Academic Year: ${academicYear}`, 140, 32);
+  doc.text(`Class: ${cleanClass}`, 14, 32);
+  doc.text(`Date: ${cleanDate}`, 78, 32);
+  doc.text(`Academic Year: ${cleanYear}`, 140, 32);
 
   doc.setFont('helvetica', 'normal');
-  doc.text(`Teacher: ${teacherName}`, 14, 38);
+  doc.text(`Teacher: ${cleanTeacher}`, 14, 38);
   doc.text(`Total Students: ${totalStudents}`, 78, 38);
   doc.text(`Attendance Rate: ${attendanceRate}%`, 140, 38);
 
@@ -83,7 +129,7 @@ export const downloadAttendancePdf = ({
   // Table Body Rows
   const tableData = records.map((r) => [
     r.no.toString(),
-    r.studentName,
+    sanitizeForPdf(r.studentName) || r.studentName,
     r.isPresent ? 'P' : '-',
     r.isAbsent ? 'A' : '-',
     r.isLate ? 'L' : '-',
@@ -154,6 +200,6 @@ export const downloadAttendancePdf = ({
   });
 
   // Save the PDF file directly to download
-  const cleanClassName = className.replace(/\s+/g, '_');
+  const cleanClassName = cleanClass.replace(/\s+/g, '_');
   doc.save(`Attendance_${cleanClassName}_${date}.pdf`);
 };

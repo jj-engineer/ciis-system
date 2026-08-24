@@ -234,7 +234,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
             </div>
             <div>
               <h2 className="text-sm font-black text-zinc-950 leading-tight">
-                {isKhmer ? 'សាលារៀន ស៊ី អាយ អាយ អេស' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL'}
+                {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
               </h2>
               <p className="text-[10px] text-pink-800 font-bold font-mono">
                 CIIS SCHOOL • CAMBODIA

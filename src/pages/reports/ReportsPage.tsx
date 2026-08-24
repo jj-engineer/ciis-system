@@ -52,7 +52,7 @@ export const ReportsPage: React.FC = () => {
   // Download directly as .pdf
   const handleDownloadPresidentPDF = () => {
     downloadAttendancePdf({
-      schoolName: isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+      schoolName: isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)' : 'CIIS International School',
       reportTitle: 'Official Student Attendance Sheet',
       className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
       date: filterDate,
@@ -84,7 +84,7 @@ export const ReportsPage: React.FC = () => {
     }));
 
     downloadProfessionalAttendanceExcel({
-      schoolName: isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+      schoolName: isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)' : 'CIIS International School',
       reportTitle: 'តារាងស្រង់វត្តមានសិស្សផ្លូវការ',
       className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
       date: filterDate,
@@ -194,16 +194,16 @@ export const ReportsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-pink-900/20 shadow-sm space-y-6 card-print">
             {/* Header with School Title */}
             <div className="text-center pb-6 border-b-2 border-slate-900/10 space-y-1">
-              <span className="text-xs font-black uppercase tracking-widest text-slate-800 block">
-                {isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)' : 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)'}
+              <span className="text-xs font-black uppercase tracking-widest text-slate-800 block font-khmer-title">
+                {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)' : 'CIIS INTERNATIONAL SCHOOL'}
               </span>
               <h2 className="text-lg sm:text-xl font-black text-pink-900 tracking-tight pt-1">
                 {isKhmer ? 'តារាងស្រង់វត្តមានសិស្សផ្លូវការ' : 'OFFICIAL STUDENT ATTENDANCE RECORD SHEET'}
               </h2>
               <p className="text-xs text-slate-500 font-mono">
                 {isKhmer
-                  ? `ថ្នាក់រៀន៖ ${selectedClass?.name || 'CIIS Computer {5:30-6:30}'} | កាលបរិច្ឆេទ៖ ${filterDate}`
-                  : `Class: ${selectedClass?.name || 'CIIS Computer {5:30-6:30}'} | Date: ${filterDate}`}
+                  ? `ថ្នាក់រៀន៖ ${selectedClass?.name || 'CIIS Computer {5:30-6:30}'} | គ្រូបង្រៀន៖ ${currentUser.fullName} | កាលបរិច្ឆេទ៖ ${filterDate}`
+                  : `Class: ${selectedClass?.name || 'CIIS Computer {5:30-6:30}'} | Teacher: ${currentUser.fullName} | Date: ${filterDate}`}
               </p>
             </div>
 

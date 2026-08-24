@@ -56,7 +56,7 @@ export const SplashLoadingModal: React.FC<SplashLoadingModalProps> = ({
           <div className="w-16 h-16 rounded-full bg-white p-1 flex items-center justify-center shadow-sm border border-pink-100 z-10">
             <img 
               src="/ciis-logo.svg" 
-              alt="CIIS - Community Internal Inspiration School" 
+              alt="CIIS - សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS International School)" 
               className="w-full h-full object-contain" 
             />
           </div>

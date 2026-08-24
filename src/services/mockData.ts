@@ -72,7 +72,7 @@ export const INITIAL_PROFILES: UserProfile[] = [
     phone: '012 345 678',
     role: 'teacher',
     avatarUrl: '/images/teachers/nun-langdy.png',
-    bio: 'Lead Developer & Teacher - COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+    bio: 'Lead Developer & Teacher - សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
     isActive: true,
     createdAt: '2026-01-10T08:00:00Z',
   }
@@ -747,8 +747,8 @@ export const INITIAL_CALENDAR_EVENTS: CalendarEvent[] = [
 export const INITIAL_NOTIFICATIONS: SystemNotification[] = [
   {
     id: 'notif-01',
-    title: 'Welcome to COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
-    message: 'សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងការសិក្សា សាលារៀនស៊ី អាយ អាយ អេស (CIIS LMS)។',
+    title: 'Welcome to សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
+    message: 'សូមស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងការសិក្សា សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS LMS)។',
     iconType: 'announcement',
     linkUrl: '/dashboard',
     isRead: false,

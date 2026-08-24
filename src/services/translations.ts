@@ -5,11 +5,11 @@ export type Language = 'en' | 'km';
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
   en: {
     // Brand & General
-    'app.name': 'COMMUNITY INTERNAL INSPIRATION SCHOOL',
+    'app.name': 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស',
     'app.short_name': 'CIIS',
-    'app.school_full_km': 'សាលារៀនស៊ី អាយ អាយ អេស',
-    'app.school_full_en': 'COMMUNITY INTERNAL INSPIRATION SCHOOL',
-    'app.tagline': 'Community Internal Inspiration School - Learning Management System',
+    'app.school_full_km': 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស',
+    'app.school_full_en': 'CIIS INTERNATIONAL SCHOOL',
+    'app.tagline': 'CIIS International School - Learning Management System',
     'app.academic_year': 'Academic Year 2026-2027',
     'app.lab_name': 'CIIS Computer Lab & Study Center',
 
@@ -134,13 +134,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
   },
   km: {
     // Brand & General (Natural Khmer)
-    'app.name': 'សាលារៀនស៊ី អាយ អាយ អេស (CIIS)',
+    'app.name': 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
     'app.short_name': 'CIIS',
-    'app.school_full_km': 'សាលារៀនស៊ី អាយ អាយ អេស',
-    'app.school_full_en': 'COMMUNITY INTERNAL INSPIRATION SCHOOL',
-    'app.tagline': 'ប្រព័ន្ធគ្រប់គ្រងការសិក្សា សាលារៀនស៊ី អាយ អាយ អេស (CIIS)',
+    'app.school_full_km': 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស',
+    'app.school_full_en': 'CIIS INTERNATIONAL SCHOOL',
+    'app.tagline': 'ប្រព័ន្ធគ្រប់គ្រងការសិក្សា សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
     'app.academic_year': 'ឆ្នាំសិក្សា ២០២៦-២០២៧',
-    'app.lab_name': 'បន្ទប់កុំព្យូទ័រ សាលារៀនស៊ី អាយ អាយ អេស (CIIS)',
+    'app.lab_name': 'បន្ទប់កុំព្យូទ័រ សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
 
     // Roles (Natural Khmer)
     'role.teacher': 'លោកគ្រូ/អ្នកគ្រូបង្រៀន',

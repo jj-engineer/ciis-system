@@ -28,7 +28,7 @@ export interface ExportAttendanceOptions {
 }
 
 export const downloadProfessionalAttendanceExcel = ({
-  schoolName = 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+  schoolName = 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
   reportTitle = 'OFFICIAL STUDENT ATTENDANCE RECORD SHEET',
   className,
   date,

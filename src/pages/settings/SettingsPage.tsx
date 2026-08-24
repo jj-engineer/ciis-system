@@ -33,8 +33,8 @@ export const SettingsPage: React.FC = () => {
   const { classes } = useApp();
 
   // General System State
-  const [schoolNameKh, setSchoolNameKh] = useState('សាលារៀនស៊ី អាយ អាយ អេស');
-  const [schoolNameEn, setSchoolNameEn] = useState('COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)');
+  const [schoolNameKh, setSchoolNameKh] = useState('សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស');
+  const [schoolNameEn, setSchoolNameEn] = useState('CIIS International School (សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស)');
   const [academicYear, setAcademicYear] = useState('2026-2027');
   const [labName, setLabName] = useState('បន្ទប់កុំព្យូទ័រ CIIS Lab 1 (Room 204)');
   const [contactPhone, setContactPhone] = useState('012 345 678');
@@ -88,7 +88,7 @@ export const SettingsPage: React.FC = () => {
 
   const handleExportBackup = () => {
     const backupData = {
-      system: 'COMMUNITY INTERNAL INSPIRATION SCHOOL (CIIS)',
+      system: 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
       version: '2.0.0',
       exportedAt: new Date().toISOString(),
       schoolSettings: {

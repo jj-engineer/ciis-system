@@ -152,7 +152,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, setActiveTab, o
               </div>
               <div className="overflow-hidden min-w-0">
                 <span className="font-black text-xs text-slate-950 truncate block uppercase leading-tight">
-                  {isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស' : 'CIIS SCHOOL'}
+                  {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS SCHOOL'}
                 </span>
                 <span className="text-[9.5px] text-pink-800 font-extrabold uppercase truncate block font-mono">
                   {isTeacher ? (isKhmer ? 'ប្រព័ន្ធគ្រប់គ្រងគ្រូ' : 'Faculty Portal') : (isKhmer ? 'ប្រព័ន្ធសិស្ស' : 'Student Portal')}

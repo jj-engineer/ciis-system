@@ -234,7 +234,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password: data.password || 'ciis',
       role: 'teacher',
       avatarUrl: getDefaultAvatar('teacher', data.username),
-      bio: 'Lead Teacher - COMMUNITY INTERNAL INSPIRATION SCHOOL',
+      bio: 'Lead Teacher - សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
       isActive: true,
       createdAt: new Date().toISOString(),
     };

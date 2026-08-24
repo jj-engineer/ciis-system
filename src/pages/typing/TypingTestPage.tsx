@@ -132,7 +132,7 @@ export const TypingTestPage: React.FC = () => {
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {isKhmer
-              ? 'ប្រព័ន្ធវាស់ល្បឿនវាយអក្សរផ្លូវការរបស់សាលារៀនស៊ី អាយ អាយ អេស គាំទ្រភាសាខ្មែរ អង់គ្លេស និងការប្រកួតប្រជែងសកល។'
+              ? 'ប្រព័ន្ធវាស់ល្បឿនវាយអក្សរផ្លូវការរបស់សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស គាំទ្រភាសាខ្មែរ អង់គ្លេស និងការប្រកួតប្រជែងសកល។'
               : 'Official CIIS Touch Typing Speed Lab with real-time accuracy evaluation, Khmer and English keyboard drills, and school leaderboard.'}
           </p>
         </div>

@@ -83,7 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <div className="overflow-hidden min-w-0">
           <h1 className="text-xs sm:text-[13px] font-black text-zinc-950 tracking-tight leading-tight uppercase truncate">
-            {isKhmer ? 'សាលារៀនស៊ី អាយ អាយ អេស' : 'CIIS SCHOOL'}
+            {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS SCHOOL'}
           </h1>
           <p className="text-[9px] text-pink-800 font-extrabold uppercase tracking-wider truncate font-mono mt-0.5">
             CIIS TECH SYSTEM
