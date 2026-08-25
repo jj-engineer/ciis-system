@@ -415,19 +415,6 @@ export const printAttendanceDocument = ({
     </tbody>
   </table>
 
-  <div class="signature-grid">
-    <div class="signature-col">
-      <div class="signature-title">បានឃើញ និងឯកភាពដោយ គណៈគ្រប់គ្រងសាលា</div>
-      <div class="signature-line"></div>
-      <div class="signature-name">នាយកសាលា / School Director</div>
-    </div>
-    <div class="signature-col">
-      <div class="signature-title">គ្រូទទួលបន្ទុកថ្នាក់ / Subject Instructor</div>
-      <div class="signature-line"></div>
-      <div class="signature-name">${cleanTeacher}</div>
-    </div>
-  </div>
-
   <div class="print-actions">
     <button onclick="window.print()">🖨️ បោះពុម្ព / រក្សាទុកជា PDF</button>
   </div>

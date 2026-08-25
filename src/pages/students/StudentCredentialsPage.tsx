@@ -134,8 +134,8 @@ export const StudentCredentialsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 text-pink-900 text-xs font-bold border border-pink-200 mb-2">
-            <KeyRound className="w-3.5 h-3.5 text-pink-700" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-900 text-xs font-bold border border-zinc-200 mb-2">
+            <KeyRound className="w-3.5 h-3.5 text-zinc-700" />
             <span>{isKhmer ? 'ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យ & ពាក្យសម្ងាត់សិស្ស' : 'Teacher Master Student Records & Credentials'}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
@@ -151,16 +151,16 @@ export const StudentCredentialsPage: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-950 font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-950 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4 text-pink-800" />
+            <FileSpreadsheet className="w-4 h-4 text-zinc-700" />
             <span>{isKhmer ? 'ទាញយក Excel / CSV' : 'Export Records'}</span>
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-pink-800 to-pink-950 hover:from-pink-700 hover:to-pink-900 text-white font-extrabold text-xs rounded-xl shadow-md shadow-pink-950/20 transition-all flex items-center gap-2 cursor-pointer border border-pink-700/30"
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
           >
-            <UserPlus className="w-4 h-4 text-pink-300" />
+            <UserPlus className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'បន្ថែមសិស្សថ្មី' : 'Add Student'}</span>
           </button>
         </div>
@@ -168,9 +168,9 @@ export const StudentCredentialsPage: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-3xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-pink-950/10 text-pink-900 flex items-center justify-center font-black">
-            <Users className="w-5 h-5 text-pink-800" />
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold border border-zinc-200">
+            <Users className="w-5 h-5 text-zinc-800" />
           </div>
           <div>
             <p className="text-[11px] text-zinc-400 font-bold uppercase">{isKhmer ? 'សិស្សចុះឈ្មោះសរុប' : 'Total Students'}</p>
@@ -178,9 +178,9 @@ export const StudentCredentialsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-3xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-black text-white flex items-center justify-center font-black">
-            <School className="w-5 h-5 text-pink-300" />
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-bold">
+            <School className="w-5 h-5 text-zinc-100" />
           </div>
           <div>
             <p className="text-[11px] text-zinc-400 font-bold uppercase">{isKhmer ? 'ថ្នាក់រៀនសកម្ម' : 'Active Classes'}</p>
@@ -188,9 +188,9 @@ export const StudentCredentialsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-3xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-pink-950/10 text-pink-900 flex items-center justify-center font-black">
-            <KeyRound className="w-5 h-5 text-pink-800" />
+        <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold border border-zinc-200">
+            <KeyRound className="w-5 h-5 text-zinc-800" />
           </div>
           <div>
             <p className="text-[11px] text-zinc-400 font-bold uppercase">{isKhmer ? 'ប្រព័ន្ធពាក្យសម្ងាត់' : 'Password Vault'}</p>

@@ -239,7 +239,7 @@ export const AttendancePage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <CheckSquare className="w-6 h-6 text-pink-700" />
+            <CheckSquare className="w-6 h-6 text-zinc-900" />
             {t('title.attendance', undefined, 'Fast Attendance Management')}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
@@ -252,25 +252,25 @@ export const AttendancePage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             title="Download clean 7-column PDF attendance sheet (.pdf)"
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'ទាញយកជា PDF (.pdf)' : 'Download as PDF (.pdf)'}</span>
           </button>
           <button
             onClick={() => handleExportExcel('excel_table')}
-            className="px-3.5 py-2 bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold text-xs rounded-xl border border-pink-200 shadow-xs transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs rounded-xl border border-zinc-200 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             title="Download formatted Excel table"
           >
-            <FileSpreadsheet className="w-4 h-4 text-pink-700" />
+            <FileSpreadsheet className="w-4 h-4 text-zinc-600" />
             <span>{isKhmer ? 'តារាង Excel (.xls)' : 'Excel (.xls)'}</span>
           </button>
           <button
             onClick={handleSaveAttendance}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-4 h-4 text-zinc-300" />
             <span>{t('action.save_attendance', undefined, 'Save Attendance')}</span>
           </button>
         </div>
@@ -284,19 +284,17 @@ export const AttendancePage: React.FC = () => {
         </div>
       )}
 
-
-
       {/* Controls Bar: Class, Date, Mark All Present, Live Counter */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             {/* Class Dropdown */}
-            <div className="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500">Class:</span>
+            <div className="flex items-center gap-2 bg-zinc-50 px-3 py-2 rounded-xl border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">Class:</span>
               <select
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(e.target.value)}
-                className="bg-transparent font-bold text-xs text-slate-900 outline-none cursor-pointer"
+                className="bg-transparent font-bold text-xs text-zinc-900 outline-none cursor-pointer"
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -307,22 +305,23 @@ export const AttendancePage: React.FC = () => {
             </div>
 
             {/* Date Picker */}
-            <div className="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-              <CalendarIcon className="w-4 h-4 text-slate-500" />
+            <div className="flex items-center gap-2 bg-zinc-50 px-3 py-2 rounded-xl border border-zinc-200">
+              <CalendarIcon className="w-4 h-4 text-zinc-500" />
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-transparent font-bold text-xs text-slate-900 outline-none cursor-pointer"
-              />
+                className="bg-transparent font-bold text-xs text-zinc-900 outline-none cursor-pointer"
+              >
+              </input>
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-slate-100 p-0.5 rounded-xl text-xs font-semibold text-slate-600">
+            <div className="flex items-center bg-zinc-100 p-0.5 rounded-xl text-xs font-semibold text-zinc-600 border border-zinc-200">
               <button
                 onClick={() => setViewMode('daily')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  viewMode === 'daily' ? 'bg-white text-pink-700 shadow-xs font-bold' : 'hover:text-slate-900'
+                  viewMode === 'daily' ? 'bg-white text-zinc-950 shadow-xs font-bold' : 'hover:text-zinc-900'
                 }`}
               >
                 Daily Sheet
@@ -330,7 +329,7 @@ export const AttendancePage: React.FC = () => {
               <button
                 onClick={() => setViewMode('history')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  viewMode === 'history' ? 'bg-white text-pink-700 shadow-xs font-bold' : 'hover:text-slate-900'
+                  viewMode === 'history' ? 'bg-white text-zinc-950 shadow-xs font-bold' : 'hover:text-zinc-900'
                 }`}
               >
                 History Logs
@@ -342,9 +341,9 @@ export const AttendancePage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleMarkAllPresent}
-              className="w-full sm:w-auto px-4 py-2 bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold text-xs rounded-xl border border-pink-200 shadow-xs transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs rounded-xl border border-zinc-300 shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CheckCheck className="w-4 h-4" />
+              <CheckCheck className="w-4 h-4 text-zinc-600" />
               <span>Select All as Present</span>
             </button>
           </div>
@@ -352,29 +351,29 @@ export const AttendancePage: React.FC = () => {
 
         {/* Live Attendance Statistics Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-slate-100">
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-center">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block">Class Rate</span>
-            <span className="text-base font-black text-pink-700">{attendanceRate}%</span>
+          <div className="p-2.5 rounded-xl bg-zinc-900 text-white border border-zinc-900 text-center shadow-xs">
+            <span className="text-[10px] uppercase font-bold text-zinc-400 block">Class Rate</span>
+            <span className="text-base font-black text-white">{attendanceRate}%</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
-            <span className="text-[10px] uppercase font-bold text-emerald-800 block">Present</span>
-            <span className="text-base font-black text-emerald-700">{presentCount}</span>
+          <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-center">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Present</span>
+            <span className="text-base font-black text-zinc-900">{presentCount}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-100 text-center">
-            <span className="text-[10px] uppercase font-bold text-rose-800 block">Absent</span>
-            <span className="text-base font-black text-rose-700">{absentCount}</span>
+          <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-center">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Absent</span>
+            <span className="text-base font-black text-zinc-900">{absentCount}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-100 text-center">
-            <span className="text-[10px] uppercase font-bold text-amber-800 block">Late</span>
-            <span className="text-base font-black text-amber-700">{lateCount}</span>
+          <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-center">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Late</span>
+            <span className="text-base font-black text-zinc-900">{lateCount}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-100 text-center">
-            <span className="text-[10px] uppercase font-bold text-sky-800 block">Permission</span>
-            <span className="text-base font-black text-sky-700">{permissionCount}</span>
+          <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-center">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Permission</span>
+            <span className="text-base font-black text-zinc-900">{permissionCount}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-purple-50 border border-purple-100 text-center">
-            <span className="text-[10px] uppercase font-bold text-purple-800 block">Sick</span>
-            <span className="text-base font-black text-purple-700">{sickCount}</span>
+          <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-center">
+            <span className="text-[10px] uppercase font-bold text-zinc-500 block">Sick</span>
+            <span className="text-base font-black text-zinc-900">{sickCount}</span>
           </div>
         </div>
       </div>

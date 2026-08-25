@@ -109,7 +109,7 @@ export const ReportsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-pink-700" />
+            <BarChart3 className="w-6 h-6 text-zinc-900" />
             {isKhmer ? 'របាយការណ៍វត្តមានផ្លូវការ & លទ្ធផលសិក្សា' : 'Official Attendance & Academic Reports'}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -122,9 +122,9 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => window.print()}
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <Printer className="w-4 h-4 text-pink-700" />
+            <Printer className="w-4 h-4 text-zinc-700" />
             <span>{isKhmer ? 'បោះពុម្ព (Print)' : 'Print View'}</span>
           </button>
 
@@ -133,18 +133,18 @@ export const ReportsPage: React.FC = () => {
               {/* PRIMARY DOWNLOAD AS .PDF BUTTON */}
               <button
                 onClick={handleDownloadPresidentPDF}
-                className="px-4 py-2 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-1.5"
+                className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Download formatted 7-column attendance document as PDF"
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="w-4 h-4 text-zinc-300" />
                 <span>{isKhmer ? 'ទាញយកជា .PDF ជូនលោកនាយក' : 'Download as .PDF for President'}</span>
               </button>
 
               <button
                 onClick={handleExportPresidentExcel}
-                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-xs transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                <FileSpreadsheet className="w-4 h-4 text-slate-500" />
+                <FileSpreadsheet className="w-4 h-4 text-zinc-600" />
                 <span>{isKhmer ? 'Excel (.xls)' : 'Excel'}</span>
               </button>
             </>
@@ -158,7 +158,7 @@ export const ReportsPage: React.FC = () => {
           onClick={() => setReportType('president_attendance')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 ${
             reportType === 'president_attendance'
-              ? 'bg-pink-700 text-white shadow-xs'
+              ? 'bg-zinc-900 text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >

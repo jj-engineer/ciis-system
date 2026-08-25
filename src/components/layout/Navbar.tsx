@@ -54,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <h1 className="text-base sm:text-lg font-black text-slate-950 tracking-tight truncate">
           {activeTabTitle}
         </h1>
-        <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-pink-50 border border-pink-200 text-pink-900 text-[10px] font-extrabold font-mono shrink-0">
+        <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-800 text-[10px] font-extrabold font-mono shrink-0">
           {isStudent ? (isKhmer ? 'សិស្ស' : 'Student') : (isKhmer ? 'គ្រូបង្រៀន' : 'Faculty')}
         </span>
       </div>
@@ -64,13 +64,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Class Selector for Teachers */}
         {!isStudent ? (
           <div className="relative hidden lg:flex items-center">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:border-pink-300 hover:shadow-xs transition-all">
-              <School className="w-3.5 h-3.5 text-pink-700" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs font-semibold text-zinc-700 hover:border-zinc-300 hover:shadow-xs transition-all">
+              <School className="w-3.5 h-3.5 text-zinc-700" />
               <span>{isKhmer ? 'ថ្នាក់៖' : 'Class:'}</span>
               <select
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(e.target.value)}
-                className="bg-transparent font-bold text-pink-700 border-none outline-none cursor-pointer pr-2 hover:text-pink-800 transition-colors"
+                className="bg-transparent font-bold text-zinc-900 border-none outline-none cursor-pointer pr-2 hover:text-zinc-950 transition-colors"
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -82,8 +82,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         ) : (
           /* Enrolled Class Pill for Students */
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-pink-50 border border-pink-200 text-xs text-pink-900 font-extrabold shadow-2xs hover:bg-pink-100/70 hover:scale-[1.02] transition-all cursor-default">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 border border-zinc-200 text-xs text-zinc-900 font-extrabold shadow-2xs transition-all cursor-default">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span>{currentUser.className || 'CIIS Computer {5:30-6:30}'}</span>
           </div>
         )}
@@ -96,19 +96,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('action.search', undefined, 'Search...')}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-600 transition-all placeholder:text-slate-400 hover:border-slate-300"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400/20 focus:border-zinc-800 transition-all placeholder:text-slate-400 hover:border-slate-300"
           />
         </div>
 
-        {/* 1-Click EN | ខ្មែរ Bilingual Language Switcher Pill with hover & lift */}
-        <div className="flex items-center p-1 bg-slate-100/90 rounded-xl border border-slate-200/80 shadow-xs">
+        {/* 1-Click EN | ខ្មែរ Bilingual Language Switcher Pill */}
+        <div className="flex items-center p-1 bg-zinc-100 rounded-xl border border-zinc-200 shadow-xs">
           <button
             type="button"
             onClick={() => setLanguage('en')}
-            className={`px-2.5 py-1 text-xs font-black rounded-lg transition-all transform ${
+            className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
               language === 'en'
-                ? 'bg-pink-700 text-white shadow-xs scale-105'
-                : 'text-slate-600 hover:text-pink-700 hover:bg-white/80'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-white/80'
             }`}
             title="English Language"
           >
@@ -117,10 +117,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={() => setLanguage('km')}
-            className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all transform ${
+            className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
               language === 'km'
-                ? 'bg-pink-700 text-white shadow-xs scale-105'
-                : 'text-slate-600 hover:text-pink-700 hover:bg-white/80'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-white/80'
             }`}
             title="ភាសាខ្មែរ (Khmer Language)"
           >
@@ -133,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 text-slate-500 hover:text-pink-700 hover:bg-pink-50 rounded-xl transition-all hover:scale-105"
+            className="relative p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-all"
             aria-label="Notifications"
           >
             <Bell className="w-5 h-5" />

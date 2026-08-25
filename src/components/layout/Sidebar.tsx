@@ -77,16 +77,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className="w-60 sm:w-64 bg-white border-r border-zinc-200/90 flex flex-col h-full shrink-0 select-none shadow-sm z-30 relative overflow-hidden font-sans">
       
-      {/* 1. BRAND HEADER (Matching Sample Design: Logo + Website Name) */}
+      {/* 1. BRAND HEADER */}
       <div className="p-5 flex items-center gap-3 border-b border-zinc-100 bg-white">
-        <div className="w-11 h-11 rounded-2xl bg-white p-1 flex items-center justify-center shadow-md border border-pink-200 shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-xs border border-zinc-200 shrink-0">
           <img src="/ciis-logo.svg" alt="CIIS Logo" className="w-full h-full object-contain" />
         </div>
         <div className="overflow-hidden min-w-0">
           <h1 className="text-xs sm:text-[13px] font-black text-zinc-950 tracking-tight leading-tight uppercase truncate">
             {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS SCHOOL'}
           </h1>
-          <p className="text-[9px] text-pink-800 font-extrabold uppercase tracking-wider truncate font-mono mt-0.5">
+          <p className="text-[9px] text-zinc-500 font-extrabold uppercase tracking-wider truncate font-mono mt-0.5">
             CIIS TECH SYSTEM
           </p>
         </div>
@@ -97,76 +97,73 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="px-3 pt-3 pb-1">
           <button
             onClick={onVisitWebsite}
-            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-pink-50 border border-slate-200/90 hover:border-pink-300 text-slate-700 hover:text-pink-950 text-xs font-black transition-all cursor-pointer shadow-2xs group"
+            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-zinc-100/80 hover:bg-zinc-200/70 border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 text-xs font-black transition-all cursor-pointer shadow-2xs group"
             title={isKhmer ? 'ត្រឡប់ទៅគេហទំព័រដើមវិញ' : 'Back to Public Website'}
           >
             <div className="flex items-center gap-2">
-              <ArrowLeft className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-800 group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-950 group-hover:-translate-x-0.5 transition-transform" />
               <span className="uppercase tracking-wider text-[11px] font-bold">
                 {isKhmer ? 'ត្រឡប់វិញ' : 'Back'}
               </span>
             </div>
-            <span className="text-[9.5px] px-2 py-0.5 rounded bg-white text-slate-600 group-hover:text-pink-800 font-mono font-bold border border-slate-200">
+            <span className="text-[9.5px] px-2 py-0.5 rounded bg-white text-zinc-600 font-mono font-bold border border-zinc-200">
               {isKhmer ? 'គេហទំព័រ' : 'Web'}
             </span>
           </button>
         </div>
       )}
 
-      {/* 2. NAVIGATION LINKS WITH CLEAN MOTION & SOFT PINK ACTIVE STYLE */}
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      {/* 2. NAVIGATION LINKS WITH MODERN MINIMALIST ACTIVE STYLE */}
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
 
           if (isActive) {
             return (
-              /* Active Item with Clean Pink Gradient & Icon Badge */
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className="w-full flex items-center justify-between p-2 pl-2.5 rounded-2xl bg-gradient-to-r from-pink-100/90 via-pink-50 to-white text-pink-950 border border-pink-200/90 shadow-xs font-black cursor-pointer transition-all duration-200 relative group transform translate-x-1"
+                className="w-full flex items-center justify-between p-2 pl-2.5 rounded-xl bg-zinc-900 text-white border border-zinc-900 shadow-sm font-bold cursor-pointer transition-all duration-150 relative group"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Clean Pink Icon Capsule */}
-                  <div className="w-8 h-8 rounded-xl bg-pink-800 text-white flex items-center justify-center shrink-0 shadow-sm shadow-pink-800/30 group-hover:scale-110 transition-transform">
-                    <Icon className="w-4 h-4 text-pink-100" />
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-zinc-800 text-white flex items-center justify-center shrink-0 border border-zinc-700">
+                    <Icon className="w-3.5 h-3.5 text-zinc-100" />
                   </div>
-                  <span className="text-xs font-black tracking-wider uppercase text-pink-950 truncate">
+                  <span className="text-xs font-bold tracking-wider uppercase text-white truncate">
                     {isKhmer ? item.labelKh : item.labelEn}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5 mr-1">
                   {item.badge && (
-                    <span className="text-[8.5px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 font-mono bg-pink-800 text-white shadow-2xs">
+                    <span className="text-[8.5px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0 font-mono bg-zinc-800 text-zinc-200 border border-zinc-700">
                       {item.badge}
                     </span>
                   )}
-                  <span className="w-1.5 h-1.5 rounded-full bg-pink-800 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 </div>
               </button>
             );
           }
 
           return (
-            /* Inactive Item with Smooth Hover Motion & Micro-animations */
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className="w-full flex items-center justify-between p-2 pl-2.5 rounded-2xl text-xs font-extrabold text-zinc-600 hover:text-pink-950 hover:bg-gradient-to-r hover:from-pink-50/70 hover:to-zinc-50/50 border border-transparent hover:border-pink-200/60 transition-all duration-200 group cursor-pointer transform hover:translate-x-1.5 hover:shadow-2xs active:scale-98"
+              className="w-full flex items-center justify-between p-2 pl-2.5 rounded-xl text-xs font-semibold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 border border-transparent transition-all duration-150 group cursor-pointer"
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-pink-800 group-hover:bg-pink-100/60 transition-all duration-200 shrink-0">
-                  <Icon className="w-4 h-4 group-hover:scale-120 group-hover:rotate-6 transition-transform duration-200 ease-out" />
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 group-hover:text-zinc-800 group-hover:bg-zinc-200/60 transition-colors shrink-0">
+                  <Icon className="w-3.5 h-3.5" />
                 </div>
-                <span className="tracking-wide uppercase text-zinc-700 group-hover:text-pink-950 truncate text-[11.5px] group-hover:font-black transition-colors">
+                <span className="tracking-wide uppercase text-zinc-700 group-hover:text-zinc-950 truncate text-[11.5px] transition-colors">
                   {isKhmer ? item.labelKh : item.labelEn}
                 </span>
               </div>
 
               {item.badge && (
-                <span className="text-[8.5px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 font-mono bg-zinc-100 text-zinc-600 border border-zinc-200 group-hover:border-pink-200 group-hover:bg-pink-50 group-hover:text-pink-900 transition-colors mr-1">
+                <span className="text-[8.5px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider shrink-0 font-mono bg-zinc-100 text-zinc-500 border border-zinc-200 mr-1">
                   {item.badge}
                 </span>
               )}
