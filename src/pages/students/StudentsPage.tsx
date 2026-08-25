@@ -137,12 +137,16 @@ export const StudentsPage: React.FC = () => {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold shrink-0 border border-zinc-200">
-            <DollarSign className="w-5 h-5 text-zinc-800" />
+          <div className="w-10 h-10 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-bold shrink-0">
+            <DollarSign className="w-5 h-5 text-zinc-100" />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] text-zinc-400 font-bold uppercase truncate">{isKhmer ? 'ថ្លៃសិក្សាប្រចាំខែ' : 'Monthly Fee'}</p>
-            <p className="text-lg sm:text-xl font-black text-zinc-950 truncate">$15 <span className="text-[11px] font-normal text-zinc-400">/ Student</span></p>
+            <p className="text-[10px] text-zinc-500 font-black uppercase tracking-wider truncate">
+              {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ប្រាក់ (សំខាន់)' : 'Payment Deadline (Strict)'}
+            </p>
+            <p className="text-sm sm:text-base font-black text-zinc-950 truncate">
+              {isKhmer ? 'ថ្ងៃទី ២៨ ប្រចាំខែ' : '28th Monthly'} <span className="text-xs font-bold text-zinc-500">($15)</span>
+            </p>
           </div>
         </div>
 
@@ -204,7 +208,7 @@ export const StudentsPage: React.FC = () => {
               className="bg-white rounded-2xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-400 transition-all cursor-pointer flex flex-col justify-between h-full min-h-[300px] group"
             >
               {/* Top Row: Avatar + Name + Badges */}
-              <div className="space-y-3.5">
+              <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2.5">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-11 h-11 rounded-xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs group-hover:scale-105 transition-transform">
@@ -231,27 +235,35 @@ export const StudentsPage: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Symmetrical Contact & Tuition Row */}
-                <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200/80 text-xs">
-                  <div className="space-y-0.5 min-w-0">
-                    <span className="text-[10px] text-zinc-400 font-bold uppercase block flex items-center gap-1">
-                      <Phone className="w-2.5 h-2.5 text-zinc-500" />
-                      {isKhmer ? 'លេខទូរស័ព្ទ' : 'Phone'}
+                {/* Important Highlight: Payment Deadline Banner */}
+                <div className="p-2.5 rounded-xl bg-zinc-900 text-white flex items-center justify-between shadow-xs">
+                  <div className="min-w-0">
+                    <span className="text-[9px] uppercase tracking-wider font-extrabold text-zinc-400 block">
+                      {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ (សំខាន់)' : 'Payment Deadline (Critical)'}
                     </span>
-                    <p className="font-mono font-bold text-zinc-900 text-[11px] truncate">
-                      {student.phone || '012 345 678'}
+                    <p className="font-mono font-black text-xs text-white truncate">
+                      {student.paymentDeadline || '28-Aug-2026'}
                     </p>
                   </div>
+                  <div className="text-right pl-2 border-l border-zinc-800 shrink-0">
+                    <span className="text-[9px] uppercase tracking-wider font-extrabold text-zinc-400 block">
+                      {isKhmer ? 'ថ្លៃសិក្សា' : 'Tuition'}
+                    </span>
+                    <span className="font-mono font-black text-xs text-white">
+                      $15.00
+                    </span>
+                  </div>
+                </div>
 
-                  <div className="space-y-0.5 min-w-0 border-l border-zinc-200 pl-2.5">
-                    <span className="text-[10px] text-zinc-400 font-bold uppercase block flex items-center gap-1">
-                      <Calendar className="w-2.5 h-2.5 text-zinc-500" />
-                      {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ ($15)' : 'Payment Deadline'}
-                    </span>
-                    <p className="font-mono font-bold text-zinc-900 text-[11px] truncate">
-                      {student.paymentDeadline || '28-Aug-26'}
-                    </p>
-                  </div>
+                {/* Contact Phone Row */}
+                <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200/80 text-xs flex items-center justify-between">
+                  <span className="text-[10px] text-zinc-400 font-bold uppercase flex items-center gap-1">
+                    <Phone className="w-3 h-3 text-zinc-500" />
+                    {isKhmer ? 'ទូរស័ព្ទ' : 'Phone'}
+                  </span>
+                  <span className="font-mono font-bold text-zinc-900 text-[11px]">
+                    {student.phone || '012 345 678'}
+                  </span>
                 </div>
 
                 {/* Symmetrical 3-Column Performance Stats */}

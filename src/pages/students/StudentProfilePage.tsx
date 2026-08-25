@@ -167,6 +167,30 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
         </div>
       </div>
 
+      {/* Critical Payment Deadline & Tuition Notice */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900 text-white border border-zinc-800 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded bg-white text-zinc-950 font-black text-[10px] uppercase tracking-wider">
+              {isKhmer ? 'សំខាន់ • IMPORTANT' : 'IMPORTANT • REQUIRED'}
+            </span>
+            <span className="text-xs font-bold text-zinc-300">
+              {isKhmer ? 'កាលបរិច្ឆេទផុតកំណត់បង់ថ្លៃសិក្សា' : 'Monthly Tuition Due Date'}
+            </span>
+          </div>
+          <p className="text-lg sm:text-xl font-black text-white font-mono">
+            {student.paymentDeadline || '28-Aug-2026'} <span className="text-xs font-bold text-zinc-400 font-sans">($15.00 USD / Month)</span>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 bg-zinc-800/80 px-4 py-2.5 rounded-xl border border-zinc-700/80 self-start sm:self-auto">
+          <div className="text-right">
+            <span className="text-[10px] text-zinc-400 font-bold uppercase block">{isKhmer ? 'ស្ថានភាពបង់ប្រាក់' : 'Payment Status'}</span>
+            <span className="text-xs font-black text-zinc-100 font-mono">{isKhmer ? 'ត្រូវបង់ថ្ងៃទី ២៨' : 'Due Every 28th'}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Symmetrical 4-Column Subject Performance Breakdown */}
       <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs space-y-4">
         <h3 className="text-sm font-bold text-zinc-950 flex items-center gap-2">

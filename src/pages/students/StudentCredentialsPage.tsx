@@ -19,7 +19,8 @@ import {
   School,
   Lock,
   User,
-  Phone
+  Phone,
+  DollarSign
 } from 'lucide-react';
 
 export const StudentCredentialsPage: React.FC = () => {
@@ -169,12 +170,12 @@ export const StudentCredentialsPage: React.FC = () => {
         </div>
 
         <div className="p-4 rounded-2xl bg-white border border-zinc-200 shadow-xs flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold border border-zinc-200">
-            <KeyRound className="w-5 h-5 text-zinc-800" />
+          <div className="w-10 h-10 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-bold">
+            <DollarSign className="w-5 h-5 text-zinc-100" />
           </div>
           <div>
-            <p className="text-[11px] text-zinc-400 font-bold uppercase">{isKhmer ? 'ថ្លៃសិក្សាប្រចាំខែ' : 'Monthly Tuition'}</p>
-            <p className="text-xl font-black text-zinc-950">$15 <span className="text-xs font-normal text-zinc-400">/ Student</span></p>
+            <p className="text-[10px] text-zinc-500 font-extrabold uppercase tracking-wider">{isKhmer ? 'ថ្ងៃផុតកំណត់បង់ (សំខាន់)' : 'Payment Deadline (Strict)'}</p>
+            <p className="text-base sm:text-lg font-black text-zinc-950">{isKhmer ? 'ថ្ងៃទី ២៨ ប្រចាំខែ' : '28th Monthly'} <span className="text-xs font-bold text-zinc-500">($15)</span></p>
           </div>
         </div>
       </div>
@@ -219,7 +220,7 @@ export const StudentCredentialsPage: React.FC = () => {
                 <th className="py-3 px-4">{isKhmer ? 'ឈ្មោះសិស្ស' : 'Student Name'}</th>
                 <th className="py-3 px-3">{isKhmer ? 'ភេទ' : 'Sex'}</th>
                 <th className="py-3 px-3">{isKhmer ? 'លេខទូរស័ព្ទ' : 'Phone Number'}</th>
-                <th className="py-3 px-3">{isKhmer ? 'ថ្ងៃផុតកំណត់បង់' : 'Payment Deadline'}</th>
+                <th className="py-3 px-3">{isKhmer ? 'ថ្ងៃផុតកំណត់បង់ (សំខាន់)' : 'Payment Deadline (Strict)'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ពាក្យសម្ងាត់' : 'Password'}</th>
                 <th className="py-3 px-4 text-right">{isKhmer ? 'សកម្មភាព' : 'Actions'}</th>
               </tr>
@@ -280,8 +281,8 @@ export const StudentCredentialsPage: React.FC = () => {
 
                       {/* Payment Deadline */}
                       <td className="py-3.5 px-3">
-                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-900 font-mono font-bold text-[11px] border border-zinc-200">
-                          {student.paymentDeadline || '28-Aug-26'} ($15)
+                        <span className="px-2.5 py-1 rounded-lg bg-zinc-900 text-white font-mono font-black text-[11px] shadow-xs">
+                          {student.paymentDeadline || '28-Aug-2026'} <span className="text-[10px] text-zinc-400 font-sans font-bold">($15)</span>
                         </span>
                       </td>
 
