@@ -26,6 +26,7 @@ interface AuthContextType {
     password?: string;
     studentId?: string;
     avatarUrl?: string;
+    gender?: 'female' | 'male' | string;
   }) => UserProfile;
   registerTeacher: (data: {
     fullName: string;
@@ -171,6 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password?: string;
     studentId?: string;
     avatarUrl?: string;
+    gender?: 'female' | 'male' | string;
   }): UserProfile => {
     const autoStudentId = data.studentId || StorageService.getNextStudentId();
     const cleanUsername = data.fullName
@@ -180,9 +182,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .replace(/[^a-z0-9.]/g, '') || `student.${autoStudentId.toLowerCase()}`;
 
     const newStudent: UserProfile = {
-      id: `user-student-${Date.now()}`,
+      id: `user-student-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       studentId: autoStudentId,
       fullName: data.fullName.trim(),
+      gender: data.gender || 'male',
       username: cleanUsername,
       email: `${autoStudentId.toLowerCase()}@student.school.edu`,
       password: data.password || '123',

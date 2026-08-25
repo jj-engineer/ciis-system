@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { Badge, BadgeVariant } from '../../components/common/Badge';
-import { AttendanceStatus } from '../../types';
+import { Modal } from '../../components/common/Modal';
+import { AttendanceStatus, UserProfile } from '../../types';
 import { downloadProfessionalAttendanceExcel } from '../../utils/excelAttendanceExport';
 import { downloadAttendancePdf } from '../../utils/pdfAttendanceExport';
 import {
@@ -24,11 +25,19 @@ import {
   FileSpreadsheet,
   FileText,
   Printer,
-  User
+  User,
+  UserPlus,
+  UploadCloud,
+  Edit3,
+  Trash2,
+  Plus,
+  ListPlus,
+  Sparkles,
+  Users
 } from 'lucide-react';
 
 export const AttendancePage: React.FC = () => {
-  const { allProfiles, currentUser } = useAuth();
+  const { allProfiles, currentUser, registerStudent, updateStudentCredentials, deleteStudentProfile, getNextAutoStudentId } = useAuth();
   const { isKhmer, t } = useLanguage();
   const {
     classes,
@@ -40,10 +49,28 @@ export const AttendancePage: React.FC = () => {
     studentAnalytics
   } = useApp();
 
-  const [selectedDate, setSelectedDate] = useState<string>('2026-08-21');
+  const [selectedDate, setSelectedDate] = useState<string>('2026-08-25');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'daily' | 'history'>('daily');
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
+
+  // Student Management Modals State
+  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [showUploadModal, setShowUploadModal] = useState<boolean>(false);
+  const [editingStudent, setEditingStudent] = useState<UserProfile | null>(null);
+
+  // Add Single Student Form
+  const [newName, setNewName] = useState<string>('');
+  const [newGender, setNewGender] = useState<'female' | 'male'>('female');
+  const [newStudentId, setNewStudentId] = useState<string>('');
+
+  // Bulk Upload Form
+  const [bulkText, setBulkText] = useState<string>('');
+
+  // Edit Student Form
+  const [editName, setEditName] = useState<string>('');
+  const [editGender, setEditGender] = useState<'female' | 'male'>('female');
+  const [editStudentId, setEditStudentId] = useState<string>('');
 
   // Filter students belonging to the active class
   const classStudents = allProfiles.filter(
@@ -68,7 +95,7 @@ export const AttendancePage: React.FC = () => {
     return map;
   });
 
-  // Re-sync local draft when selectedClass or date changes
+  // Re-sync local draft when selectedClass, date, or student roster changes
   React.useEffect(() => {
     const map: Record<string, { status: AttendanceStatus; note: string }> = {};
     classStudents.forEach((student) => {
@@ -81,7 +108,7 @@ export const AttendancePage: React.FC = () => {
       };
     });
     setDraftStatuses(map);
-  }, [selectedClassId, selectedDate, attendance]);
+  }, [selectedClassId, selectedDate, attendance, allProfiles]);
 
   const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
     setDraftStatuses((prev) => ({
@@ -113,8 +140,125 @@ export const AttendancePage: React.FC = () => {
       };
     });
     setDraftStatuses(updated);
-    setSaveSuccessMsg('All students marked Present!');
+    setSaveSuccessMsg(isKhmer ? 'បានកំណត់សិស្សទាំងអស់ជា វត្តមាន!' : 'All students marked Present!');
     setTimeout(() => setSaveSuccessMsg(null), 3000);
+  };
+
+  // Open Add Student Modal
+  const handleOpenAddModal = () => {
+    const autoId = getNextAutoStudentId ? getNextAutoStudentId() : `STD-${String(classStudents.length + 1).padStart(3, '0')}`;
+    setNewStudentId(autoId);
+    setNewName('');
+    setNewGender('female');
+    setShowAddModal(true);
+  };
+
+  // Submit Add Single Student
+  const handleAddStudentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+
+    const created = registerStudent({
+      fullName: newName.trim(),
+      classId: selectedClassId,
+      className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
+      gender: newGender,
+      studentId: newStudentId.trim() || undefined,
+      password: '123'
+    });
+
+    setDraftStatuses((prev) => ({
+      ...prev,
+      [created.id]: { status: 'present', note: '' }
+    }));
+
+    setShowAddModal(false);
+    setNewName('');
+    setSaveSuccessMsg(isKhmer ? `បានបន្ថែមសិស្ស "${created.fullName}" ចូលក្នុងថ្នាក់ដោយជោគជ័យ!` : `Added student "${created.fullName}" successfully!`);
+    setTimeout(() => setSaveSuccessMsg(null), 3500);
+  };
+
+  // Submit Bulk Upload / Paste Student List
+  const handleBulkUploadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bulkText.trim()) return;
+
+    const lines = bulkText.split('\n').map((l) => l.trim()).filter(Boolean);
+    let count = 0;
+
+    lines.forEach((line) => {
+      // Clean leading numbering e.g. "1. ", "20-", "#3", "1) "
+      let clean = line.replace(/^(\d+[\.\-\)]\s*|\#\d+\s*)/, '').trim();
+      let gender: 'female' | 'male' = 'male';
+
+      // Detect gender keywords in Khmer or English
+      if (clean.includes('ស្រី') || clean.toLowerCase().includes('female') || clean.toLowerCase().includes(',f')) {
+        gender = 'female';
+        clean = clean.replace(/(,\s*)?(ស្រី|female|F|f)/gi, '').trim();
+      } else if (clean.includes('ប្រុស') || clean.toLowerCase().includes('male') || clean.toLowerCase().includes(',m')) {
+        gender = 'male';
+        clean = clean.replace(/(,\s*)?(ប្រុស|male|M|m)/gi, '').trim();
+      }
+
+      if (clean) {
+        const created = registerStudent({
+          fullName: clean,
+          classId: selectedClassId,
+          className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
+          gender,
+          password: '123'
+        });
+        setDraftStatuses((prev) => ({ ...prev, [created.id]: { status: 'present', note: '' } }));
+        count++;
+      }
+    });
+
+    setShowUploadModal(false);
+    setBulkText('');
+    setSaveSuccessMsg(isKhmer ? `បានបញ្ចូលសិស្សចំនួន ${count} នាក់ចូលក្នុងថ្នាក់ដោយជោគជ័យ!` : `Successfully imported ${count} students into class!`);
+    setTimeout(() => setSaveSuccessMsg(null), 3500);
+  };
+
+  // Open Edit Modal
+  const handleOpenEditModal = (student: UserProfile) => {
+    setEditingStudent(student);
+    setEditName(student.fullName);
+    setEditGender((student.gender as 'female' | 'male') || 'male');
+    setEditStudentId(student.studentId || '');
+  };
+
+  // Save Edit Student
+  const handleSaveEditStudent = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingStudent || !editName.trim()) return;
+
+    updateStudentCredentials(editingStudent.id, {
+      fullName: editName.trim(),
+      gender: editGender,
+      studentId: editStudentId.trim() || undefined
+    });
+
+    setEditingStudent(null);
+    setSaveSuccessMsg(isKhmer ? `បានកែសម្រួលព័ត៌មាន "${editName}" រួចរាល់!` : `Updated student "${editName}" successfully!`);
+    setTimeout(() => setSaveSuccessMsg(null), 3000);
+  };
+
+  // Delete Student
+  const handleDeleteStudent = (student: UserProfile) => {
+    const msg = isKhmer
+      ? `តើអ្នកពិតជាចង់លុបសិស្ស "${student.fullName}" (${student.studentId || ''}) ចេញពីបញ្ជីវត្តមានថ្នាក់នេះមែនទេ?`
+      : `Are you sure you want to remove "${student.fullName}" (${student.studentId || ''}) from class attendance?`;
+
+    if (window.confirm(msg)) {
+      deleteStudentProfile(student.id);
+      setDraftStatuses((prev) => {
+        const next = { ...prev };
+        delete next[student.id];
+        return next;
+      });
+      setSaveSuccessMsg(isKhmer ? `បានលុបសិស្ស "${student.fullName}" រួចរាល់!` : `Removed student "${student.fullName}"!`);
+      setTimeout(() => setSaveSuccessMsg(null), 3000);
+    }
   };
 
   // Save changes to state & storage
@@ -133,7 +277,7 @@ export const AttendancePage: React.FC = () => {
     }));
 
     saveAttendance(payload);
-    setSaveSuccessMsg(`Attendance saved successfully for ${selectedDate}!`);
+    setSaveSuccessMsg(isKhmer ? `បានរក្សាទុកវត្តមានថ្ងៃ ${selectedDate} ដោយជោគជ័យ!` : `Attendance saved successfully for ${selectedDate}!`);
     setTimeout(() => setSaveSuccessMsg(null), 3000);
   };
 
@@ -173,7 +317,7 @@ export const AttendancePage: React.FC = () => {
 
       return {
         no: index + 1,
-        studentId: s.studentId || `STD-2026-${String(index + 1).padStart(3, '0')}`,
+        studentId: s.studentId || `STD-${String(index + 1).padStart(3, '0')}`,
         fullName: s.fullName,
         gender: isFemale ? (isKhmer ? 'ស្រី (ស)' : 'F') : (isKhmer ? 'ប្រុស (ប)' : 'M'),
         className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
@@ -213,9 +357,6 @@ export const AttendancePage: React.FC = () => {
   const sickCount = Object.values(draftStatuses).filter((s) => s.status === 'sick').length;
   const attendanceRate = Math.round((presentCount / total) * 100);
 
-  // Students with low attendance (<80%)
-  const lowAttendanceStudents = studentAnalytics.filter((s) => s.attendancePercentage < 80);
-
   const filteredStudents = classStudents.filter(
     (s) =>
       s.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -244,28 +385,54 @@ export const AttendancePage: React.FC = () => {
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
             {isKhmer
-              ? 'ស្រង់វត្តមានសិស្សប្រចាំថ្ងៃក្នុងថ្នាក់រៀនបានលឿន និងត្រឹមត្រូវ។'
-              : 'Record official daily student attendance rapidly and accurately.'}
+              ? 'ស្រង់វត្តមានសិស្សប្រចាំថ្ងៃក្នុងថ្នាក់រៀន បន្ថែមសិស្សថ្មី កែសម្រួលឈ្មោះ និងទាញយកឯកសារផ្លូវការ។'
+              : 'Record official daily student attendance, manage roster, edit student details, and export records.'}
           </p>
         </div>
 
+        {/* Action Buttons Toolbar */}
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Add Student Button */}
+          <button
+            onClick={handleOpenAddModal}
+            className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            title="Add a new student to this class"
+          >
+            <UserPlus className="w-4 h-4 text-zinc-300" />
+            <span>{isKhmer ? '+ បន្ថែមសិស្ស' : '+ Add Student'}</span>
+          </button>
+
+          {/* Paste / Upload Roster Button */}
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs rounded-xl border border-zinc-300 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            title="Paste multiple student names to batch upload"
+          >
+            <UploadCloud className="w-4 h-4 text-zinc-700" />
+            <span>{isKhmer ? 'ផ្ទុកបញ្ជីសិស្ស' : 'Upload Roster'}</span>
+          </button>
+
+          {/* PDF Export */}
           <button
             onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs rounded-xl border border-zinc-200 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             title="Download clean 7-column PDF attendance sheet (.pdf)"
           >
-            <FileText className="w-4 h-4 text-zinc-300" />
-            <span>{isKhmer ? 'ទាញយកជា PDF (.pdf)' : 'Download as PDF (.pdf)'}</span>
+            <FileText className="w-4 h-4 text-zinc-600" />
+            <span>{isKhmer ? 'PDF (.pdf)' : 'PDF (.pdf)'}</span>
           </button>
+
+          {/* Excel Export */}
           <button
             onClick={() => handleExportExcel('excel_table')}
             className="px-3.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold text-xs rounded-xl border border-zinc-200 shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             title="Download formatted Excel table"
           >
             <FileSpreadsheet className="w-4 h-4 text-zinc-600" />
-            <span>{isKhmer ? 'តារាង Excel (.xls)' : 'Excel (.xls)'}</span>
+            <span>{isKhmer ? 'Excel (.xls)' : 'Excel (.xls)'}</span>
           </button>
+
+          {/* Save Attendance */}
           <button
             onClick={handleSaveAttendance}
             className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
@@ -278,7 +445,7 @@ export const AttendancePage: React.FC = () => {
 
       {/* Save Success Alert */}
       {saveSuccessMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-200 shadow-xs">
           <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{saveSuccessMsg}</span>
         </div>
@@ -298,7 +465,7 @@ export const AttendancePage: React.FC = () => {
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name} ({c.studentCount} Students)
+                    {c.name} ({classStudents.length} Students)
                   </option>
                 ))}
               </select>
@@ -312,8 +479,7 @@ export const AttendancePage: React.FC = () => {
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="bg-transparent font-bold text-xs text-zinc-900 outline-none cursor-pointer"
-              >
-              </input>
+              />
             </div>
 
             {/* View Mode Toggle */}
@@ -380,7 +546,7 @@ export const AttendancePage: React.FC = () => {
 
       {/* Student List View / Table */}
       {viewMode === 'daily' ? (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
           {/* Search bar above list */}
           <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
             <div className="relative w-full max-w-sm">
@@ -390,7 +556,7 @@ export const AttendancePage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search student name or ID..."
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-600 transition-all"
+                className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400/20 focus:border-zinc-800 transition-all"
               />
             </div>
             <span className="text-xs text-slate-500 font-semibold shrink-0">
@@ -401,21 +567,28 @@ export const AttendancePage: React.FC = () => {
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50/70 text-slate-500 uppercase font-semibold text-[11px] border-b border-slate-100">
+              <thead className="bg-zinc-50 text-zinc-600 uppercase font-bold text-[11px] border-b border-zinc-200">
                 <tr>
+                  <th className="py-3 px-4 w-12 text-center">#</th>
                   <th className="py-3 px-4">{isKhmer ? 'សិស្ស' : 'Student'}</th>
                   <th className="py-3 px-3">{isKhmer ? 'ភេទ' : 'Sex'}</th>
                   <th className="py-3 px-3">{isKhmer ? 'អត្តលេខ' : 'Student ID'}</th>
                   <th className="py-3 px-4">{isKhmer ? 'វត្តមាន (១-ចុច)' : 'Mark Status (1-Click)'}</th>
                   <th className="py-3 px-4">{isKhmer ? 'កំណត់ចំណាំ / មូលហេតុ' : 'Note / Reason'}</th>
+                  <th className="py-3 px-4 text-center w-24">{isKhmer ? 'សកម្មភាព' : 'Actions'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800">
-                {filteredStudents.map((student) => {
+                {filteredStudents.map((student, idx) => {
                   const draft = draftStatuses[student.id] || { status: 'present', note: '' };
                   const isFemale = student.gender === 'female';
                   return (
-                    <tr key={student.id} className="hover:bg-pink-50/30 transition-colors">
+                    <tr key={student.id} className="hover:bg-zinc-50/70 transition-colors">
+                      {/* Line Number */}
+                      <td className="py-3 px-4 text-center font-mono font-bold text-zinc-400">
+                        {idx + 1}
+                      </td>
+
                       {/* Name & Avatar */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
@@ -444,33 +617,33 @@ export const AttendancePage: React.FC = () => {
 
                       {/* Student ID */}
                       <td className="py-3 px-3 font-mono font-medium text-slate-600">
-                        {student.studentId || 'STD-001'}
+                        {student.studentId || `STD-${String(idx + 1).padStart(3, '0')}`}
                       </td>
 
                       {/* Status Toggle Pills */}
                       <td className="py-3 px-4">
-                        <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl gap-1">
+                        <div className="inline-flex items-center bg-zinc-100 p-1 rounded-xl gap-1 border border-zinc-200">
                           {(['present', 'absent', 'late', 'permission', 'sick'] as AttendanceStatus[]).map((st) => {
                             const isSelected = draft.status === st;
                             const cfg = statusConfig[st];
                             const Icon = cfg.icon;
 
-                            let activeBg = 'bg-pink-700 text-white shadow-xs';
-                            if (st === 'present') activeBg = 'bg-emerald-600 text-white shadow-xs';
-                            if (st === 'absent') activeBg = 'bg-rose-600 text-white shadow-xs';
-                            if (st === 'late') activeBg = 'bg-amber-600 text-white shadow-xs';
-                            if (st === 'permission') activeBg = 'bg-sky-600 text-white shadow-xs';
-                            if (st === 'sick') activeBg = 'bg-purple-600 text-white shadow-xs';
+                            let activeBg = 'bg-zinc-900 text-white shadow-xs';
+                            if (st === 'present') activeBg = 'bg-emerald-700 text-white shadow-xs';
+                            if (st === 'absent') activeBg = 'bg-rose-700 text-white shadow-xs';
+                            if (st === 'late') activeBg = 'bg-amber-700 text-white shadow-xs';
+                            if (st === 'permission') activeBg = 'bg-sky-700 text-white shadow-xs';
+                            if (st === 'sick') activeBg = 'bg-purple-700 text-white shadow-xs';
 
                             return (
                               <button
                                 key={st}
                                 type="button"
                                 onClick={() => handleStatusChange(student.id, st)}
-                                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1 transition-all ${
+                                className={`px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1 transition-all cursor-pointer ${
                                   isSelected
                                     ? activeBg
-                                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/80'
+                                    : 'text-zinc-600 hover:text-zinc-900 hover:bg-white'
                                 }`}
                               >
                                 <Icon className="w-3.5 h-3.5" />
@@ -487,9 +660,31 @@ export const AttendancePage: React.FC = () => {
                           type="text"
                           value={draft.note}
                           onChange={(e) => handleNoteChange(student.id, e.target.value)}
-                          placeholder="Add note (traffic, fever...)"
-                          className="w-full px-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-pink-500 focus:bg-white transition-all placeholder:text-slate-400"
+                          placeholder={isKhmer ? 'កំណត់ចំណាំ (មូលហេតុ...)' : 'Add note...'}
+                          className="w-full px-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-800 focus:bg-white transition-all placeholder:text-slate-400 font-medium"
                         />
+                      </td>
+
+                      {/* Actions: Edit / Delete */}
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditModal(student)}
+                            className="p-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-zinc-950 transition-colors cursor-pointer"
+                            title={isKhmer ? 'កែប្រែព័ត៌មានសិស្ស' : 'Edit student'}
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStudent(student)}
+                            className="p-1.5 rounded-lg bg-zinc-100 hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors cursor-pointer"
+                            title={isKhmer ? 'លុបចេញពីថ្នាក់' : 'Delete student'}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -500,7 +695,7 @@ export const AttendancePage: React.FC = () => {
 
           {/* Mobile Responsive Cards */}
           <div className="md:hidden divide-y divide-slate-100 p-2 space-y-3">
-            {filteredStudents.map((student) => {
+            {filteredStudents.map((student, idx) => {
               const draft = draftStatuses[student.id] || { status: 'present', note: '' };
               const isFemale = student.gender === 'female';
               return (
@@ -512,7 +707,7 @@ export const AttendancePage: React.FC = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-xs text-slate-900">{student.fullName}</h4>
+                          <h4 className="font-bold text-xs text-slate-900">{idx + 1}. {student.fullName}</h4>
                           {isFemale ? (
                             <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 text-[9.5px] font-bold border border-rose-200">
                               {isKhmer ? 'ស្រី' : 'F'}
@@ -526,9 +721,23 @@ export const AttendancePage: React.FC = () => {
                         <span className="text-[10px] text-slate-500 font-mono">{student.studentId}</span>
                       </div>
                     </div>
-                    <Badge variant={statusConfig[draft.status].variant} size="sm">
-                      {statusConfig[draft.status].label}
-                    </Badge>
+                    
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditModal(student)}
+                        className="p-1 rounded-lg bg-white border border-zinc-200 text-zinc-700 hover:text-zinc-950"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteStudent(student)}
+                        className="p-1 rounded-lg bg-white border border-zinc-200 text-zinc-400 hover:text-rose-600"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* 1-Tap status buttons */}
@@ -541,7 +750,7 @@ export const AttendancePage: React.FC = () => {
                           onClick={() => handleStatusChange(student.id, st)}
                           className={`py-1 px-1.5 text-[10px] font-bold rounded-lg border text-center transition-all ${
                             isSelected
-                              ? 'bg-pink-700 text-white border-pink-700'
+                              ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs'
                               : 'bg-white text-slate-700 border-slate-200'
                           }`}
                         >
@@ -584,6 +793,244 @@ export const AttendancePage: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: ADD SINGLE STUDENT                                               */}
+      {/* ========================================================================= */}
+      {showAddModal && (
+        <Modal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          title={isKhmer ? 'បន្ថែមសិស្សថ្មីចូលក្នុងថ្នាក់' : 'Add New Student to Class'}
+          subtitle={isKhmer ? `ថ្នាក់៖ ${selectedClass?.name || 'CIIS Computer'}` : `Class: ${selectedClass?.name || 'CIIS Computer'}`}
+          maxWidth="md"
+        >
+          <form onSubmit={handleAddStudentSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1">
+                {isKhmer ? 'ឈ្មោះសិស្សពេញលេញ (Full Name)' : 'Student Full Name'} *
+              </label>
+              <input
+                type="text"
+                required
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder={isKhmer ? 'ឧទាហរណ៍៖ សុខ បញ្ញា ឬ Sok Panha' : 'e.g. Sok Panha'}
+                className="w-full px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:border-zinc-800 outline-none font-bold text-zinc-900"
+                autoFocus
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  {isKhmer ? 'ភេទ (Gender)' : 'Gender'} *
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewGender('female')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      newGender === 'female'
+                        ? 'bg-rose-50 border-rose-300 text-rose-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ស្រី (ស)' : 'Female'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewGender('male')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      newGender === 'male'
+                        ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ប្រុស (ប)' : 'Male'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  {isKhmer ? 'អត្តលេខសិស្ស (ID)' : 'Student ID'}
+                </label>
+                <input
+                  type="text"
+                  value={newStudentId}
+                  onChange={(e) => setNewStudentId(e.target.value)}
+                  placeholder="STD-020"
+                  className="w-full px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:border-zinc-800 outline-none font-mono font-bold text-zinc-900"
+                />
+              </div>
+            </div>
+
+            <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-[11px] text-zinc-500 space-y-1">
+              <p>• {isKhmer ? 'ពាក្យសម្ងាត់ដំបូងរបស់សិស្សគឺ៖' : 'Initial default password is:'} <strong className="font-mono text-zinc-900">123</strong></p>
+              <p>• {isKhmer ? 'សិស្សនឹងត្រូវបញ្ចូលក្នុងបញ្ជីវត្តមាន និងប្រព័ន្ធដោយស្វ័យប្រវត្តិ។' : 'The student will be instantly enrolled into this class roster.'}</p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100 rounded-xl transition-colors cursor-pointer"
+              >
+                {isKhmer ? 'បោះបង់' : 'Cancel'}
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+              >
+                {isKhmer ? '+ បន្ថែមសិស្ស' : '+ Add Student'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: BATCH PASTE & UPLOAD ROSTER                                      */}
+      {/* ========================================================================= */}
+      {showUploadModal && (
+        <Modal
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+          title={isKhmer ? 'ផ្ទុក ឬបិទភ្ជាប់បញ្ជីឈ្មោះសិស្សជាបណ្តុំ' : 'Batch Paste & Upload Student Roster'}
+          subtitle={isKhmer ? `បញ្ចូលសិស្សច្រើននាក់ក្នុងពេលតែមួយទៅក្នុង ${selectedClass?.name || 'CIIS Computer'}` : `Paste multiple student names to import to ${selectedClass?.name || 'CIIS Computer'}`}
+          maxWidth="lg"
+        >
+          <form onSubmit={handleBulkUploadSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1">
+                {isKhmer ? 'បិទភ្ជាប់បញ្ជីឈ្មោះសិស្ស (១ ជួរ = ១ នាក់)' : 'Paste Student Names (1 line per student)'}
+              </label>
+              <textarea
+                rows={7}
+                required
+                value={bulkText}
+                onChange={(e) => setBulkText(e.target.value)}
+                placeholder={`1. ផៃ ចិន្តា, ស្រី\n2. សេងវ៉ាក់ វិច្ឆ័យ, ប្រុស\n3. ថេង សុខគីមហួរ, ប្រុស\n4. វ៉ា ធីតា, ស្រី`}
+                className="w-full p-3.5 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:border-zinc-800 outline-none font-medium font-sans text-zinc-900 leading-relaxed"
+                autoFocus
+              />
+            </div>
+
+            <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-[11px] text-zinc-600 space-y-1">
+              <p className="font-bold text-zinc-900">{isKhmer ? '💡 របៀបប្រើប្រាស់ងាយៗ៖' : '💡 Format Guide:'}</p>
+              <p>• {isKhmer ? 'លោកគ្រូអ្នកគ្រូអាច Copy ឈ្មោះពី Telegram/Word/Excel រួច Paste ចូលបាន។' : 'You can copy lines from Telegram, Excel, or Word and paste here.'}</p>
+              <p>• {isKhmer ? 'ប្រព័ន្ធនឹងកំណត់លេខសម្គាល់ STD-XXX និងភេទ (ស្រី/ប្រុស) ដោយស្វ័យប្រវត្តិ។' : 'The system will auto-assign Student IDs and detect gender automatically.'}</p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setShowUploadModal(false)}
+                className="px-4 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100 rounded-xl transition-colors cursor-pointer"
+              >
+                {isKhmer ? 'បោះបង់' : 'Cancel'}
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <UploadCloud className="w-4 h-4 text-zinc-300" />
+                <span>{isKhmer ? '📥 បញ្ចូលបញ្ជីសិស្សទាំងនេះ' : '📥 Import Students'}</span>
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: EDIT STUDENT DETAILS                                             */}
+      {/* ========================================================================= */}
+      {editingStudent && (
+        <Modal
+          isOpen={Boolean(editingStudent)}
+          onClose={() => setEditingStudent(null)}
+          title={isKhmer ? 'កែសម្រួលព័ត៌មានសិស្ស' : 'Edit Student Details'}
+          subtitle={editingStudent.fullName}
+          maxWidth="md"
+        >
+          <form onSubmit={handleSaveEditStudent} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1">
+                {isKhmer ? 'ឈ្មោះសិស្ស (Full Name)' : 'Full Name'} *
+              </label>
+              <input
+                type="text"
+                required
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="w-full px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:border-zinc-800 outline-none font-bold text-zinc-900"
+                autoFocus
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  {isKhmer ? 'ភេទ (Gender)' : 'Gender'} *
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditGender('female')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      editGender === 'female'
+                        ? 'bg-rose-50 border-rose-300 text-rose-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ស្រី (ស)' : 'Female'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditGender('male')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      editGender === 'male'
+                        ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ប្រុស (ប)' : 'Male'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  {isKhmer ? 'អត្តលេខសិស្ស (ID)' : 'Student ID'}
+                </label>
+                <input
+                  type="text"
+                  value={editStudentId}
+                  onChange={(e) => setEditStudentId(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs bg-zinc-50 border border-zinc-200 rounded-xl focus:border-zinc-800 outline-none font-mono font-bold text-zinc-900"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setEditingStudent(null)}
+                className="px-4 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100 rounded-xl transition-colors cursor-pointer"
+              >
+                {isKhmer ? 'បោះបង់' : 'Cancel'}
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+              >
+                {isKhmer ? 'រក្សាទុកការកែប្រែ' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );
