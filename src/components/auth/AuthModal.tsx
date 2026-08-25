@@ -30,7 +30,9 @@ import {
   ArrowRight,
   Sparkles,
   Command,
-  ArrowLeft
+  ArrowLeft,
+  ChevronRight,
+  Zap
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -94,7 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   }, [isOpen, initialRole, authModalRole, initialTab]);
 
-  // Body scroll lock and Esc / Ctrl+Shift+T keyboard shortcuts
+  // Body scroll lock and Esc / keyboard shortcuts
   useEffect(() => {
     if (!isOpen) return;
 
@@ -130,6 +132,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleQuickFillStudent = (identifier: string, pass: string) => {
     setSignInIdentifier(identifier);
     setSignInPassword(pass);
+    setErrorMessage(null);
   };
 
   // Student Sign In
@@ -237,29 +240,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] w-screen h-screen min-h-screen overflow-y-auto flex items-center justify-center bg-zinc-950/75 backdrop-blur-md p-3 sm:p-6 transition-all duration-300"
+      className="fixed inset-0 z-[9999] w-screen h-screen min-h-screen overflow-y-auto flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-2.5 sm:p-6 transition-all duration-300"
       onClick={onClose}
       style={{ margin: 0, left: 0, top: 0, right: 0, bottom: 0 }}
     >
       {/* Split-Screen Modal Card */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl bg-white rounded-[28px] sm:rounded-[36px] shadow-2xl border border-zinc-200/90 overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-250 max-h-[92vh] select-none"
+        className="w-full max-w-4xl bg-white rounded-[24px] sm:rounded-[36px] shadow-2xl border border-zinc-200/90 overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-250 max-h-[94vh] md:max-h-[92vh] select-none"
       >
         {/* Top-Right Close Button */}
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-4 right-4 z-40 p-2 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all cursor-pointer"
+          className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-50 p-2 sm:p-2.5 rounded-full text-zinc-400 hover:text-zinc-900 bg-zinc-100/80 hover:bg-zinc-200/90 transition-all cursor-pointer shadow-xs"
           title="Close Modal"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* ========================================================================= */}
-        {/* 1. LEFT PANEL: ARTISTIC HOT AIR BALLOON IN DARK GRADIENT PINK             */}
+        {/* 1. LEFT PANEL: ARTISTIC HOT AIR BALLOON (DESKTOP ONLY: md:flex)           */}
         {/* ========================================================================= */}
-        <div className="w-full md:w-[45%] bg-gradient-to-br from-[#2c0417] via-[#1a020e] to-[#0c0007] text-white relative overflow-hidden flex flex-col justify-between p-6 sm:p-8 shrink-0 min-h-[220px] md:min-h-[580px]">
+        <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-[#2c0417] via-[#1a020e] to-[#0c0007] text-white relative overflow-hidden flex-col justify-between p-6 sm:p-8 shrink-0 md:min-h-[580px]">
           
           {/* Background Atmosphere */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -338,7 +341,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {/* Bottom Security / Copyright Tag */}
           <div className="relative z-10 flex items-center justify-between text-[10px] text-pink-300/70 border-t border-white/10 pt-3">
-            <span className="font-mono">CIIS LMS v2.5</span>
+            <span className="font-mono">CIIS LMS v2.6</span>
             <span className="flex items-center gap-1 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-pink-400" />
               {isTeacherMode ? 'Teacher Secure Mode' : 'SSL Encrypted'}
@@ -348,20 +351,78 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {/* ========================================================================= */}
-        {/* 2. RIGHT PANEL: FORM WORKSPACE                                            */}
+        {/* 2. MOBILE COMPACT BRAND & QUICK ROLE BAR (< md ONLY)                     */}
         {/* ========================================================================= */}
-        <div className="w-full md:w-[55%] bg-white p-6 sm:p-10 flex flex-col justify-between overflow-y-auto max-h-[85vh] md:max-h-[580px]">
+        <div className="block md:hidden bg-gradient-to-r from-[#2c0417] via-[#1a020e] to-[#0c0007] text-white p-4 pb-3.5 border-b border-pink-900/40 shrink-0">
+          <div className="flex items-center justify-between gap-2 pr-8">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-white/15 p-1 flex items-center justify-center backdrop-blur-md border border-white/20 shrink-0">
+                <img src="/ciis-logo.svg" alt="CIIS" className="w-full h-full object-contain" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-[11px] font-black text-white uppercase tracking-tight truncate">
+                  {isKhmer ? 'សាលារៀន CIIS' : 'CIIS SCHOOL'}
+                </h4>
+                <p className="text-[9px] text-pink-300 font-mono font-bold truncate">
+                  {isTeacherMode ? 'FACULTY PORTAL' : 'STUDENT PORTAL'}
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile Fast Role Toggle Pill */}
+            <div className="flex items-center p-0.5 bg-white/10 rounded-xl border border-white/15 backdrop-blur-sm shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsTeacherMode(false);
+                  setIsTeacherVerified(false);
+                  setErrorMessage(null);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-[10.5px] font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  !isTeacherMode
+                    ? 'bg-pink-700 text-white shadow-xs'
+                    : 'text-zinc-300 hover:text-white'
+                }`}
+              >
+                <GraduationCap className="w-3 h-3" />
+                <span>{isKhmer ? 'សិស្ស' : 'Student'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsTeacherMode(true);
+                  setIsTeacherVerified(false);
+                  setErrorMessage(null);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-[10.5px] font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  isTeacherMode
+                    ? 'bg-gradient-to-r from-pink-800 to-rose-600 text-white shadow-xs'
+                    : 'text-zinc-300 hover:text-white'
+                }`}
+              >
+                <ShieldCheck className="w-3 h-3 text-pink-300" />
+                <span>{isKhmer ? 'គ្រូ' : 'Teacher'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 3. RIGHT PANEL: FORM WORKSPACE (Optimized for Mobile & Desktop)          */}
+        {/* ========================================================================= */}
+        <div className="w-full md:w-[55%] bg-white p-4 sm:p-8 md:p-10 flex flex-col justify-between overflow-y-auto overscroll-contain max-h-[80vh] md:max-h-[580px] pb-8 md:pb-10">
           
-          {/* Top Banner Alert Message */}
+          {/* Top Banner Alert Messages */}
           {errorMessage && (
-            <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+            <div className="mb-3.5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+            <div className="mb-3.5 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{successMessage}</span>
             </div>
@@ -371,7 +432,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {/* FLOW A: TEACHER COMMAND MODE (PASSWORD CONFIRMATION -> 3 ACCOUNTS)      */}
           {/* ======================================================================= */}
           {isTeacherMode ? (
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               
               {/* Back to Student Portal Button */}
               <button
@@ -383,19 +444,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 }}
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-zinc-950 transition-colors cursor-pointer"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ArrowLeft className="w-3.5 h-3.5 text-pink-700" />
                 <span>{isKhmer ? 'ត្រឡប់ទៅផ្ទាំងសិស្ស (Student Portal)' : 'Back to Student Portal'}</span>
               </button>
 
               {/* STEP 1: Teacher Master Password Gate (when not verified) */}
               {!isTeacherVerified ? (
-                <div className="space-y-5 pt-2">
+                <div className="space-y-4 pt-1">
                   <div>
                     <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-pink-950/10 text-pink-900 border border-pink-200 text-[10.5px] font-black uppercase font-mono tracking-wider">
                       <ShieldCheck className="w-3.5 h-3.5 text-pink-800" />
                       <span>{isKhmer ? 'ការផ្ទៀងផ្ទាត់សិទ្ធិគ្រូ' : 'TEACHER AUTHORIZATION'}</span>
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight mt-1">
+                    <h2 className="text-lg sm:text-2xl font-black text-zinc-950 tracking-tight mt-1">
                       {isKhmer ? 'បញ្ជាក់ពាក្យសម្ងាត់គ្រូបង្រៀន' : 'Enter Teacher Role Password'}
                     </h2>
                     <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
@@ -406,7 +467,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
 
                   {/* Password Input Form (NO HINTS SHOWN) */}
-                  <form onSubmit={handleVerifyTeacherPassword} className="space-y-4 pt-1">
+                  <form onSubmit={handleVerifyTeacherPassword} className="space-y-3.5 pt-1">
                     <div>
                       <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-1.5 font-mono">
                         {isKhmer ? 'ពាក្យសម្ងាត់គ្រូ (Teacher Password) *' : 'Teacher Password *'}
@@ -433,7 +494,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                     <button
                       type="submit"
-                      className="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs sm:text-sm font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
+                      className="w-full py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs sm:text-sm font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
                     >
                       <span>{isKhmer ? 'ផ្ទៀងផ្ទាត់ & បើកបញ្ជីគណនី' : 'Confirm & Unlock Accounts'}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -442,13 +503,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               ) : (
                 /* STEP 2: 3 Teacher Accounts Grid (Direct 1-Click Log In) */
-                <div className="space-y-4 pt-1">
+                <div className="space-y-3.5 pt-1">
                   <div>
                     <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10.5px] font-black uppercase font-mono tracking-wider">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
                       <span>{isKhmer ? 'បានផ្ទៀងផ្ទាត់ជោគជ័យ' : 'VERIFIED FACULTY'}</span>
                     </div>
-                    <h2 className="text-xl font-black text-zinc-950 tracking-tight mt-1">
+                    <h2 className="text-lg sm:text-xl font-black text-zinc-950 tracking-tight mt-1">
                       {isKhmer ? 'ជ្រើសរើសគណនីគ្រូដើម្បីចូល' : 'Select Faculty Account'}
                     </h2>
                     <p className="text-xs text-zinc-500 mt-0.5">
@@ -464,25 +525,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <div
                         key={teacher.id}
                         onClick={() => handleDirectTeacherLogin(teacher.id === 'teacher-nun-langdy' ? 'nun.langdy' : teacher.id === 'teacher-ten-chandara' ? 'ten.chandara' : 'tekchas', teacher.nameEn)}
-                        className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-pink-50/50 border border-zinc-200 hover:border-pink-300 hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                        className="p-3 sm:p-3.5 rounded-2xl bg-zinc-50 hover:bg-pink-50/50 border border-zinc-200 hover:border-pink-300 hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-3 group"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                           <img
                             src={teacher.image}
                             alt={teacher.nameEn}
-                            className="w-11 h-11 rounded-2xl object-cover ring-2 ring-pink-900/20 group-hover:scale-105 transition-transform bg-white shrink-0"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-cover ring-2 ring-pink-900/20 group-hover:scale-105 transition-transform bg-white shrink-0"
                           />
                           <div className="min-w-0">
                             <h4 className="text-xs sm:text-sm font-black text-zinc-950 group-hover:text-pink-900 transition-colors truncate">
                               {isKhmer ? teacher.nameKh : teacher.nameEn}
                             </h4>
-                            <p className="text-[10px] text-pink-800 font-extrabold uppercase font-mono truncate">
+                            <p className="text-[9.5px] sm:text-[10px] text-pink-800 font-extrabold uppercase font-mono truncate">
                               {isKhmer ? teacher.badgeKh : teacher.badgeEn}
                             </p>
                           </div>
                         </div>
 
-                        <div className="px-3.5 py-1.5 rounded-xl bg-white border border-zinc-200 group-hover:bg-gradient-to-r group-hover:from-pink-800 group-hover:to-pink-950 group-hover:text-white group-hover:border-transparent text-zinc-700 text-xs font-black transition-all flex items-center gap-1 shrink-0">
+                        <div className="px-3 py-1.5 rounded-xl bg-white border border-zinc-200 group-hover:bg-gradient-to-r group-hover:from-pink-800 group-hover:to-pink-950 group-hover:text-white group-hover:border-transparent text-zinc-700 text-xs font-black transition-all flex items-center gap-1 shrink-0">
                           <span>{isKhmer ? 'ចូលគណនី' : 'Log In'}</span>
                           <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                         </div>
@@ -497,16 +558,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             /* ======================================================================= */
             /* FLOW B: NORMAL STUDENT SIGN IN / SIGN UP                                */
             /* ======================================================================= */
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               
-              {/* Header Title */}
+              {/* Header Title on Desktop (on mobile, condensed) */}
               <div>
-                <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 tracking-tight">
+                <h2 className="text-xl sm:text-3xl font-black text-zinc-950 tracking-tight">
                   {isSignUp
                     ? (isKhmer ? 'ចុះឈ្មោះសិស្សថ្មី' : 'Student Sign Up')
                     : (isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Sign In')}
                 </h2>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-zinc-500 mt-0.5 sm:mt-1">
                   {isSignUp
                     ? (isKhmer ? 'បង្កើតគណនីសិស្ស និងជ្រើសរើសវេនសិក្សាក្នុង CIIS Lab' : 'Create student account & select your shift.')
                     : (isKhmer ? 'បញ្ចូលអត្តលេខសិស្ស ឬឈ្មោះដើម្បីចូលរៀន' : 'Enter your Student ID or username to log in.')}
@@ -521,13 +582,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     setActiveTab('signin');
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                     !isSignUp
                       ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200/60 font-black'
                       : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-3.5 h-3.5 text-pink-700" />
                   <span>{isKhmer ? 'ចូលគណនី (Sign In)' : 'Sign In'}</span>
                 </button>
 
@@ -537,22 +598,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     setActiveTab('signup');
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                     isSignUp
                       ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200/60 font-black'
                       : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <UserPlus className="w-3.5 h-3.5" />
+                  <UserPlus className="w-3.5 h-3.5 text-pink-700" />
                   <span>{isKhmer ? 'ចុះឈ្មោះ (Sign Up)' : 'Sign Up'}</span>
                 </button>
               </div>
 
               {/* Student Sign In Form */}
               {!isSignUp ? (
-                <form onSubmit={handleStudentSignIn} className="space-y-4">
+                <form onSubmit={handleStudentSignIn} className="space-y-3.5 sm:space-y-4">
                   <div>
-                    <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-1.5 font-mono">
+                    <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-1 font-mono">
                       {isKhmer ? 'អត្តលេខសិស្ស ឬឈ្មោះ (Student ID / Username) *' : 'Student ID / Username *'}
                     </label>
                     <div className="relative">
@@ -563,13 +624,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         value={signInIdentifier}
                         onChange={(e) => setSignInIdentifier(e.target.value)}
                         placeholder="e.g. STD-001 or Dara"
-                        className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 focus:ring-2 focus:ring-pink-800/20 outline-none transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 focus:ring-2 focus:ring-pink-800/20 outline-none transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-1.5 font-mono">
+                    <label className="block text-xs font-black text-zinc-800 uppercase tracking-wider mb-1 font-mono">
                       {isKhmer ? 'ពាក្យសម្ងាត់ (Password) *' : 'Password *'}
                     </label>
                     <div className="relative">
@@ -580,7 +641,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 focus:ring-2 focus:ring-pink-800/20 outline-none transition-all"
+                        className="w-full pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 focus:ring-2 focus:ring-pink-800/20 outline-none transition-all font-mono"
                       />
                       <button
                         type="button"
@@ -592,9 +653,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     </div>
                   </div>
 
+                  {/* Quick-Fill Sample Chips for Faster Student Access */}
+                  <div className="pt-0.5">
+                    <span className="text-[10px] font-mono text-zinc-400 font-bold block mb-1.5">
+                      {isKhmer ? 'គណនីសាកល្បងរហ័ស (Quick Demo Fill):' : 'Quick Demo Fill:'}
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleQuickFillStudent('STD-001', '123')}
+                        className="px-2.5 py-1 rounded-xl bg-pink-50 hover:bg-pink-100/80 border border-pink-200/80 text-pink-900 text-[10.5px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer active:scale-95"
+                      >
+                        <Zap className="w-3 h-3 text-pink-700" />
+                        <span>STD-001 (Dara)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleQuickFillStudent('STD-002', '123')}
+                        className="px-2.5 py-1 rounded-xl bg-zinc-100 hover:bg-zinc-200/80 border border-zinc-200 text-zinc-800 text-[10.5px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer active:scale-95"
+                      >
+                        <Zap className="w-3 h-3 text-zinc-600" />
+                        <span>STD-002 (Bopha)</span>
+                      </button>
+                    </div>
+                  </div>
+
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs sm:text-sm font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
+                    className="w-full py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs sm:text-sm font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
                   >
                     <span>{isKhmer ? 'ចូលគណនីសិស្ស' : 'Sign In as Student'}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -602,15 +688,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </form>
               ) : (
                 /* Student Sign Up Form */
-                <form onSubmit={handleStudentSignUp} className="space-y-3.5">
-                  <div className="p-3 bg-pink-50/70 rounded-2xl border border-pink-200/80 flex items-center justify-between">
+                <form onSubmit={handleStudentSignUp} className="space-y-3 sm:space-y-3.5">
+                  <div className="p-2.5 sm:p-3 bg-pink-50/70 rounded-2xl border border-pink-200/80 flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] font-mono text-pink-800 font-bold uppercase block">
+                      <span className="text-[9.5px] sm:text-[10px] font-mono text-pink-800 font-bold uppercase block">
                         {isKhmer ? 'អត្តលេខសិស្សស្វ័យប្រវត្តិ' : 'Auto Student ID'}
                       </span>
-                      <span className="text-xs font-black text-pink-950 font-mono">{autoNextId}</span>
+                      <span className="text-xs sm:text-sm font-black text-pink-950 font-mono">{autoNextId}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-pink-800 text-white font-mono font-bold text-[9.5px]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-pink-800 text-white font-mono font-bold text-[9.5px]">
                       CIIS STD
                     </span>
                   </div>
@@ -625,7 +711,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       value={studentFullName}
                       onChange={(e) => setStudentFullName(e.target.value)}
                       placeholder="e.g. SOK Dara"
-                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none"
                     />
                   </div>
 
@@ -636,7 +722,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <select
                       value={studentClassId}
                       onChange={(e) => setStudentClassId(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none font-bold"
+                      className="w-full px-3 py-2.5 text-xs sm:text-sm rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none font-bold text-zinc-800"
                     >
                       {classes.map((cls) => (
                         <option key={cls.id} value={cls.id}>
@@ -657,7 +743,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         value={studentPassword}
                         onChange={(e) => setStudentPassword(e.target.value)}
                         placeholder="Create a password"
-                        className="w-full pl-3.5 pr-10 py-2 text-xs rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none"
+                        className="w-full pl-3.5 pr-10 py-2.5 text-xs sm:text-sm rounded-xl border border-zinc-200 bg-zinc-50/70 focus:bg-white focus:border-pink-800 outline-none font-mono"
                       />
                       <button
                         type="button"
@@ -671,7 +757,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
+                    className="w-full py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-pink-800 via-pink-900 to-black hover:from-pink-700 hover:to-pink-950 text-white text-xs sm:text-sm font-black shadow-lg shadow-pink-950/20 hover:scale-[1.01] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-2 border border-pink-700/30"
                   >
                     <span>{isKhmer ? 'បង្កើតគណនីសិស្សថ្មី' : 'Create Student Account'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />

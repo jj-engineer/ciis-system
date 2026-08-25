@@ -1,0 +1,17 @@
+{
+  "name": "ciis-school-lab-agent",
+  "version": "1.0.4",
+  "description": "Lightweight Windows Background Agent for CIIS School Computer Lab Control",
+  "main": "src/agent.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/agent.js",
+    "dev": "node --watch src/agent.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "keywords": ["windows-agent", "school-lab", "websocket", "education"],
+  "author": "CIIS Development Team",
+  "license": "ISC"
+}

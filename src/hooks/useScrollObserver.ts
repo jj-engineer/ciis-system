@@ -30,8 +30,8 @@ export function useScrollObserver(
       },
       {
         root: null,
-        rootMargin: '0px 0px -40px 0px', // Triggers cleanly as user scrolls down
-        threshold: 0.05
+        rootMargin: '0px 0px 120px 0px', // Triggers in advance for instant, snappy scroll
+        threshold: 0.01
       }
     );
 

@@ -1,0 +1,17 @@
+{
+  "name": "ciis-school-pc-agent-backend",
+  "version": "0.1.0",
+  "description": "CIIS School PC Agent MVP - Realtime Online/Offline Monitoring Backend",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "keywords": ["school-pc-agent", "heartbeat", "websocket", "lms"],
+  "author": "CIIS Development Team",
+  "license": "ISC"
+}

@@ -96,10 +96,6 @@
     font-family: 'Battambang', system-ui, sans-serif !important;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   /* Custom subtle dark pink & zinc scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
@@ -118,7 +114,7 @@
 }
 
 /* ========================================================================= */
-/* KEYFRAME ANIMATIONS FOR SMOOTH SCROLL, ENTRANCES & HOVER MOTIONS          */
+/* KEYFRAME ANIMATIONS FOR FAST ENTRANCES & LIGHT HOVER MOTIONS              */
 /* ========================================================================= */
 @keyframes indeterminate-bar {
   0% {
@@ -137,7 +133,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
   }
 }
 
@@ -147,15 +143,15 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.85;
-    transform: scale(1.02);
+    opacity: 0.90;
+    transform: scale(1.01);
   }
 }
 
 @keyframes fade-slide-up {
   0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(6px);
   }
   100% {
     opacity: 1;
@@ -176,16 +172,16 @@
 }
 
 .animate-fade-slide-up {
-  animation: fade-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ========================================================================= */
-/* SCROLL REVEAL & INTERSECTION MOTION SYSTEM                                */
+/* SCROLL REVEAL & FAST INTERSECTION MOTION SYSTEM                           */
 /* ========================================================================= */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(8px);
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -196,8 +192,8 @@
 
 .scroll-reveal-scale {
   opacity: 0;
-  transform: translateY(22px) scale(0.975);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(6px) scale(0.992);
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -208,8 +204,8 @@
 
 .scroll-reveal-left {
   opacity: 0;
-  transform: translateX(-28px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-8px);
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -220,8 +216,8 @@
 
 .scroll-reveal-right {
   opacity: 0;
-  transform: translateX(28px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(8px);
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -230,20 +226,22 @@
   transform: translateX(0);
 }
 
-/* Stagger delay utilities */
-.delay-75 { transition-delay: 75ms; }
-.delay-100 { transition-delay: 100ms; }
-.delay-150 { transition-delay: 150ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-250 { transition-delay: 250ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
+/* Fast, crisp micro-delay utilities */
+.delay-75 { transition-delay: 15ms; }
+.delay-100 { transition-delay: 25ms; }
+.delay-150 { transition-delay: 35ms; }
+.delay-200 { transition-delay: 45ms; }
+.delay-250 { transition-delay: 55ms; }
+.delay-300 { transition-delay: 65ms; }
+.delay-400 { transition-delay: 80ms; }
+.delay-500 { transition-delay: 100ms; }
 
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .scroll-reveal,
   .scroll-reveal-scale,
+  .scroll-reveal-left,
+  .scroll-reveal-right,
   .animate-float-subtle,
   .animate-pulse-subtle,
   .animate-fade-slide-up,
@@ -255,32 +253,32 @@
   }
 }
 
-/* Universal Smooth Motion Transitions */
+/* Fast, GPU-Accelerated UI Transitions */
 button, a, input, select, textarea, [role="button"], .interactive-card {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 button:active, [role="button"]:active {
-  transform: scale(0.975);
+  transform: scale(0.985);
 }
 
 /* Card Hover Elevation & Dynamic Glow */
 .card-hover-effect {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 .card-hover-effect:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 32px -8px rgba(80, 7, 36, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(80, 7, 36, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
   border-color: rgba(157, 23, 77, 0.35);
 }
 
 /* Sidebar Item Hover Effect */
 .nav-item-effect {
   position: relative;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
 }
 .nav-item-effect:hover:not(.active-nav) {
-  transform: translateX(5px);
+  transform: translateX(3px);
   background-color: rgba(80, 7, 36, 0.08);
   color: #831843;
 }

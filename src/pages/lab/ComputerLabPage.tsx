@@ -18,10 +18,17 @@ import {
   RefreshCw
 } from 'lucide-react';
 
+import { TeacherComputerLabPage } from './TeacherComputerLabPage';
+
 export const ComputerLabPage: React.FC = () => {
   const { isStaff, currentUser } = useAuth();
   const { deviceSessions, registerDeviceSession } = useApp();
   const { isKhmer, t } = useLanguage();
+
+  // If teacher / staff, render the comprehensive Computer Lab Control System
+  if (isStaff) {
+    return <TeacherComputerLabPage />;
+  }
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

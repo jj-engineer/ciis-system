@@ -4,7 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { TEACHERS_DATA, TeacherProfile } from '../../services/teacherData';
 import { TeacherCard } from '../../components/teachers/TeacherCard';
 import { TeacherDetailModal } from '../../components/teachers/TeacherDetailModal';
-import { CIIS3DRobotMascot } from '../../components/common/CIIS3DRobotMascot';
+import { CIIS3DLaptopMascot } from '../../components/common/CIIS3DLaptopMascot';
 import { useScrollObserver } from '../../hooks/useScrollObserver';
 import {
   School,
@@ -53,7 +53,9 @@ import {
   Share2,
   Sparkles,
   LayoutDashboard,
-  Menu
+  Menu,
+  Send,
+  MessageSquare
 } from 'lucide-react';
 
 interface GalleryModalItem {
@@ -84,8 +86,33 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
   const [isDeveloperExpanded, setIsDeveloperExpanded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Inquiry Form State
+  const [inquiryForm, setInquiryForm] = useState({
+    name: '',
+    phone: '',
+    program: 'computer-lab',
+    message: ''
+  });
+  const [inquirySubmitted, setInquirySubmitted] = useState(false);
+  const [isSubmittingInquiry, setIsSubmittingInquiry] = useState(false);
+
+  const handleInquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiryForm.name.trim() || !inquiryForm.phone.trim()) return;
+    setIsSubmittingInquiry(true);
+    setTimeout(() => {
+      setIsSubmittingInquiry(false);
+      setInquirySubmitted(true);
+    }, 600);
+  };
+
   // Initialize IntersectionObserver scroll reveal system (triggers on scroll down)
   useScrollObserver('.scroll-reveal, .scroll-reveal-scale, .scroll-reveal-left, .scroll-reveal-right', [language, activeLabTab]);
+
+  // Reset scroll position to top on initial render / page reload
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Track scroll progress and dynamic navbar styling
   useEffect(() => {
@@ -813,9 +840,9 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               </div>
             </div>
 
-            {/* Right Column: Real WebGL 3D Robot Mascot */}
+            {/* Right Column: Real WebGL 3D Interactive Futuristic Laptop Workstation */}
             <div className="scroll-reveal-right delay-150 lg:col-span-5 flex items-center justify-center relative">
-              <CIIS3DRobotMascot />
+              <CIIS3DLaptopMascot />
             </div>
 
           </div>
@@ -1445,536 +1472,612 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </section>
 
       {/* ========================================================================= */}
-      {/* 9. ABOUT THE DEVELOPER — CHOEURN TEKCHAS (JAME / JJ-DEV)                   */}
+      {/* 9. ABOUT THE DEVELOPER — Minimalist Text Link (Expands on Click)          */}
       {/* ========================================================================= */}
-      <section id="developer-section" className="py-14 sm:py-20 bg-[#08040a] text-white border-b border-zinc-800/80 relative overflow-hidden select-none">
-
-        {/* Subtle Ambient Backdrops */}
-        <div className="absolute top-1/3 -left-32 w-96 h-96 bg-pink-950/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 -right-32 w-96 h-96 bg-rose-950/20 rounded-full blur-[140px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-
-          {/* Section Header / Eyebrow */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/60 pb-5 text-left">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-lg bg-pink-950/90 text-pink-300 border border-pink-500/30 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <Code2 className="w-3.5 h-3.5 text-pink-400" />
-                  {isKhmer ? 'អំពីអ្នកបង្កើតប្រព័ន្ធ' : 'ABOUT THE DEVELOPER'}
-                </span>
-                <span className="text-xs text-zinc-400 font-mono">CIIS LMS SYSTEM ARCHITECT</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-khmer-title">
-                {isKhmer ? 'ស្គាល់អ្នកបង្កើតប្រព័ន្ធ (The Person Behind the System)' : 'The Person Behind The System'}
-              </h3>
-            </div>
-
-            {/* Toggle Expand / Collapse Button */}
-            <button
-              type="button"
-              onClick={() => setIsDeveloperExpanded(!isDeveloperExpanded)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/[0.06] hover:bg-pink-950/50 border border-white/10 hover:border-pink-500/50 text-white font-bold text-xs sm:text-sm transition-all duration-300 shadow-md hover:scale-102 cursor-pointer w-fit"
-            >
-              <span>
-                {isDeveloperExpanded
-                  ? (isKhmer ? 'បង្រួមការបង្ហាញ (Collapse)' : 'Minimize Profile')
-                  : (isKhmer ? 'ស្វែងយល់បន្ថែមអំពី Developer (Click to Explore)' : 'Explore Developer Story')}
-              </span>
-              <ChevronRight className={`w-4 h-4 text-pink-300 transition-transform duration-300 ${isDeveloperExpanded ? '-rotate-90' : 'rotate-90'}`} />
-            </button>
-          </div>
-
-          {/* COMPACT PREVIEW BANNER (Default Clean & Non-intrusive state) */}
+      <section id="developer-section" className="py-4 bg-[#fcfcfd] border-t border-zinc-200/80 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {!isDeveloperExpanded ? (
-            <div
-              onClick={() => setIsDeveloperExpanded(true)}
-              className="p-6 sm:p-8 rounded-3xl bg-zinc-950/80 hover:bg-zinc-900/90 border border-zinc-800/90 hover:border-pink-500/50 transition-all duration-300 shadow-xl cursor-pointer group flex flex-col md:flex-row items-center justify-between gap-6 text-left"
-            >
-              <div className="flex items-center gap-5">
-                <div className="relative shrink-0">
-                  <img
-                    src="/images/choeurn-tekchas.jpg"
-                    alt="Choeurn Tekchas"
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-pink-500/40 group-hover:scale-105 transition-transform duration-300 shadow-lg"
-                  />
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-zinc-950 animate-pulse" />
-                </div>
-
-                <div className="space-y-1 text-left">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-lg sm:text-xl font-black text-white">
-                      CHOEURN TEKCHAS (JAME)
-                    </h4>
-                    <span className="px-2 py-0.5 rounded-md bg-white/10 text-[10.5px] font-mono text-pink-300 font-bold">
-                      JJ-DEV
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-pink-400 font-mono font-medium">
-                    AI & Software Developer • Started Coding in Grade 9
-                  </p>
-                  <p className="text-xs text-zinc-400 line-clamp-1 font-kantumruy">
-                    {isKhmer
-                      ? '“ខ្ញុំបង្កើតបច្ចេកវិទ្យាដោយបង្វែរគំនិតឱ្យក្លាយជាប្រព័ន្ធជាក់ស្តែង។” ចុចដើម្បីស្វែងយល់បន្ថែមអំពីដំណើរវិវត្ត'
-                      : '“I build technology by turning ideas into real systems.” Click to explore journey & architecture.'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="px-4 py-2.5 rounded-2xl bg-pink-900/80 group-hover:bg-pink-800 text-white font-bold text-xs flex items-center gap-2 shadow-md transition-all">
-                  <span>{isKhmer ? 'ចុចដើម្បីបើកមើលប្រវត្តិ' : 'Click to Reveal Profile'}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="flex items-center justify-center py-1">
+              <button
+                type="button"
+                onClick={() => setIsDeveloperExpanded(true)}
+                className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 hover:bg-zinc-200/80 text-zinc-600 hover:text-zinc-950 text-xs font-mono transition-all duration-200 cursor-pointer shadow-2xs"
+              >
+                <Code2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-950 transition-colors" />
+                <span className={isKhmer ? 'font-kantumruy font-semibold' : 'font-mono'}>
+                  {isKhmer
+                    ? 'ស្វែងយល់បន្ថែមអំពី Developer (JJ-DEV)'
+                    : 'About the System Developer (JJ-DEV)'}
                 </span>
-              </div>
+                <span className="text-zinc-400 group-hover:text-zinc-950 group-hover:translate-x-0.5 transition-transform text-xs">→</span>
+              </button>
             </div>
           ) : (
-            /* FULL MASTERPIECE 2-COLUMN DEVELOPER SHOWCASE */
-            <div className="p-6 sm:p-10 rounded-3xl bg-zinc-950/90 border border-pink-500/30 shadow-2xl space-y-10">
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start text-left">
-
-                {/* LEFT COLUMN: Developer Portrait & Personal Stat Cards */}
-                <div className="lg:col-span-5 space-y-6">
-
-                  {/* Portrait Container */}
-                  <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl group max-w-sm mx-auto lg:max-w-none">
-                    <img
-                      src="/images/choeurn-tekchas.jpg"
-                      alt="Choeurn Tekchas"
-                      className="w-full h-80 sm:h-96 object-cover object-top group-hover:scale-103 transition-transform duration-700 ease-out"
-                    />
-
-                    {/* Live Building Badge Overlay */}
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold shadow-md">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Currently Building
-                      </span>
-                    </div>
-
-                    {/* Gradient Overlay at Bottom */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 rounded bg-pink-900/90 text-white text-[10px] font-mono font-bold">
-                          JJ-DEV
-                        </span>
-                        <span className="text-[11px] font-mono text-zinc-300">
-                          AI & SOFTWARE DEVELOPER
-                        </span>
-                      </div>
-                      <h4 className="text-2xl font-black text-white tracking-tight">
-                        CHOEURN TEKCHAS
-                      </h4>
-                      <p className="text-xs text-pink-300 font-medium font-kantumruy">
-                        ជឿន តេជៈ (Preferred Name: JAME)
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 4 Personal Metric / Stat Cards */}
-                  <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-pink-500/40 transition-colors">
-                      <span className="text-[10.5px] text-zinc-500 block uppercase">Started Coding</span>
-                      <span className="text-white font-bold text-sm">Grade 9</span>
-                      <span className="text-[10px] text-zinc-400 block">HTML, CSS & Beyond</span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-pink-500/40 transition-colors">
-                      <span className="text-[10.5px] text-zinc-500 block uppercase">Core Focus</span>
-                      <span className="text-pink-400 font-bold text-sm">AI + Software</span>
-                      <span className="text-[10px] text-zinc-400 block">Practical Architecture</span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-pink-500/40 transition-colors">
-                      <span className="text-[10.5px] text-zinc-500 block uppercase">Learning Style</span>
-                      <span className="text-white font-bold text-sm">Build & Test</span>
-                      <span className="text-[10px] text-zinc-400 block">Hands-on Experience</span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-pink-500/40 transition-colors">
-                      <span className="text-[10.5px] text-zinc-500 block uppercase">Current Direction</span>
-                      <span className="text-pink-400 font-bold text-sm">AI Engineering</span>
-                      <span className="text-[10px] text-zinc-400 block">Applied Intelligence</span>
-                    </div>
-                  </div>
-
+            <div className="py-6 space-y-6 animate-in fade-in zoom-in-98 duration-300">
+              {/* Header with Close/Minimize button */}
+              <div className="flex items-center justify-between border-b border-zinc-200 pb-4 text-left">
+                <div className="flex items-center gap-2.5">
+                  <span className="px-2.5 py-0.5 rounded-lg bg-zinc-100 text-zinc-800 border border-zinc-200 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-zinc-800" />
+                    {isKhmer ? 'អំពីអ្នកបង្កើតប្រព័ន្ធ' : 'ABOUT THE DEVELOPER'}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-mono">CIIS LMS SYSTEM ARCHITECT</span>
                 </div>
 
-                {/* RIGHT COLUMN: Journey Narrative, Approach Visual, Focus Tags & Actions */}
-                <div className="lg:col-span-7 space-y-7">
+                <button
+                  type="button"
+                  onClick={() => setIsDeveloperExpanded(false)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>{isKhmer ? 'បង្រួម / បិទ' : 'Minimize View'}</span>
+                </button>
+              </div>
 
-                  {/* Headline */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10.5px] font-mono font-bold uppercase tracking-wider">
-                        DEVELOPER STORY
-                      </span>
-                      <span className="text-xs text-zinc-400 font-mono">YOUNG BUILDER • AI ENTHUSIAST</span>
-                    </div>
+              {/* Masterpiece 2-Column Developer Showcase */}
+              <div className="p-6 sm:p-10 rounded-3xl bg-zinc-950 text-white border border-zinc-800 shadow-xl space-y-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start text-left">
 
-                    <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-snug font-khmer-title">
-                      {isKhmer ? (
-                        <>
-                          “ខ្ញុំបង្កើតបច្ចេកវិទ្យាដោយបង្វែរគំនិត <br className="hidden sm:inline" />
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
-                            ឱ្យក្លាយជាប្រព័ន្ធជាក់ស្តែង។”
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          “I build technology by turning ideas <br className="hidden sm:inline" />
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
-                            into real systems.”
-                          </span>
-                        </>
-                      )}
-                    </h3>
-                  </div>
+                  {/* LEFT COLUMN: Developer Portrait & Personal Stat Cards */}
+                  <div className="lg:col-span-5 space-y-6">
 
-                  {/* 3 Concise Narrative Paragraphs */}
-                  <div className="space-y-4 text-zinc-300 text-sm sm:text-[15px] leading-relaxed font-kantumruy">
-                    <p>
-                      {isKhmer
-                        ? 'ខ្ញុំបានចាប់ផ្តើមដំណើរការសរសេរកូដតាំងពីថ្នាក់ទី ៩ ដោយផ្តើមចេញពី HTML និង CSS ហើយបានចាប់ចិត្តយ៉ាងខ្លាំងក្នុងការបង្កើតផលិតផលឌីជីថលពិតៗ។ ចំណង់ចំណូលចិត្តរបស់ខ្ញុំលើ AI បានរីកចម្រើនយ៉ាងខ្លាំងបន្ទាប់ពីការលេចឡើងនៃ ChatGPT ក្នុងឆ្នាំ ២០២២ ដែលជំរុញឱ្យខ្ញុំស្វែងយល់យ៉ាងស៊ីជម្រៅអំពី Artificial Intelligence, Software Engineering និងឧបករណ៍បច្ចេកវិទ្យាទំនើបៗ។'
-                        : 'I started my coding journey in Grade 9, beginning with HTML and CSS and gradually becoming interested in building real digital products. My interest in AI grew strongly after discovering ChatGPT in 2022, which motivated me to explore artificial intelligence, software engineering, and modern development tools.'}
-                    </p>
+                    {/* Portrait Container */}
+                    <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl group max-w-sm mx-auto lg:max-w-none">
+                      <img
+                        src="/images/choeurn-tekchas.jpg"
+                        alt="Choeurn Tekchas"
+                        className="w-full h-80 sm:h-96 object-cover object-top group-hover:scale-103 transition-transform duration-700 ease-out"
+                      />
 
-                    <p>
-                      {isKhmer
-                        ? 'ជាជាងការរៀនត្រឹមតែទ្រឹស្តី ខ្ញុំរៀនតាមរយៈការអនុវត្តជាក់ស្តែង (Learn by Building)។ ខ្ញុំបានអភិវឌ្ឍប្រព័ន្ធអប់រំ, ប្រព័ន្ធសិក្សាជំនួយដោយ AI, ឧបករណ៍គ្រប់គ្រងសាលា, ប្រព័ន្ធស្រង់វត្តមាន, កម្មវិធីបង្កើត CV, ប្រព័ន្ធ QR Video, ប្រព័ន្ធកុម្ម៉ង់ម្ហូប និង Web Application ជាក់ស្តែងជាច្រើនទៀត។'
-                        : 'Rather than learning only through theory, I learn by building. I have worked on educational platforms, AI-powered learning systems, school management tools, attendance engines, CV generators, QR video platforms, restaurant ordering systems, and other practical web applications.'}
-                    </p>
-
-                    <p>
-                      {isKhmer
-                        ? 'ចំណុចសំខាន់ក្នុងដំណើរអភិវឌ្ឍន៍របស់ខ្ញុំ គឺការប្រើប្រាស់ AI ជាដៃគូសហការ (Development Partner)។ ខ្ញុំមិនគ្រាន់តែឱ្យ AI បង្កើតកូដនោះឡើយ ប៉ុន្តែប្រើវាដើម្បីពិភាក្សាគំនិត ស្វែងយល់ពីបច្ចេកវិទ្យា ដោះស្រាយបញ្ហាស្មុគស្មាញ បង្កើនប្រសិទ្ធភាព Architecture និងពិសោធន៍ UI/UX ដើម្បីប្រែក្លាយគំនិតឱ្យទៅជាប្រព័ន្ធរឹងមាំ និងដំណើរការបានល្អ។'
-                        : 'A major part of my development journey has been using AI as a development partner. I don’t simply ask AI to generate code and accept the result. I use it to explore ideas, understand technologies, debug problems, improve architecture, experiment with UI/UX, and turn ideas into working systems.'}
-                    </p>
-                  </div>
-
-                  {/* My Approach Visual Sequence */}
-                  <div className="space-y-2 pt-1">
-                    <p className="text-xs font-mono text-pink-400 font-bold uppercase tracking-wider">
-                      DEVELOPMENT APPROACH
-                    </p>
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] font-mono font-bold text-white">
-                      <span className="px-3 py-1.5 rounded-xl bg-pink-950/80 border border-pink-500/30 text-pink-300">THINK</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">BUILD</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">TEST</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-rose-950/80 border border-rose-500/30 text-rose-300">BREAK</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">DEBUG</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/30 text-emerald-300">IMPROVE</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-pink-400">REPEAT</span>
-                    </div>
-                  </div>
-
-                  {/* Core Technical Focus Tags */}
-                  <div className="space-y-2 pt-1">
-                    <p className="text-xs font-mono text-zinc-400 font-bold uppercase tracking-wider">
-                      INTERESTS & TECHNICAL SCOPE
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Artificial Intelligence',
-                        'Software Engineering',
-                        'Full-Stack Development',
-                        'Web Applications',
-                        'Machine Learning',
-                        'Cloud Technologies',
-                        'Cybersecurity',
-                        'Educational Technology',
-                        'React 18 & TypeScript'
-                      ].map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 rounded-xl bg-white/[0.04] border border-white/10 hover:border-pink-500/40 text-xs font-mono text-zinc-300 transition-colors"
-                        >
-                          {tag}
+                      {/* Live Building Badge Overlay */}
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-bold shadow-md">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                          Currently Building
                         </span>
-                      ))}
+                      </div>
+
+                      {/* Gradient Overlay at Bottom */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="px-2 py-0.5 rounded bg-pink-900/90 text-white text-[10px] font-mono font-bold">
+                            JJ-DEV
+                          </span>
+                          <span className="text-[11px] font-mono text-zinc-300">
+                            AI & SOFTWARE DEVELOPER
+                          </span>
+                        </div>
+                        <h4 className="text-2xl font-black text-white tracking-tight">
+                          CHOEURN TEKCHAS
+                        </h4>
+                        <p className="text-xs text-pink-300 font-medium font-kantumruy">
+                          ជឿន តេជៈ (Preferred Name: JAME)
+                        </p>
+                      </div>
                     </div>
+
+                    {/* 4 Personal Metric / Stat Cards */}
+                    <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-zinc-500 transition-colors">
+                        <span className="text-[10.5px] text-zinc-500 block uppercase">Started Coding</span>
+                        <span className="text-white font-bold text-sm">Grade 9</span>
+                        <span className="text-[10px] text-zinc-400 block">HTML, CSS & Beyond</span>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-zinc-500 transition-colors">
+                        <span className="text-[10.5px] text-zinc-500 block uppercase">Core Focus</span>
+                        <span className="text-pink-400 font-bold text-sm">AI + Software</span>
+                        <span className="text-[10px] text-zinc-400 block">Practical Architecture</span>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-zinc-500 transition-colors">
+                        <span className="text-[10.5px] text-zinc-500 block uppercase">Learning Style</span>
+                        <span className="text-white font-bold text-sm">Build & Test</span>
+                        <span className="text-[10px] text-zinc-400 block">Hands-on Experience</span>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1 hover:border-zinc-500 transition-colors">
+                        <span className="text-[10.5px] text-zinc-500 block uppercase">Current Direction</span>
+                        <span className="text-pink-400 font-bold text-sm">AI Engineering</span>
+                        <span className="text-[10px] text-zinc-400 block">Applied Intelligence</span>
+                      </div>
+                    </div>
+
                   </div>
 
-                  {/* Philosophy Statement Box */}
-                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-pink-950/40 via-rose-950/30 to-zinc-900 border border-pink-500/30 shadow-inner">
-                    <p className="text-sm sm:text-base font-bold text-white italic font-khmer-title">
-                      “I don’t just want to learn technology. I want to build something useful with it.”
-                    </p>
-                    <p className="text-xs text-pink-400 font-mono mt-1">
-                      — CHOEURN TEKCHAS (JAME), AI & Software Developer
-                    </p>
-                  </div>
+                  {/* RIGHT COLUMN: Journey Narrative, Approach Visual, Focus Tags & Actions */}
+                  <div className="lg:col-span-7 space-y-7">
 
-                  {/* Actions Bar: Visit Portfolio & Collapse Button */}
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <a
-                      href="https://portfolio-jame7.vercel.app/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-700 via-pink-600 to-rose-600 hover:from-pink-600 hover:to-rose-500 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:scale-102 ${isKhmer ? 'font-kantumruy' : ''}`}
-                    >
-                      <span>{isKhmer ? 'ចូលមើល Portfolio របស់ JJ-DEV' : 'Visit JJ-DEV Portfolio'}</span>
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
+                    {/* Headline */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-md bg-white/10 text-pink-300 border border-white/20 text-[10.5px] font-mono font-bold uppercase tracking-wider">
+                          DEVELOPER STORY
+                        </span>
+                        <span className="text-xs text-zinc-400 font-mono">YOUNG BUILDER • AI ENTHUSIAST</span>
+                      </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setIsDeveloperExpanded(false)}
-                      className="px-4 py-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-zinc-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer"
-                    >
-                      {isKhmer ? 'បង្រួមការបង្ហាញ (Collapse)' : 'Minimize View'}
-                    </button>
+                      <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-snug font-khmer-title">
+                        {isKhmer ? (
+                          <>
+                            “ខ្ញុំបង្កើតបច្ចេកវិទ្យាដោយបង្វែរគំនិត <br className="hidden sm:inline" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
+                              ឱ្យក្លាយជាប្រព័ន្ធជាក់ស្តែង។”
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            “I build technology by turning ideas <br className="hidden sm:inline" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
+                              into real systems.”
+                            </span>
+                          </>
+                        )}
+                      </h3>
+                    </div>
+
+                    {/* 3 Concise Narrative Paragraphs */}
+                    <div className="space-y-4 text-zinc-300 text-sm sm:text-[15px] leading-relaxed font-kantumruy">
+                      <p>
+                        {isKhmer
+                          ? 'ខ្ញុំបានចាប់ផ្តើមដំណើរការសរសេរកូដតាំងពីថ្នាក់ទី ៩ ដោយផ្តើមចេញពី HTML និង CSS ហើយបានចាប់ចិត្តយ៉ាងខ្លាំងក្នុងការបង្កើតផលិតផលឌីជីថលពិតៗ។ ចំណង់ចំណូលចិត្តរបស់ខ្ញុំលើ AI បានរីកចម្រើនយ៉ាងខ្លាំងបន្ទាប់ពីការលេចឡើងនៃ ChatGPT ក្នុងឆ្នាំ ២០២២ ដែលជំរុញឱ្យខ្ញុំស្វែងយល់យ៉ាងស៊ីជម្រៅអំពី Artificial Intelligence, Software Engineering និងឧបករណ៍បច្ចេកវិទ្យាទំនើបៗ។'
+                          : 'I started my coding journey in Grade 9, beginning with HTML and CSS and gradually becoming interested in building real digital products. My interest in AI grew strongly after discovering ChatGPT in 2022, which motivated me to explore artificial intelligence, software engineering, and modern development tools.'}
+                      </p>
+
+                      <p>
+                        {isKhmer
+                          ? 'ជាជាងការរៀនត្រឹមតែទ្រឹស្តី ខ្ញុំរៀនតាមរយៈការអនុវត្តជាក់ស្តែង (Learn by Building)។ ខ្ញុំបានអភិវឌ្ឍប្រព័ន្ធអប់រំ, ប្រព័ន្ធសិក្សាជំនួយដោយ AI, ឧបករណ៍គ្រប់គ្រងសាលា, ប្រព័ន្ធស្រង់វត្តមាន, កម្មវិធីបង្កើត CV, ប្រព័ន្ធ QR Video, ប្រព័ន្ធកុម្ម៉ង់ម្ហូប និង Web Application ជាក់ស្តែងជាច្រើនទៀត។'
+                          : 'Rather than learning only through theory, I learn by building. I have worked on educational platforms, AI-powered learning systems, school management tools, attendance engines, CV generators, QR video platforms, restaurant ordering systems, and other practical web applications.'}
+                      </p>
+
+                      <p>
+                        {isKhmer
+                          ? 'ចំណុចសំខាន់ក្នុងដំណើរអភិវឌ្ឍន៍របស់ខ្ញុំ គឺការប្រើប្រាស់ AI ជាដៃគូសហការ (Development Partner)។ ខ្ញុំមិនគ្រាន់តែឱ្យ AI បង្កើតកូដនោះឡើយ ប៉ុន្តែប្រើវាដើម្បីពិភាក្សាគំនិត ស្វែងយល់ពីបច្ចេកវិទ្យា ដោះស្រាយបញ្ហាស្មុគស្មាញ បង្កើនប្រសិទ្ធភាព Architecture និងពិសោធន៍ UI/UX ដើម្បីប្រែក្លាយគំនិតឱ្យទៅជាប្រព័ន្ធរឹងមាំ និងដំណើរការបានល្អ។'
+                          : 'A major part of my development journey has been using AI as a development partner. I don’t simply ask AI to generate code and accept the result. I use it to explore ideas, understand technologies, debug problems, improve architecture, experiment with UI/UX, and turn ideas into working systems.'}
+                      </p>
+                    </div>
+
+                    {/* My Approach Visual Sequence */}
+                    <div className="space-y-2 pt-1">
+                      <p className="text-xs font-mono text-pink-400 font-bold uppercase tracking-wider">
+                        DEVELOPMENT APPROACH
+                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] font-mono font-bold text-white">
+                        <span className="px-3 py-1.5 rounded-xl bg-pink-950/80 border border-pink-500/30 text-pink-300">THINK</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">BUILD</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">TEST</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-rose-950/80 border border-rose-500/30 text-rose-300">BREAK</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-200">DEBUG</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/30 text-emerald-300">IMPROVE</span>
+                        <span className="text-zinc-600">→</span>
+                        <span className="px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-pink-400">REPEAT</span>
+                      </div>
+                    </div>
+
+                    {/* Core Technical Focus Tags */}
+                    <div className="space-y-2 pt-1">
+                      <p className="text-xs font-mono text-zinc-400 font-bold uppercase tracking-wider">
+                        INTERESTS & TECHNICAL SCOPE
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          'Artificial Intelligence',
+                          'Software Engineering',
+                          'Full-Stack Development',
+                          'Web Applications',
+                          'Machine Learning',
+                          'Cloud Technologies',
+                          'Cybersecurity',
+                          'Educational Technology',
+                          'React 18 & TypeScript'
+                        ].map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 rounded-xl bg-white/[0.04] border border-white/10 hover:border-zinc-500 text-xs font-mono text-zinc-300 transition-colors"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Philosophy Statement Box */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-pink-950/40 via-rose-950/30 to-zinc-900 border border-pink-500/30 shadow-inner">
+                      <p className="text-sm sm:text-base font-bold text-white italic font-khmer-title">
+                        “I don’t just want to learn technology. I want to build something useful with it.”
+                      </p>
+                      <p className="text-xs text-pink-400 font-mono mt-1">
+                        — CHOEURN TEKCHAS (JAME), AI & Software Developer
+                      </p>
+                    </div>
+
+                    {/* Actions Bar: Visit Portfolio & Collapse Button */}
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                      <a
+                        href="https://portfolio-jame7.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-700 via-pink-600 to-rose-600 hover:from-pink-600 hover:to-rose-500 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:scale-102 ${isKhmer ? 'font-kantumruy' : ''}`}
+                      >
+                        <span>{isKhmer ? 'ចូលមើល Portfolio របស់ JJ-DEV' : 'Visit JJ-DEV Portfolio'}</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsDeveloperExpanded(false)}
+                        className="px-4 py-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-zinc-300 hover:text-white text-xs font-mono font-bold transition-all cursor-pointer"
+                      >
+                        {isKhmer ? 'បង្រួមការបង្ហាញ (Collapse)' : 'Minimize View'}
+                      </button>
+                    </div>
+
                   </div>
 
                 </div>
 
               </div>
-
             </div>
           )}
-
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 9.5. CONTACT ADMIN & GET IN TOUCH (Match Sample Luxury Dark Design)        */}
+      {/* 9.5. CONTACT ADMIN & INSTITUTIONAL INQUIRY (Clean Monochromatic Design)    */}
       {/* ========================================================================= */}
-      <section id="contact-admin-section" className="py-20 sm:py-28 bg-[#09050d] text-white relative overflow-hidden select-none border-t border-zinc-800/80">
+      <section id="contact-admin-section" className="py-16 sm:py-24 bg-[#fcfcfd] text-zinc-900 relative overflow-hidden border-t border-zinc-200">
 
-        {/* Layered Atmospheric Glows (Blue ambient glow left + Vibrant warm flare right) */}
-        <div className="absolute top-1/4 -left-20 w-[450px] h-[450px] bg-blue-900/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/4 w-[350px] h-[350px] bg-sky-950/25 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12 sm:space-y-14">
 
-        {/* Right Abstract Light Flare (Matches sample image glowing colored plume) */}
-        <div className="absolute top-1/3 right-10 sm:right-24 w-40 sm:w-52 h-64 sm:h-80 bg-gradient-to-t from-pink-500 via-rose-600 to-amber-300 rounded-full blur-[75px] opacity-60 pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-[400px] h-[300px] bg-rose-950/30 rounded-full blur-[130px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-
-            {/* LEFT COLUMN: Main Typography Headline & Dot Matrix Grid */}
-            <div className="scroll-reveal-left lg:col-span-6 space-y-8 text-left">
-
-              <div className="space-y-3">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-950/80 text-pink-300 border border-pink-500/30 text-xs font-mono font-bold uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-                  {isKhmer ? 'ការិយាល័យរដ្ឋបាល & ទំនាក់ទំនង' : 'ADMINISTRATION & CONTACT'}
-                </span>
-
-                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08] font-khmer-title">
-                  {isKhmer ? (
-                    <>
-                      ទំនាក់ទំនង <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
-                        មកកាន់យើងខ្ញុំ។
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      Get in <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-amber-200">
-                        touch.
-                      </span>
-                    </>
-                  )}
-                </h2>
-
-                <p className="text-zinc-400 text-sm sm:text-base font-medium max-w-md font-kantumruy pt-1 leading-relaxed">
-                  {isKhmer
-                    ? 'សម្រាប់ព័ត៌មានបន្ថែមអំពីការចុះឈ្មោះចូលរៀន ថ្នាក់កុំព្យូទ័រ Lab ឬកាលវិភាគសិក្សា សូមទាក់ទងមកកាន់រដ្ឋបាលសាលាដោយផ្ទាល់។'
-                    : 'For enrollment inquiries, Computer Lab admissions, or shift schedules, feel free to reach out to our administration team.'}
-                </p>
-              </div>
-
-              {/* Dot Matrix Grid (Exact match with reference image) */}
-              <div className="pt-4 hidden sm:block">
-                <div className="grid grid-cols-12 gap-3.5 max-w-[340px] opacity-45">
-                  {[...Array(60)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-1.5 h-1.5 rounded-full bg-zinc-400 hover:bg-pink-400 hover:scale-150 transition-all duration-300"
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Bottom Tagline */}
-              <div className="pt-6 border-t border-zinc-800/80">
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight font-khmer-title">
-                  {isKhmer ? 'ចាប់ផ្តើមការសាកសួរព័ត៌មាន។' : 'Start a conversation.'}
-                </p>
-                <p className="text-xs text-zinc-500 font-mono pt-1">
-                  CIIS SCHOOL • PHNOM PENH, CAMBODIA
-                </p>
-              </div>
-
+          {/* SECTION HEADER: Clean Minimalist Typography */}
+          <div className="scroll-reveal text-center max-w-3xl mx-auto space-y-3.5">
+            <div className="flex items-center justify-center">
+              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-800 border border-zinc-200 text-xs font-bold ${isKhmer ? 'font-kantumruy' : 'font-mono uppercase tracking-wider'}`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                {isKhmer ? 'ទំនាក់ទំនង & ការិយាល័យរដ្ឋបាល' : 'ADMINISTRATION & DIRECT CONTACT'}
+              </span>
             </div>
 
-            {/* RIGHT COLUMN: Contact Details (Address, Phone, Mail, Follow Us) */}
-            <div className="scroll-reveal-right delay-150 lg:col-span-6 space-y-8 text-left">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-zinc-950 tracking-tight leading-[1.2] font-khmer-title">
+              {isKhmer ? 'ទំនាក់ទំនងមកកាន់សាលារៀន CIIS' : 'Contact CIIS International School'}
+            </h2>
 
-              {/* 1. ADDRESS */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-pink-400 group-hover:border-pink-500/50 group-hover:bg-pink-950/40 transition-all shrink-0 shadow-lg">
-                  <MapPin className="w-6 h-6" />
+            <p className="text-zinc-600 text-xs sm:text-sm lg:text-base font-normal max-w-2xl mx-auto font-kantumruy leading-relaxed">
+              {isKhmer
+                ? 'សម្រាប់ព័ត៌មានបន្ថែមអំពីការចុះឈ្មោះចូលរៀន ថ្នាក់កុំព្យូទ័រ Lab 1 ឬកាលវិភាគសិក្សា សូមទាក់ទងមកកាន់រដ្ឋបាលសាលា ឬផ្ញើសារសាកសួរតាមទម្រង់ខាងក្រោម។'
+                : 'For enrollment inquiries, Computer Lab 1 shifts, academic programs, or campus visits, please contact our administration team directly or submit a message below.'}
+            </p>
+          </div>
+
+          {/* TWO-COLUMN CONTENT GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+
+            {/* LEFT COLUMN: School Directory & Direct Contact Cards (6 cols on lg) */}
+            <div className="scroll-reveal-left lg:col-span-6 space-y-4 text-left">
+
+              {/* 1. CAMPUS ADDRESS */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all flex items-start gap-4">
+                <div className="w-11 h-11 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                    {isKhmer ? 'អាសយដ្ឋាន' : 'Address'}
-                  </h3>
-                  <p className="text-sm text-zinc-300 font-medium leading-relaxed font-kantumruy">
-                    #01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh
+                <div className="space-y-1 flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className={`text-sm sm:text-base font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                      {isKhmer ? 'អាសយដ្ឋានទីតាំងសាលា' : 'Campus Location'}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 text-[10px] font-mono font-bold uppercase shrink-0">
+                      Phnom Penh
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed font-kantumruy">
+                    #01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh, Cambodia
                   </p>
                 </div>
               </div>
 
-              {/* 2. PHONE */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-pink-400 group-hover:border-pink-500/50 group-hover:bg-pink-950/40 transition-all shrink-0 shadow-lg">
-                  <Phone className="w-6 h-6" />
-                </div>
-                <div className="space-y-2.5 flex-1">
-                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                    {isKhmer ? 'លេខទូរស័ព្ទទំនាក់ទំនង' : 'Phone'}
-                  </h3>
-
-                  {/* Carrier Contact Pills with Rounded Logos */}
-                  <div className="flex flex-wrap gap-2.5 pt-0.5">
-                    {/* Smart */}
-                    <a
-                      href="tel:081505605"
-                      className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] hover:bg-emerald-950/40 border border-white/10 hover:border-emerald-500/50 text-white text-xs sm:text-sm font-mono font-bold transition-all shadow-sm hover:scale-[1.02] group/phone"
-                    >
-                      <img
-                        src="/carriers/smart-logo.png"
-                        alt="Smart"
-                        className="w-7 h-7 rounded-xl object-contain bg-[#00a651] p-1 shadow-xs shrink-0"
-                      />
-                      <span>081 505 605</span>
-                    </a>
-
-                    {/* Metfone */}
-                    <a
-                      href="tel:067505605"
-                      className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] hover:bg-rose-950/40 border border-white/10 hover:border-rose-500/50 text-white text-xs sm:text-sm font-mono font-bold transition-all shadow-sm hover:scale-[1.02] group/phone"
-                    >
-                      <img
-                        src="/carriers/metfone-logo.png"
-                        alt="Metfone"
-                        className="w-7 h-7 rounded-xl object-contain bg-[#e60000] p-0.5 shadow-xs shrink-0"
-                      />
-                      <span>067 505 605</span>
-                    </a>
-
-                    {/* Cellcard */}
-                    <a
-                      href="tel:095505605"
-                      className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] hover:bg-amber-950/40 border border-white/10 hover:border-amber-500/50 text-white text-xs sm:text-sm font-mono font-bold transition-all shadow-sm hover:scale-[1.02] group/phone"
-                    >
-                      <img
-                        src="/carriers/cellcard-logo.png"
-                        alt="Cellcard"
-                        className="w-7 h-7 rounded-xl object-cover bg-[#f39200] shadow-xs shrink-0"
-                      />
-                      <span>095 505 605</span>
-                    </a>
+              {/* 2. DIRECT PHONE HOTLINES WITH CARRIERS */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all space-y-3.5">
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <h3 className={`text-sm sm:text-base font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                      {isKhmer ? 'លេខទូរស័ព្ទទំនាក់ទំនងផ្ទាល់' : 'Direct Telephone Lines'}
+                    </h3>
+                    <p className="text-xs text-zinc-500 font-kantumruy">
+                      {isKhmer ? 'អាចទាក់ទងបានរៀងរាល់ថ្ងៃធ្វើការ (ចុចដើម្បីតេ)' : 'Tap any number below for direct one-click calling'}
+                    </p>
                   </div>
                 </div>
-              </div>
 
-              {/* 3. MAIL */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-pink-400 group-hover:border-pink-500/50 group-hover:bg-pink-950/40 transition-all shrink-0 shadow-lg">
-                  <Mail className="w-6 h-6" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                    {isKhmer ? 'សារអេឡិចត្រូនិច' : 'Mail'}
-                  </h3>
+                {/* Carrier Contact Pills */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-0.5">
+                  {/* Smart */}
                   <a
-                    href="mailto:ciis@ciscambodia.com"
-                    className="text-sm sm:text-base font-mono text-pink-300 hover:text-white transition-colors underline decoration-pink-500/40 underline-offset-4"
+                    href="tel:081505605"
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 text-zinc-900 text-xs font-mono font-bold transition-all shadow-2xs group"
                   >
-                    ciis@ciscambodia.com
+                    <img
+                      src="/carriers/smart-logo.png"
+                      alt="Smart"
+                      className="w-6 h-6 rounded-lg object-contain bg-[#00a651] p-0.5 shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <span className="block text-[9px] text-zinc-500 uppercase">Smart</span>
+                      <span className="truncate">081 505 605</span>
+                    </div>
+                  </a>
+
+                  {/* Metfone */}
+                  <a
+                    href="tel:067505605"
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 text-zinc-900 text-xs font-mono font-bold transition-all shadow-2xs group"
+                  >
+                    <img
+                      src="/carriers/metfone-logo.png"
+                      alt="Metfone"
+                      className="w-6 h-6 rounded-lg object-contain bg-[#e60000] p-0.5 shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <span className="block text-[9px] text-zinc-500 uppercase">Metfone</span>
+                      <span className="truncate">067 505 605</span>
+                    </div>
+                  </a>
+
+                  {/* Cellcard */}
+                  <a
+                    href="tel:095505605"
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 text-zinc-900 text-xs font-mono font-bold transition-all shadow-2xs group"
+                  >
+                    <img
+                      src="/carriers/cellcard-logo.png"
+                      alt="Cellcard"
+                      className="w-6 h-6 rounded-lg object-cover bg-[#f39200] shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <span className="block text-[9px] text-zinc-500 uppercase">Cellcard</span>
+                      <span className="truncate">095 505 605</span>
+                    </div>
                   </a>
                 </div>
               </div>
 
-              {/* 4. FOLLOW US */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-pink-400 group-hover:border-pink-500/50 group-hover:bg-pink-950/40 transition-all shrink-0 shadow-lg">
-                  <Share2 className="w-6 h-6" />
-                </div>
-                <div className="space-y-2.5 flex-1">
-                  <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                    {isKhmer ? 'តាមដានបណ្តាញសង្គម' : 'Follow Us'}
-                  </h3>
-
-                  {/* 2 Facebook Links */}
-                  <div className="flex flex-col sm:flex-row gap-2.5 pt-0.5">
-                    {/* Facebook Page 1 */}
-                    <a
-                      href="https://www.facebook.com/share/19Efi4Q7LV/?mibextid=wwXIfr"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-blue-950/40 hover:bg-blue-900/60 border border-blue-500/30 hover:border-blue-400 text-white text-xs font-bold transition-all shadow-sm hover:scale-[1.02] cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-black">
-                          f
-                        </span>
-                        <span className={isKhmer ? 'font-kantumruy' : 'font-mono'}>
-                          {isKhmer ? 'ទំព័រហ្វេសប៊ុកទី ១' : 'Facebook Page 1'}
-                        </span>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5 text-blue-300" />
-                    </a>
-
-                    {/* Facebook Page 2 */}
-                    <a
-                      href="https://www.facebook.com/share/1BpGnEa6aa/?mibextid=wwXIfr"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-blue-950/40 hover:bg-blue-900/60 border border-blue-500/30 hover:border-blue-400 text-white text-xs font-bold transition-all shadow-sm hover:scale-[1.02] cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-black">
-                          f
-                        </span>
-                        <span className={isKhmer ? 'font-kantumruy' : 'font-mono'}>
-                          {isKhmer ? 'ទំព័រហ្វេសប៊ុកទី ២' : 'Facebook Page 2'}
-                        </span>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5 text-blue-300" />
-                    </a>
+              {/* 3. EMAIL & OFFICE HOURS (2 Grid Cards) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Email Card */}
+                <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className={`text-xs sm:text-sm font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                        {isKhmer ? 'សារអេឡិចត្រូនិច' : 'Official Email'}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">Response &lt;24h</span>
+                    </div>
                   </div>
+                  <a
+                    href="mailto:ciis@ciscambodia.com"
+                    className="block text-xs sm:text-sm font-mono font-bold text-zinc-900 hover:text-zinc-600 hover:underline truncate"
+                  >
+                    ciis@ciscambodia.com
+                  </a>
+                </div>
+
+                {/* Office Hours Card */}
+                <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className={`text-xs sm:text-sm font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                        {isKhmer ? 'ម៉ោងធ្វើការរដ្ឋបាល' : 'Office Hours'}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-mono">Mon - Fri</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-zinc-700 font-mono font-bold truncate">
+                    7:00 AM – 7:40 PM
+                  </p>
+                </div>
+              </div>
+
+              {/* 4. SOCIAL MEDIA / FACEBOOK PAGES */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
+                    <Share2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className={`text-xs font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                      {isKhmer ? 'ទំព័រហ្វេសប៊ុកផ្លូវការរបស់សាលា' : 'Official Facebook Pages'}
+                    </p>
+                    <p className="text-[10.5px] text-zinc-500 font-kantumruy">
+                      {isKhmer ? 'តាមដានព័ត៌មាន & សកម្មភាពសិស្ស' : 'Follow news & student events'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <a
+                    href="https://www.facebook.com/share/19Efi4Q7LV/?mibextid=wwXIfr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-800 border border-zinc-200 hover:border-zinc-300 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                  >
+                    <span className="w-4 h-4 rounded-full bg-zinc-800 text-white flex items-center justify-center text-[9px] font-black">f</span>
+                    <span className={isKhmer ? 'font-kantumruy' : 'font-mono'}>{isKhmer ? 'ទំព័រទី ១' : 'Page 1'}</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-400" />
+                  </a>
+
+                  <a
+                    href="https://www.facebook.com/share/1BpGnEa6aa/?mibextid=wwXIfr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-800 border border-zinc-200 hover:border-zinc-300 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                  >
+                    <span className="w-4 h-4 rounded-full bg-zinc-800 text-white flex items-center justify-center text-[9px] font-black">f</span>
+                    <span className={isKhmer ? 'font-kantumruy' : 'font-mono'}>{isKhmer ? 'ទំព័រទី ២' : 'Page 2'}</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-400" />
+                  </a>
                 </div>
               </div>
 
             </div>
 
-          </div>
+            {/* RIGHT COLUMN: Interactive Quick Inquiry Form Card (6 cols on lg) */}
+            <div className="scroll-reveal-right delay-150 lg:col-span-6 bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 text-left relative">
 
-          {/* Bottom Radial Dials Matrix Graphic (as seen in sample image) */}
-          <div className="pt-16 pb-4 border-t border-zinc-900/80 mt-16 flex items-center justify-center">
-            <div className="grid grid-cols-8 sm:grid-cols-16 gap-3.5 sm:gap-5 opacity-40">
-              {[0, 22, 45, 67, 90, 112, 135, 157, 180, 202, 225, 247, 270, 292, 315, 337].map((deg, i) => (
-                <div key={i} className="flex flex-col items-center justify-center">
-                  <div
-                    className="w-4 h-0.5 bg-zinc-400 hover:bg-pink-400 transition-colors"
-                    style={{ transform: `rotate(${deg}deg)` }}
-                  />
+              {/* Form Header */}
+              <div className="space-y-1.5 border-b border-zinc-100 pb-4">
+                <div className="flex items-center justify-between">
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-800 text-[11px] font-bold border border-zinc-200 ${isKhmer ? 'font-kantumruy' : 'font-mono uppercase'}`}>
+                    <MessageSquare className="w-3.5 h-3.5 text-zinc-700" />
+                    {isKhmer ? 'ទម្រង់សាកសួរព័ត៌មាន' : 'Direct Inquiry Form'}
+                  </span>
+                  <span className="text-[11px] text-zinc-400 font-mono">Response &lt;24h</span>
                 </div>
-              ))}
+                <h3 className={`text-lg sm:text-xl font-black text-zinc-950 tracking-tight ${isKhmer ? 'font-khmer-title' : ''}`}>
+                  {isKhmer ? 'ផ្ញើសារមកកាន់រដ្ឋបាលសាលា' : 'Send an Admission Inquiry'}
+                </h3>
+                <p className="text-xs text-zinc-500 font-kantumruy leading-relaxed">
+                  {isKhmer
+                    ? 'សូមបំពេញព័ត៌មានខាងក្រោម ក្រុមការងាររដ្ឋបាលនឹងទាក់ទងមកលោកអ្នកវិញយ៉ាងឆាប់រហ័ស។'
+                    : 'Fill in your details below and our school administration will get back to you promptly.'}
+                </p>
+              </div>
+
+              {inquirySubmitted ? (
+                <div className="py-8 text-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                  <div className="w-14 h-14 rounded-2xl bg-zinc-100 border border-zinc-200 text-zinc-900 flex items-center justify-center mx-auto shadow-2xs">
+                    <CheckCircle2 className="w-7 h-7 text-zinc-900" />
+                  </div>
+                  <div className="space-y-1.5 max-w-sm mx-auto">
+                    <h4 className={`text-base font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
+                      {isKhmer ? 'សាររបស់អ្នកត្រូវបានផ្ញើរួចរាល់!' : 'Inquiry Submitted Successfully!'}
+                    </h4>
+                    <p className="text-xs text-zinc-600 font-kantumruy leading-relaxed">
+                      {isKhmer
+                        ? 'សូមអរគុណសម្រាប់ការទាក់ទងមកកាន់ CIIS។ ក្រុមការងាររដ្ឋបាលសាលានឹងពិនិត្យ និងទាក់ទងមកកាន់លេខទូរស័ព្ទរបស់អ្នកក្នុងពេលឆាប់ៗ។'
+                        : 'Thank you for contacting CIIS. Our administration team has received your message and will reach out to you shortly.'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInquirySubmitted(false);
+                      setInquiryForm({ name: '', phone: '', program: 'computer-lab', message: '' });
+                    }}
+                    className={`px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer ${isKhmer ? 'font-kantumruy' : 'font-mono'}`}
+                  >
+                    {isKhmer ? 'ផ្ញើសារថ្មីមួយទៀត' : 'Send Another Inquiry'}
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleInquirySubmit} className="space-y-4">
+                  {/* Full Name & Phone/Telegram in 2 Cols on sm */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className={`block text-xs font-bold text-zinc-700 ${isKhmer ? 'font-kantumruy' : ''}`}>
+                        {isKhmer ? 'ឈ្មោះសិស្ស / អាណាព្យាបាល *' : 'Full Name *'}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={inquiryForm.name}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
+                        placeholder={isKhmer ? 'ឧ. សុខ ចាន់ដារា' : 'e.g. John Doe'}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs focus:bg-white focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all font-medium"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className={`block text-xs font-bold text-zinc-700 ${isKhmer ? 'font-kantumruy' : ''}`}>
+                        {isKhmer ? 'លេខទូរស័ព្ទ / Telegram *' : 'Phone / Telegram *'}
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={inquiryForm.phone}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
+                        placeholder={isKhmer ? 'ឧ. 081 505 605' : 'e.g. 081 505 605'}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs focus:bg-white focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all font-mono font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Program Selection */}
+                  <div className="space-y-1.5">
+                    <label className={`block text-xs font-bold text-zinc-700 ${isKhmer ? 'font-kantumruy' : ''}`}>
+                      {isKhmer ? 'ផ្នែក / កម្មវិធីសិក្សាដែលចាប់អារម្មណ៍' : 'Program of Interest'}
+                    </label>
+                    <select
+                      value={inquiryForm.program}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, program: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs focus:bg-white focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all font-medium cursor-pointer"
+                    >
+                      <option value="computer-lab">
+                        {isKhmer ? 'ថ្នាក់រៀនកុំព្យូទ័រអនុវត្ត Lab 1 (Touch Typing, Word, Excel)' : 'Practical Computer Lab 1 (Typing, Word, Excel)'}
+                      </option>
+                      <option value="grade-1-12">
+                        {isKhmer ? 'ចំណេះទូទៅ ថ្នាក់ទី១ ដល់ ទី១២ (បឋម, អនុ, វិទ្យាល័យ)' : 'General Education: Grades 1 to 12'}
+                      </option>
+                      <option value="kindergarten">
+                        {isKhmer ? 'ថ្នាក់មត្តេយ្យសិក្សា (កុមារតូច ៣-៥ ឆ្នាំ)' : 'Early Childhood & Kindergarten'}
+                      </option>
+                      <option value="ielts-english">
+                        {isKhmer ? 'ថ្នាក់ភាសាអង់គ្លេសទូទៅ & IELTS' : 'International English & IELTS Track'}
+                      </option>
+                      <option value="other">
+                        {isKhmer ? 'ព័ត៌មានទូទៅផ្សេងៗ (Other Inquiries)' : 'General Inquiries & Campus Visit'}
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* Message */}
+                  <div className="space-y-1.5">
+                    <label className={`block text-xs font-bold text-zinc-700 ${isKhmer ? 'font-kantumruy' : ''}`}>
+                      {isKhmer ? 'សារសាកសួរ / ចម្ងល់ផ្សេងៗ' : 'Your Message / Questions'}
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={inquiryForm.message}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, message: e.target.value })}
+                      placeholder={isKhmer ? 'សរសេរសារ ឬចម្ងល់របស់អ្នកនៅទីនេះ...' : 'Write your questions or notes here...'}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs focus:bg-white focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all font-medium resize-none"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmittingInquiry}
+                    className={`w-full py-3 px-5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-70 ${isKhmer ? 'font-kantumruy' : ''}`}
+                  >
+                    {isSubmittingInquiry ? (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>{isKhmer ? 'កំពុងផ្ញើសារ...' : 'Sending Message...'}</span>
+                      </span>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 text-zinc-300" />
+                        <span>{isKhmer ? 'ផ្ញើសារសាកសួរទៅកាន់រដ្ឋបាល' : 'Submit Admission Inquiry'}</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
+
           </div>
 
         </div>

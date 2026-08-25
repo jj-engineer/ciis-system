@@ -1,0 +1,16 @@
+{
+  "serverUrl": "ws://localhost:4001/ws/agent",
+  "computerCode": "LAB-01",
+  "labGroup": "Lab A",
+  "agentToken": "ciis_agent_secret_token_lab01_v1",
+  "agentVersion": "v1.0.4",
+  "heartbeatIntervalMs": 5000,
+  "assignmentsDirectory": "C:\\SchoolLab\\Assignments",
+  "autoStart": true,
+  "safeAllowedApplications": [
+    "Microsoft Excel",
+    "Microsoft Word",
+    "Touch Typing Lab",
+    "Google Chrome"
+  ]
+}

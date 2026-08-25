@@ -34,14 +34,38 @@ import { SettingsPage } from './pages/settings/SettingsPage';
 const AppContent: React.FC = () => {
   const { currentUser, isGuest, isAuthenticated, isStudent, isTeacher, showAuthModal, setShowAuthModal, authModalRole } = useAuth();
   const { t, isKhmer } = useLanguage();
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [viewMode, setViewMode] = useState<'portal' | 'website'>('portal');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    return localStorage.getItem('ciis_active_tab') || 'dashboard';
+  });
+  const [viewMode, setViewMode] = useState<'portal' | 'website'>(() => {
+    return (localStorage.getItem('ciis_view_mode') as 'portal' | 'website') || 'portal';
+  });
+
+  // Keep activeTab persisted in storage
+  React.useEffect(() => {
+    localStorage.setItem('ciis_active_tab', activeTab);
+  }, [activeTab]);
+
+  // Keep viewMode persisted in storage
+  React.useEffect(() => {
+    localStorage.setItem('ciis_view_mode', viewMode);
+  }, [viewMode]);
+
+  // Reset scroll to top on tab change or view mode switch
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeTab, viewMode]);
 
   // If user signed out or is not logged in / guest, or switched to Public Website view mode:
   if (isGuest || !isAuthenticated || !currentUser || currentUser.id === 'guest' || viewMode === 'website') {
     return (
       <>
-        <GuestLandingPage onReturnToPortal={() => setViewMode('portal')} />
+        <GuestLandingPage
+          onReturnToPortal={() => {
+            setViewMode('portal');
+            localStorage.setItem('ciis_view_mode', 'portal');
+          }}
+        />
         {showAuthModal && (
           <AuthModal
             isOpen={showAuthModal}

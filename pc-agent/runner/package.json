@@ -1,0 +1,13 @@
+{
+  "name": "ciis-school-pc-agent-runner",
+  "version": "0.1.0",
+  "description": "Instant-run Windows School PC Agent Runner",
+  "main": "agent.js",
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "scripts": {
+    "start": "node agent.js"
+  }
+}

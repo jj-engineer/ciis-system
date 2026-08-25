@@ -59,6 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // Teacher
     navItems = [
       { id: 'dashboard', labelEn: 'HOME', labelKh: 'ទំព័រដើម', icon: LayoutDashboard },
+      { id: 'lab', labelEn: 'COMPUTER LAB', labelKh: 'បន្ទប់កុំព្យូទ័រ', icon: Monitor, badge: 'Live' },
       { id: 'teacher-profile', labelEn: 'TEACHERS', labelKh: 'ប្រវត្តិរូបគ្រូ', icon: GraduationCap },
       { id: 'lessons', labelEn: 'LESSONS', labelKh: 'មេរៀន', icon: BookOpen },
       { id: 'calendar', labelEn: 'SCHEDULE', labelKh: 'កាលវិភាគ', icon: Calendar },

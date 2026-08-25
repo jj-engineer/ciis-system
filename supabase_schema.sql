@@ -285,7 +285,117 @@ CREATE TABLE IF NOT EXISTS public.community_comments (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 14. ROW LEVEL SECURITY (RLS) POLICIES
+-- 14. COMPUTER LAB & SCHOOL PC AGENTS (MVP ONLINE/OFFLINE MONITORING)
+CREATE TYPE pc_agent_status AS ENUM ('ONLINE', 'OFFLINE', 'UNREGISTERED', 'REVOKED');
+CREATE TYPE computer_status AS ENUM ('ONLINE', 'OFFLINE', 'AVAILABLE', 'IN_USE', 'LOCKED', 'DISCONNECTED', 'ERROR', 'UNREGISTERED', 'REVOKED');
+CREATE TYPE lab_command_type AS ENUM ('PING', 'GET_STATUS', 'START_SESSION', 'END_SESSION', 'LOCK_WORKSTATION', 'UNLOCK_WORKSTATION', 'OPEN_ASSIGNMENT', 'COLLECT_FILES');
+CREATE TYPE command_status AS ENUM ('pending', 'sent', 'acknowledged', 'failed', 'completed');
+CREATE TYPE lab_session_status AS ENUM ('active', 'paused', 'completed');
+
+-- Computers Registry (Laptops 01 through 30)
+CREATE TABLE IF NOT EXISTS public.computers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    computer_number VARCHAR(10) UNIQUE NOT NULL, -- e.g. "01", "02", ... "30"
+    computer_code VARCHAR(50) UNIQUE, -- e.g. "LAB-01"
+    hostname VARCHAR(150),
+    ip_address VARCHAR(45),
+    mac_address VARCHAR(50),
+    agent_id VARCHAR(100),
+    lab_group VARCHAR(50) NOT NULL DEFAULT 'Lab A',
+    status computer_status NOT NULL DEFAULT 'UNREGISTERED',
+    student_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    student_name VARCHAR(150),
+    current_app VARCHAR(150),
+    session_duration INT DEFAULT 0,
+    last_seen TIMESTAMPTZ,
+    last_heartbeat TIMESTAMPTZ,
+    agent_version VARCHAR(30) DEFAULT '0.1.0',
+    registration_token VARCHAR(100),
+    token_expires_at TIMESTAMPTZ,
+    current_session_id UUID,
+    cpu_usage_pct INT DEFAULT 0,
+    memory_usage_pct INT DEFAULT 0,
+    is_locked BOOLEAN DEFAULT FALSE,
+    registered_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Windows Lab Agents Registry & Auth
+CREATE TABLE IF NOT EXISTS public.lab_agents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    computer_id UUID REFERENCES public.computers(id) ON DELETE CASCADE,
+    agent_token VARCHAR(255) UNIQUE NOT NULL,
+    agent_version VARCHAR(30) NOT NULL,
+    status VARCHAR(50) DEFAULT 'registered',
+    registered_at TIMESTAMPTZ DEFAULT NOW(),
+    last_connected_at TIMESTAMPTZ,
+    last_heartbeat TIMESTAMPTZ
+);
+
+-- Computer Class Sessions
+CREATE TABLE IF NOT EXISTS public.lab_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    teacher_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    teacher_name VARCHAR(150) NOT NULL,
+    lab_group VARCHAR(50) NOT NULL DEFAULT 'Lab A',
+    title VARCHAR(200) NOT NULL, -- e.g. "Excel Practical Test #04"
+    assignment_id UUID REFERENCES public.assignments(id) ON DELETE SET NULL,
+    assignment_title VARCHAR(200),
+    target_application VARCHAR(100) DEFAULT 'Microsoft Excel', -- "Microsoft Excel", "Microsoft Word", "Typing", "General"
+    duration_minutes INT NOT NULL DEFAULT 45,
+    started_at TIMESTAMPTZ DEFAULT NOW(),
+    ended_at TIMESTAMPTZ,
+    status lab_session_status NOT NULL DEFAULT 'active',
+    total_computers INT DEFAULT 0,
+    connected_students INT DEFAULT 0,
+    collected_files_count INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Student ↔ Computer Association per Session
+CREATE TABLE IF NOT EXISTS public.computer_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lab_session_id UUID REFERENCES public.lab_sessions(id) ON DELETE CASCADE,
+    computer_id UUID REFERENCES public.computers(id) ON DELETE CASCADE,
+    student_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    student_name VARCHAR(150),
+    connected_at TIMESTAMPTZ DEFAULT NOW(),
+    disconnected_at TIMESTAMPTZ,
+    status VARCHAR(50) DEFAULT 'connected',
+    files_collected_count INT DEFAULT 0,
+    submission_path TEXT
+);
+
+-- Authorized Safe Commands Queue
+CREATE TABLE IF NOT EXISTS public.lab_commands (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    teacher_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    computer_id UUID REFERENCES public.computers(id) ON DELETE CASCADE,
+    session_id UUID REFERENCES public.lab_sessions(id) ON DELETE SET NULL,
+    command_type lab_command_type NOT NULL,
+    payload JSONB DEFAULT '{}'::jsonb,
+    status command_status NOT NULL DEFAULT 'pending',
+    result JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    executed_at TIMESTAMPTZ
+);
+
+-- Immutable Security Audit Logs
+CREATE TABLE IF NOT EXISTS public.lab_audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    teacher_name VARCHAR(150),
+    computer_id UUID REFERENCES public.computers(id) ON DELETE SET NULL,
+    computer_code VARCHAR(50),
+    action VARCHAR(100) NOT NULL, -- e.g. "LOCK_WORKSTATION", "START_SESSION", "COLLECT_FILES"
+    details TEXT,
+    status VARCHAR(50) DEFAULT 'SUCCESS',
+    ip_address VARCHAR(45),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 15. ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.classes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
@@ -301,6 +411,12 @@ ALTER TABLE public.student_device_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.direct_work_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.community_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.community_comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.computers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lab_agents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lab_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.computer_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lab_commands ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lab_audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Public read, self update
 CREATE POLICY "Profiles readable by authenticated users" ON public.profiles FOR SELECT TO authenticated USING (true);
@@ -317,3 +433,18 @@ USING (auth.uid() = (SELECT user_id FROM public.profiles WHERE id = student_id) 
 
 -- Live Device Sessions: Readable by teachers and self
 CREATE POLICY "Device sessions readable by staff and self" ON public.student_device_sessions FOR SELECT TO authenticated USING (true);
+
+-- Computer Lab Policies: Teachers and admins have full management; students can read their assigned PC status
+CREATE POLICY "Computers readable by all authenticated" ON public.computers FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Computers manageable by teachers and admins" ON public.computers FOR ALL TO authenticated
+USING ((SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('teacher', 'assistant_teacher', 'admin'));
+
+CREATE POLICY "Lab sessions manageable by teachers and admins" ON public.lab_sessions FOR ALL TO authenticated
+USING ((SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('teacher', 'assistant_teacher', 'admin'));
+
+CREATE POLICY "Lab commands manageable by teachers and admins" ON public.lab_commands FOR ALL TO authenticated
+USING ((SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('teacher', 'assistant_teacher', 'admin'));
+
+CREATE POLICY "Audit logs readable and insertable by staff" ON public.lab_audit_logs FOR ALL TO authenticated
+USING ((SELECT role FROM public.profiles WHERE user_id = auth.uid()) IN ('teacher', 'assistant_teacher', 'admin'));
+

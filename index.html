@@ -10,17 +10,49 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Moul&family=Koulen&family=Battambang:wght@400;700&family=Kantumruy+Pro:ital,wght@0,300..700;1,300..700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Roboto+Mono:ital,wght@0,300..700;1,300..700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
     <title>សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស | CIIS International School LMS</title>
+    <script>
+      // Reset scroll position to top immediately on page load / reload
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    </script>
   </head>
   <body class="bg-white text-slate-800 antialiased selection:bg-pink-100 selection:text-pink-900 font-sans min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Service Worker Lifecycle Management
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
-            console.log('SW registration note:', err);
+        const isLocalDev = Boolean(
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.includes('192.168.') ||
+          window.location.port !== ''
+        );
+
+        if (isLocalDev) {
+          // In local development / dev server, unregister any active service worker and clear SW caches
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (const registration of registrations) {
+              registration.unregister();
+            }
           });
-        });
+          if ('caches' in window) {
+            caches.keys().then(keys => {
+              for (const key of keys) {
+                caches.delete(key);
+              }
+            });
+          }
+        } else if (window.location.protocol === 'https:') {
+          // In production HTTPS, register the production Service Worker
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => {
+              console.log('SW registration note:', err);
+            });
+          });
+        }
       }
     </script>
   </body>

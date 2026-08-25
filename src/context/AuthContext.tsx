@@ -270,6 +270,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setCurrentUser(GUEST_USER);
     setShowAuthModal(false);
+    try {
+      localStorage.removeItem('ciis_active_tab');
+      localStorage.removeItem('ciis_view_mode');
+    } catch {}
   };
 
   const switchRole = (targetRole: UserRole, teacherPassword?: string): { success: boolean; error?: string } => {

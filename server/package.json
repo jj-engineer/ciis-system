@@ -1,0 +1,14 @@
+{
+  "name": "ciis-school-lab-server",
+  "version": "1.0.0",
+  "description": "CIIS School Management - Realtime Computer Lab Control & WebSocket Server",
+  "main": "lab-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node lab-server.js",
+    "dev": "node --watch lab-server.js"
+  },
+  "keywords": ["computer-lab", "school-lms", "websocket", "windows-agent"],
+  "author": "CIIS Development Team",
+  "license": "ISC"
+}
