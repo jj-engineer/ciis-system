@@ -56,7 +56,12 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
 
   // Connect and sync with real-time WebSocket backend & REST API
   useEffect(() => {
-    const host = typeof window !== 'undefined' ? (window.location.hostname || '192.168.0.114') : '192.168.0.114';
+    const isLocalHost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.startsWith('192.168.')
+    );
+    const host = isLocalHost ? window.location.hostname : '192.168.0.114';
 
     // 1. Initial REST API Sync from real backend
     fetch(`http://${host}:4001/api/computers`)

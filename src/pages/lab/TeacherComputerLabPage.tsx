@@ -14,7 +14,8 @@ import {
   Building,
   KeyRound,
   Plus,
-  Activity
+  Activity,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -66,6 +67,36 @@ export const TeacherComputerLabPage: React.FC = () => {
 
   return (
     <div className="space-y-4 animate-fade-in pb-8">
+      {/* Cloud Notice Banner (Only shown if on Vercel/Cloud) */}
+      {typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') && (
+        <div className="p-3 rounded-2xl bg-zinc-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs border border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-pink-400 shrink-0 animate-pulse" />
+            <span className="text-zinc-300 font-medium">
+              {isKhmer
+                ? 'ដើម្បីមើលវត្តមាន Laptop សាលាផ្សាយផ្ទាល់ សូមបើកលើ Teacher PC (នៅលើ Wi-Fi សាលា):'
+                : 'To view live laptop heartbeats, open the dashboard locally on the Teacher PC (School Wi-Fi):'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href="http://192.168.0.114:5173/teacher/computer-lab"
+              className="px-3 py-1 rounded-lg bg-pink-800 hover:bg-pink-700 text-white font-bold transition-all text-[11px] font-mono flex items-center gap-1 shadow-xs"
+            >
+              <span>192.168.0.114:5173</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            <a
+              href="http://localhost:5173/teacher/computer-lab"
+              className="px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-all text-[11px] font-mono flex items-center gap-1"
+            >
+              <span>localhost:5173</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* 1. Header: Real Title, Connection Pill & Quick Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-zinc-200">
         <div className="flex items-center gap-3">
