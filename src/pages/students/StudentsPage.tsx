@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { getStudentAvatar } from '../../services/avatarLibrary';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
 import { UserProfile } from '../../types';
@@ -17,7 +16,8 @@ import {
   Keyboard,
   ShieldCheck,
   Mail,
-  UserCheck
+  UserCheck,
+  User
 } from 'lucide-react';
 import { StudentProfilePage } from './StudentProfilePage';
 
@@ -151,11 +151,9 @@ export const StudentsPage: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <img
-                      src={student.avatarUrl || getStudentAvatar(student.studentId || student.fullName)}
-                      alt={student.fullName}
-                      className="w-12 h-12 rounded-xl object-cover ring-2 ring-pink-100 shrink-0"
-                    />
+                    <div className="w-12 h-12 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs">
+                      <User className="w-6 h-6 text-zinc-100" />
+                    </div>
                     <div>
                       <h3 className="font-bold text-slate-900 text-sm">{student.fullName}</h3>
                       <p className="text-[11px] text-slate-500 font-mono">{student.studentId || 'STD-001'}</p>

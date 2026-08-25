@@ -1,0 +1,15 @@
+{
+  "name": "school-lab-agent",
+  "version": "1.0.0",
+  "description": "CIIS School Computer Lab Agent — Background Online/Offline Presence Monitor",
+  "main": "agent.js",
+  "type": "module",
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "author": "CIIS Development Team",
+  "license": "ISC"
+}

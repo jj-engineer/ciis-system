@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ComputerStatus, ComputerWorkstation, LabCommandType, LabGroup } from '../types/lab';
 import { LabApiService } from '../services/labApi';
 import { LabStorageService } from '../services/labStorage';
+import { labWsClient } from '../services/labWebSocket';
 
 export type StatusFilterOption =
   | 'ALL'
@@ -17,6 +18,21 @@ export type StatusFilterOption =
   | 'AVAILABLE'
   | 'IN_USE'
   | 'LOCKED';
+
+function updateMatchingComputer(
+  prev: ComputerWorkstation[],
+  targetNumRaw: string | number,
+  updater: (pc: ComputerWorkstation) => ComputerWorkstation
+): ComputerWorkstation[] {
+  const targetNum = String(targetNumRaw).replace(/\D/g, '').padStart(2, '0');
+  return prev.map((pc) => {
+    const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
+    if (pcNum === targetNum) {
+      return updater(pc);
+    }
+    return pc;
+  });
+}
 
 export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
   const [selectedLab, setSelectedLab] = useState<LabGroup>(() => {
@@ -36,6 +52,128 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
     setComputers(loaded);
     LabStorageService.saveSelectedLabGroup(selectedLab);
     setSelectedIds(new Set());
+  }, [selectedLab]);
+
+  // Connect and sync with real-time WebSocket backend & REST API
+  useEffect(() => {
+    const host = typeof window !== 'undefined' ? (window.location.hostname || '192.168.0.114') : '192.168.0.114';
+
+    // 1. Initial REST API Sync from real backend
+    fetch(`http://${host}:4001/api/computers`)
+      .then((res) => res.json())
+      .then((backendComputers: any[]) => {
+        if (Array.isArray(backendComputers) && backendComputers.length > 0) {
+          setComputers((prev) => {
+            return prev.map((pc) => {
+              const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
+              const found = backendComputers.find(
+                (b) => String(b.computerNumber || b.laptopNumber).replace(/\D/g, '').padStart(2, '0') === pcNum
+              );
+              if (found) {
+                return {
+                  ...pc,
+                  status: found.status as ComputerStatus,
+                  hostname: found.hostname || pc.hostname,
+                  ipAddress: found.ipAddress || pc.ipAddress,
+                  lastSeen: found.lastSeen,
+                  lastHeartbeat: found.lastSeen || new Date().toISOString()
+                };
+              }
+              return pc;
+            });
+          });
+        }
+      })
+      .catch(() => {});
+
+    // 2. WebSocket Real-time Event Subscriptions
+    const unsubSnapshot = labWsClient.on('INITIAL_SNAPSHOT', (data: any) => {
+      if (data && Array.isArray(data.computers)) {
+        setComputers((prev) => {
+          return prev.map((pc) => {
+            const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
+            const found = data.computers.find(
+              (b: any) => String(b.computerNumber || b.laptopNumber).replace(/\D/g, '').padStart(2, '0') === pcNum
+            );
+            if (found) {
+              return {
+                ...pc,
+                status: found.status as ComputerStatus,
+                hostname: found.hostname || pc.hostname,
+                ipAddress: found.ipAddress || pc.ipAddress,
+                lastSeen: found.lastSeen,
+                lastHeartbeat: found.lastSeen || new Date().toISOString()
+              };
+            }
+            return pc;
+          });
+        });
+      }
+    });
+
+    const unsubStatus = labWsClient.on('COMPUTER_STATUS_CHANGED', (data: any) => {
+      const num = data.laptopNumber || data.computerNumber;
+      if (num) {
+        setComputers((prev) =>
+          updateMatchingComputer(prev, num, (pc) => ({
+            ...pc,
+            status: data.status as ComputerStatus,
+            lastSeen: data.lastSeen || new Date().toISOString(),
+            lastHeartbeat: new Date().toISOString()
+          }))
+        );
+      }
+    });
+
+    const unsubHeartbeat = labWsClient.on('COMPUTER_HEARTBEAT', (data: any) => {
+      const num = data.laptopNumber || data.computerNumber;
+      if (num) {
+        setComputers((prev) =>
+          updateMatchingComputer(prev, num, (pc) => ({
+            ...pc,
+            status: 'ONLINE',
+            lastSeen: data.lastSeen || new Date().toISOString(),
+            lastHeartbeat: new Date().toISOString()
+          }))
+        );
+      }
+    });
+
+    const unsubRegistered = labWsClient.on('AGENT_REGISTERED', (data: any) => {
+      const num = data.laptopNumber || data.computerNumber || data.computer?.computerNumber;
+      if (num) {
+        setComputers((prev) =>
+          updateMatchingComputer(prev, num, (pc) => ({
+            ...pc,
+            status: 'ONLINE',
+            hostname: data.computer?.hostname || pc.hostname,
+            ipAddress: data.computer?.ipAddress || pc.ipAddress,
+            lastSeen: new Date().toISOString(),
+            lastHeartbeat: new Date().toISOString()
+          }))
+        );
+      }
+    });
+
+    const unsubRevoked = labWsClient.on('AGENT_REVOKED', (data: any) => {
+      const num = data.laptopNumber || data.computerNumber;
+      if (num) {
+        setComputers((prev) =>
+          updateMatchingComputer(prev, num, (pc) => ({
+            ...pc,
+            status: 'REVOKED'
+          }))
+        );
+      }
+    });
+
+    return () => {
+      unsubSnapshot();
+      unsubStatus();
+      unsubHeartbeat();
+      unsubRegistered();
+      unsubRevoked();
+    };
   }, [selectedLab]);
 
   // Periodic heartbeat & session duration ticker

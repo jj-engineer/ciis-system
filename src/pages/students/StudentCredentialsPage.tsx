@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { getStudentAvatar } from '../../services/avatarLibrary';
 import { Modal } from '../../components/common/Modal';
 import { UserProfile } from '../../types';
 import {
@@ -270,11 +269,9 @@ export const StudentCredentialsPage: React.FC = () => {
                       {/* Name & Avatar */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2.5">
-                          <img
-                            src={student.avatarUrl || getStudentAvatar(student.studentId || student.fullName)}
-                            alt={student.fullName}
-                            className="w-8 h-8 rounded-xl object-cover ring-1 ring-slate-200"
-                          />
+                          <div className="w-8 h-8 rounded-xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs">
+                            <User className="w-4 h-4 text-zinc-100" />
+                          </div>
                           <div>
                             <p className="font-extrabold text-slate-900">{student.fullName}</p>
                             <p className="text-[10px] text-slate-400 font-mono">{student.username}</p>

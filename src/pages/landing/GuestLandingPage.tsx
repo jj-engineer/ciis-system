@@ -55,7 +55,9 @@ import {
   LayoutDashboard,
   Menu,
   Send,
-  MessageSquare
+  MessageSquare,
+  Navigation,
+  Copy
 } from 'lucide-react';
 
 interface GalleryModalItem {
@@ -85,6 +87,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDeveloperExpanded, setIsDeveloperExpanded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [copiedCoords, setCopiedCoords] = useState(false);
 
   // Inquiry Form State
   const [inquiryForm, setInquiryForm] = useState({
@@ -1760,23 +1764,49 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             {/* LEFT COLUMN: School Directory & Direct Contact Cards (6 cols on lg) */}
             <div className="scroll-reveal-left lg:col-span-6 space-y-4 text-left">
 
-              {/* 1. CAMPUS ADDRESS */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all flex items-start gap-4">
-                <div className="w-11 h-11 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-800 flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div className="space-y-1 flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className={`text-sm sm:text-base font-black text-zinc-950 ${isKhmer ? 'font-khmer-title' : ''}`}>
-                      {isKhmer ? 'អាសយដ្ឋានទីតាំងសាលា' : 'Campus Location'}
-                    </h3>
-                    <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 text-[10px] font-mono font-bold uppercase shrink-0">
-                      Phnom Penh
-                    </span>
+              {/* 1. CAMPUS ADDRESS WITH LIVE GOOGLE MAP TRIGGER */}
+              <div
+                onClick={() => setShowMapModal(true)}
+                className="p-5 sm:p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs hover:border-pink-300 hover:shadow-md transition-all cursor-pointer group relative overflow-hidden text-left"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowMapModal(true);
+                  }
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-pink-50 border border-pink-200 text-pink-700 group-hover:bg-pink-700 group-hover:text-white flex items-center justify-center shrink-0 transition-colors shadow-2xs">
+                    <MapPin className="w-5 h-5" />
                   </div>
-                  <p className="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed font-kantumruy">
-                    #01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh, Cambodia
-                  </p>
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className={`text-sm sm:text-base font-black text-zinc-950 group-hover:text-pink-900 transition-colors ${isKhmer ? 'font-khmer-title' : ''}`}>
+                        {isKhmer ? 'អាសយដ្ឋានទីតាំងសាលា' : 'Campus Location'}
+                      </h3>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold flex items-center gap-1 shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        LIVE MAP
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed font-kantumruy">
+                      #01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh, Cambodia
+                    </p>
+                  </div>
+                </div>
+
+                {/* Interactive Click Prompt Bar */}
+                <div className="mt-3.5 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs font-bold text-pink-700 group-hover:text-pink-800 transition-colors">
+                  <span className="flex items-center gap-1.5 font-kantumruy">
+                    <Navigation className="w-3.5 h-3.5 text-pink-600 group-hover:translate-x-0.5 transition-transform" />
+                    {isKhmer ? 'ចុចដើម្បីបើកមើលទីតាំងផ្ទាល់លើ Google Maps' : 'Click to view live interactive Google Map'}
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-400 group-hover:text-pink-600 flex items-center gap-0.5 transition-colors">
+                    11.5261, 104.7820
+                    <ExternalLink className="w-3 h-3" />
+                  </span>
                 </div>
               </div>
 
@@ -2260,6 +2290,126 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 10.3. LIVE GOOGLE MAP INTERACTIVE MODAL                                   */}
+      {/* ========================================================================= */}
+      {showMapModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setShowMapModal(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl bg-zinc-950 text-white rounded-3xl border border-zinc-800 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Top Bar */}
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-zinc-800/80 bg-zinc-900/90 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-pink-950 border border-pink-600/40 text-pink-300 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm sm:text-base font-black text-white font-khmer-title">
+                      {isKhmer ? 'ទីតាំងសាលារៀន CIIS លើ Google Maps' : 'CIIS Campus Live Google Map'}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      LIVE GPS
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 font-mono">
+                    GPS: 11.526108, 104.782097 • Khan Kambol, Phnom Penh
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowMapModal(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Interactive Live Map Iframe */}
+            <div className="relative w-full h-[360px] sm:h-[430px] bg-zinc-900">
+              <iframe
+                title="CIIS International School Google Map"
+                src="https://maps.google.com/maps?q=11.526108,104.782097&hl=en&z=17&output=embed"
+                className="w-full h-full border-0"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            {/* Address & Quick Actions Footer */}
+            <div className="p-5 sm:p-6 bg-zinc-900/95 border-t border-zinc-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1 max-w-xl text-left">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+                    {isKhmer ? 'អាសយដ្ឋានផ្លូវការ' : 'OFFICIAL CAMPUS ADDRESS'}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-zinc-200 font-medium font-kantumruy">
+                  #01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh, Cambodia
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                {/* Copy GPS */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText('11.526108, 104.782097');
+                    setCopiedCoords(true);
+                    setTimeout(() => setCopiedCoords(false), 2000);
+                  }}
+                  className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 text-xs font-bold font-mono transition-all cursor-pointer"
+                >
+                  {copiedCoords ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">{isKhmer ? 'បានចម្លង!' : 'Copied!'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                      <span>{isKhmer ? 'ចម្លង GPS' : 'Copy GPS'}</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Get Directions */}
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=11.526108,104.782097"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 text-xs font-bold transition-all cursor-pointer font-kantumruy"
+                >
+                  <Navigation className="w-3.5 h-3.5 text-pink-400" />
+                  <span>{isKhmer ? 'នាំផ្លូវ' : 'Directions'}</span>
+                </a>
+
+                {/* Open in Google Maps */}
+                <a
+                  href="https://maps.app.goo.gl/PXiXw1mdgYGkMono6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-bold shadow-md shadow-pink-900/30 transition-all cursor-pointer font-kantumruy"
+                >
+                  <span>{isKhmer ? 'បើកលើកម្មវិធី Google Maps' : 'Open in Google Maps'}</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       )}

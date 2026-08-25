@@ -6,48 +6,26 @@ import { ComputerWorkstation, LabAuditLog, LabSession } from '../types/lab';
 
 const nowIso = new Date().toISOString();
 
-// Generate 30 School Laptops (01 to 30)
+// Generate 30 Clean School Laptops (01 to 30) - All UNREGISTERED by default
 export const INITIAL_LAB_A_COMPUTERS: ComputerWorkstation[] = Array.from({ length: 30 }, (_, idx) => {
   const num = String(idx + 1).padStart(2, '0');
-  
-  // Realistic Status distribution:
-  // 24 Online, 4 Offline, 2 Unregistered
-  const isOffline = idx === 2 || idx === 17 || idx === 22 || idx === 28; // e.g. 03, 18, 23, 29
-  const isUnregistered = idx === 29; // 30
-  const isRevoked = idx === 24; // 25
-
-  let status: ComputerWorkstation['status'] = 'ONLINE';
-  let lastSeenOffset = Math.floor(Math.random() * 4000) + 1000; // 1-5s ago
-
-  if (isUnregistered) {
-    status = 'UNREGISTERED';
-    lastSeenOffset = 0;
-  } else if (isRevoked) {
-    status = 'REVOKED';
-    lastSeenOffset = 86400000;
-  } else if (isOffline) {
-    status = 'OFFLINE';
-    lastSeenOffset = idx === 2 ? 120000 : 180000 + idx * 20000; // 2-5 mins ago
-  }
-
-  const lastSeenDate = isUnregistered ? undefined : new Date(Date.now() - lastSeenOffset).toISOString();
 
   return {
     id: `pc-laptop-${num}`,
     computerNumber: num,
     computerCode: num,
     hostname: `LAPTOP-CIIS-${num}`,
-    ipAddress: `192.168.10.${100 + idx + 1}`,
-    macAddress: `00:1A:2B:3C:4D:${num}`,
-    agentId: isUnregistered ? '' : `agent-${num}`,
+    ipAddress: '',
+    macAddress: '',
+    agentId: '',
     labGroup: 'Lab A',
-    status,
-    lastSeen: lastSeenDate,
-    lastHeartbeat: lastSeenDate || nowIso,
-    agentVersion: '0.1.0',
-    sessionDuration: status === 'ONLINE' ? 1200 + idx * 45 : 0,
-    cpuUsagePct: status === 'ONLINE' ? Math.floor(10 + Math.random() * 20) : 0,
-    memoryUsagePct: status === 'ONLINE' ? Math.floor(30 + Math.random() * 25) : 0,
+    status: 'UNREGISTERED',
+    lastSeen: undefined,
+    lastHeartbeat: nowIso,
+    agentVersion: '1.0.0',
+    sessionDuration: 0,
+    cpuUsagePct: 0,
+    memoryUsagePct: 0,
     isLocked: false,
     createdAt: nowIso,
     updatedAt: nowIso

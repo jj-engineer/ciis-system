@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node backend/src/server.js",
+    "lab:server": "node backend/src/server.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "open": "node scripts/open-site.js",

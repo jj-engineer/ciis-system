@@ -36,16 +36,36 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [token, setToken] = useState<string>('');
 
-  const computerNumber = computer?.computerNumber || computer?.computerCode || '01';
+  const rawNum = computer?.computerNumber || computer?.computerCode || '01';
+  const computerNumber = String(rawNum).replace(/\D/g, '').padStart(2, '0') || '01';
 
-  // Generate a realistic token on open
+  // Generate a token and sync with backend server on open
   useEffect(() => {
     if (isOpen && computer) {
       const generated = `REG-${computerNumber}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
       setToken(generated);
-      if (onTokenGenerated) {
-        onTokenGenerated(computerNumber, generated);
-      }
+
+      // Sync with backend API
+      fetch('http://192.168.0.114:4001/api/generate-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ laptopNumber: computerNumber })
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data && data.token) {
+            setToken(data.token);
+            if (onTokenGenerated) {
+              onTokenGenerated(computerNumber, data.token);
+            }
+          }
+        })
+        .catch(() => {
+          // Fallback to local token
+          if (onTokenGenerated) {
+            onTokenGenerated(computerNumber, generated);
+          }
+        });
     }
   }, [isOpen, computer, computerNumber]);
 
@@ -114,7 +134,7 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
           <div className="p-4 rounded-2xl bg-zinc-900 text-white flex items-center justify-between gap-3 shadow-inner">
             <div>
               <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-0.5">
-                Registration Token
+                Pairing Token (Laptop {computerNumber})
               </div>
               <div className="text-xl font-black font-mono tracking-widest text-pink-300">
                 {token}
@@ -134,23 +154,61 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
             </button>
           </div>
 
-          {/* Instructions */}
+          {/* One-Line PowerShell Command Box */}
+          <div className="p-3.5 rounded-2xl bg-pink-50/70 border border-pink-200 text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10.5px] font-bold text-pink-900 flex items-center gap-1.5">
+                <Terminal className="w-3.5 h-3.5 text-pink-700" />
+                <span>{isKhmer ? 'ពាក្យបញ្ជាស្វ័យប្រវត្ត ១ ចុច (PowerShell Admin)' : '1-Click Auto Install (Zero Typing)'}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const autoCmd = `irm 192.168.0.114:4001/${computerNumber}/${token}|iex`;
+                  navigator.clipboard.writeText(autoCmd);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="px-2 py-0.5 rounded-md bg-pink-900 text-white text-[10px] font-bold hover:bg-pink-800 transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+              >
+                <Copy className="w-3 h-3" />
+                <span>Copy Command</span>
+              </button>
+            </div>
+            <div className="p-2.5 rounded-xl bg-zinc-900 text-pink-300 font-mono text-[11.5px] select-all break-all border border-zinc-800 flex items-center justify-between gap-2">
+              <span>irm 192.168.0.114:4001/{computerNumber}/{token}|iex</span>
+            </div>
+            <div className="flex items-center justify-between pt-1 border-t border-pink-200/60 text-[10.5px] text-zinc-500 font-mono">
+              <span>{isKhmer ? 'ពាក្យបញ្ជាខ្លីទូទៅ:' : 'Short generic command:'}</span>
+              <code
+                onClick={() => {
+                  navigator.clipboard.writeText('irm 192.168.0.114:4001|iex');
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="px-1.5 py-0.5 bg-white border border-zinc-200 rounded text-zinc-800 cursor-pointer hover:bg-zinc-100 font-bold"
+                title="Click to copy generic command"
+              >
+                irm 192.168.0.114:4001|iex
+              </code>
+            </div>
+          </div>
+
+          {/* Quick Steps */}
           <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-700 space-y-2">
             <div className="flex items-center gap-1.5 font-bold text-zinc-900">
-              <Terminal className="w-4 h-4 text-pink-800" />
-              <span>{isKhmer ? 'ជំហានដំឡើងលើ Laptop របស់សាលា (School Laptop):' : 'Steps on Student School Laptop:'}</span>
+              <Sparkles className="w-4 h-4 text-pink-800" />
+              <span>{isKhmer ? 'ជំហានដំឡើងលើ Laptop របស់សិស្ស:' : 'Steps on Student School Laptop:'}</span>
             </div>
             <ol className="list-decimal list-inside space-y-1 text-[11px] text-zinc-600">
-              <li>{isKhmer ? 'ចម្លង Folder pc-agent ដាក់លើ Laptop (តាម USB)' : 'Copy the `pc-agent` folder to the school laptop (via USB or LAN)'}</li>
-              <li>{isKhmer ? 'បើក file ' : 'Run '} <code className="px-1 py-0.5 bg-zinc-200 rounded font-mono text-[10px]">pc-agent\installer\register-pc.bat</code></li>
-              <li>{isKhmer ? 'បញ្ចូល IP កុំព្យូទ័រគ្រូ (Teacher IP), លេខ Laptop ' : 'Enter Teacher IP, Laptop Number '} <strong className="font-mono text-zinc-900">({computerNumber})</strong> {isKhmer ? 'និងកូដ Token' : 'and Token'}</li>
-              <li>{isKhmer ? 'បើក ' : 'Run '} <code className="px-1 py-0.5 bg-zinc-200 rounded font-mono text-[10px]">install-startup.bat</code> {isKhmer ? 'ដើម្បីដំណើរការស្វ័យប្រវត្តពេលបើក Windows' : 'for silent Windows auto-start'}</li>
+              <li>{isKhmer ? 'បើក PowerShell ជា Administrator លើ Laptop សិស្ស' : 'Open PowerShell as Administrator on Student Laptop'}</li>
+              <li>{isKhmer ? 'Paste ពាក្យបញ្ជាខាងលើ រួចចុច Enter (រួចរាល់ភ្លាមៗ ២ វិនាទី)' : 'Paste the command above and press Enter (Instantly pairs in 2 seconds)'}</li>
             </ol>
           </div>
 
           <div className="flex items-center gap-2 text-[11px] text-zinc-400 font-mono">
             <Clock className="w-3.5 h-3.5" />
-            <span>Expires in 15:00 minutes • One-time pairing token</span>
+            <span>Expires in 15:00 minutes • Single-use pairing token</span>
           </div>
         </div>
 

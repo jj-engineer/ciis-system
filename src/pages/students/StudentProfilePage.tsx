@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { getStudentAvatar } from '../../services/avatarLibrary';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
 import { UserProfile } from '../../types';
@@ -106,11 +105,9 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
       {/* Profile Overview Card */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-          <img
-            src={student.avatarUrl || getStudentAvatar(student.studentId || student.fullName)}
-            alt={student.fullName}
-            className="w-20 h-20 rounded-2xl object-cover ring-4 ring-pink-100 shadow-sm"
-          />
+          <div className="w-20 h-20 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-sm ring-4 ring-pink-100">
+            <User className="w-10 h-10 text-zinc-100" />
+          </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-extrabold text-slate-900">{student.fullName}</h2>

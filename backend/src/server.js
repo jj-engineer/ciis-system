@@ -1,30 +1,51 @@
 /**
  * ====================================================================
- * CIIS School PC Agent Backend — Realtime Monitoring Server
+ * CIIS School PC Agent Backend — Realtime Monitoring & Registration Server
  * ====================================================================
+ * Fixed Server: 192.168.0.114:4001
  *
  * REST API:
  * - GET  /health
- * - GET  /api/computers
- * - POST /api/generate-token  { computerNumber }
- * - POST /api/register-agent  { computerNumber, token, hostname }
- * - POST /api/revoke-agent    { computerNumber }
+ * - GET  /install.ps1       (One-command PowerShell installer)
+ * - GET  /install.bat       (CMD batch launcher)
+ * - GET  /uninstall.ps1     (PowerShell uninstaller)
+ * - GET  /agent.ps1         (PowerShell native background agent)
+ * - GET  /agent.js          (Node.js agent)
+ * - GET  /api/agents/bundle (JSON bundle containing all agent scripts)
+ * - GET  /api/agents/check  { laptopNumber }
+ * - POST /api/agents/register (Registration with pairing token)
+ * - POST /api/generate-token { laptopNumber }
+ * - POST /api/revoke-agent   { laptopNumber }
+ * - GET  /api/computers     (All 30 laptops telemetry)
  *
  * WebSockets:
- * - ws://localhost:4001/ws/agent    (Windows Student Laptops)
- * - ws://localhost:4001/ws/teacher  (Teacher Computer Lab Dashboard)
+ * - ws://192.168.0.114:4001/ws/agent    (Windows Student Laptops)
+ * - ws://192.168.0.114:4001/ws/teacher  (Teacher Computer Lab Dashboard)
+ * ====================================================================
  */
 
 import http from 'http';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { ComputerDatabase } from './database.js';
 import { startWatchdog } from './watchdog.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const PORT = process.env.PORT || 4001;
+const SERVER_IP = '192.168.0.114';
+
+// Locate pc-agent directories for static installer serving
+const rootDir = path.resolve(__dirname, '../../');
+const installerDir = path.resolve(rootDir, 'pc-agent/installer');
+const agentDir = path.resolve(rootDir, 'pc-agent/agent');
 
 // Active WebSocket Connections
-const activeAgentSockets = new Map(); // computerNumber -> WebSocket
-const activeTeacherSockets = new Set(); // WebSocket clients
+const activeAgentSockets = new Map(); // laptopNumber -> WebSocket
+const activeTeacherSockets = new Set(); // Teacher Dashboard WebSockets
 
 // Helper: Broadcast to all active teacher dashboards
 export function broadcastToTeachers(payload) {
@@ -53,6 +74,14 @@ function parseBody(req) {
   });
 }
 
+// Helper: Safe Read File
+function readFileSafe(filePath) {
+  if (fs.existsSync(filePath)) {
+    return fs.readFileSync(filePath, 'utf8');
+  }
+  return null;
+}
+
 // Create HTTP Server
 const server = http.createServer(async (req, res) => {
   // CORS Headers
@@ -66,14 +95,149 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  const url = req.url || '';
+  const parsedUrl = new URL(req.url || '/', `http://${SERVER_IP}:${PORT}`);
+  const pathname = parsedUrl.pathname;
 
-  // 1. Health Check
-  if (url === '/health' && req.method === 'GET') {
+  // ==================================================================
+  // 1. Static Installer & Agent Script Downloads
+  // ==================================================================
+
+  // Ultra-Short One-Line PowerShell Installers:
+  // 1) irm 192.168.0.114:4001|iex
+  // 2) irm 192.168.0.114:4001/i|iex
+  // 3) irm 192.168.0.114:4001/02/REG-02-XXXX|iex  (Zero prompts, auto-paired!)
+  const paramMatch = pathname.match(/^\/(\d{1,2})\/([A-Za-z0-9\-_]+)$/);
+  const isInstallerRoute =
+    pathname === '/' ||
+    pathname === '/i' ||
+    pathname === '/in' ||
+    pathname === '/install' ||
+    pathname === '/install.ps1' ||
+    !!paramMatch;
+
+  if (isInstallerRoute && req.method === 'GET') {
+    const installPs1Path = path.resolve(installerDir, 'install.ps1');
+    const content = readFileSafe(installPs1Path);
+    if (content) {
+      let output = content;
+
+      // Check URL Path /:laptopNum/:token (e.g. /02/REG-02-T3IL)
+      let paramLaptop = paramMatch ? paramMatch[1] : null;
+      let paramToken = paramMatch ? paramMatch[2] : null;
+
+      // Check Query Params (?pc=02&token=REG-02-T3IL)
+      if (!paramLaptop) {
+        paramLaptop = parsedUrl.searchParams.get('pc') || parsedUrl.searchParams.get('laptop') || parsedUrl.searchParams.get('n');
+      }
+      if (!paramToken) {
+        paramToken = parsedUrl.searchParams.get('token') || parsedUrl.searchParams.get('t');
+      }
+
+      if (paramLaptop) {
+        const cleanNum = String(paramLaptop).replace(/\D/g, '').padStart(2, '0');
+        let headerCode = `$ParamLaptopNumber = "${cleanNum}";\n`;
+        if (paramToken) {
+          headerCode += `$ParamPairingToken = "${paramToken.trim().toUpperCase()}";\n`;
+        }
+        output = headerCode + content;
+      }
+
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(output);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('# install.ps1 not found on server');
+    }
+    return;
+  }
+
+  // Batch Installer
+  if (pathname === '/install.bat' && req.method === 'GET') {
+    const batPath = path.resolve(installerDir, 'install.bat');
+    const content = readFileSafe(batPath);
+    if (content) {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(content);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('rem install.bat not found');
+    }
+    return;
+  }
+
+  // PowerShell Uninstaller
+  if (pathname === '/uninstall.ps1' && req.method === 'GET') {
+    const uninstPath = path.resolve(installerDir, 'uninstall.ps1');
+    const content = readFileSafe(uninstPath);
+    if (content) {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(content);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('# uninstall.ps1 not found');
+    }
+    return;
+  }
+
+  // Native Agent PowerShell Worker
+  if (pathname === '/agent.ps1' && req.method === 'GET') {
+    const agentPs1Path = path.resolve(agentDir, 'agent.ps1');
+    const content = readFileSafe(agentPs1Path);
+    if (content) {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(content);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('# agent.ps1 not found');
+    }
+    return;
+  }
+
+  // Node.js Agent
+  if (pathname === '/agent.js' && req.method === 'GET') {
+    const agentJsPath = path.resolve(agentDir, 'agent.js');
+    const content = readFileSafe(agentJsPath);
+    if (content) {
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
+      res.end(content);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('// agent.js not found');
+    }
+    return;
+  }
+
+  // Agent Bundle API (Fast single-payload download for remote laptops)
+  if (pathname === '/api/agents/bundle' && req.method === 'GET') {
+    const agentPs1 = readFileSafe(path.resolve(agentDir, 'agent.ps1')) || '';
+    const agentJs = readFileSafe(path.resolve(agentDir, 'agent.js')) || '';
+    const runnerVbs = readFileSafe(path.resolve(agentDir, 'runner.vbs')) || '';
+    const startBat = readFileSafe(path.resolve(agentDir, 'start-agent.bat')) || '';
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(
+      JSON.stringify({
+        success: true,
+        agentPs1,
+        agentJs,
+        runnerVbs,
+        startBat
+      })
+    );
+    return;
+  }
+
+  // ==================================================================
+  // 2. Health & Telemetry REST Endpoints
+  // ==================================================================
+
+  // Health Check
+  if (pathname === '/health' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(
       JSON.stringify({
         status: 'healthy',
+        server: `${SERVER_IP}:${PORT}`,
         activeLaptops: activeAgentSockets.size,
         activeTeachers: activeTeacherSockets.size,
         uptimeSeconds: Math.round(process.uptime())
@@ -82,30 +246,50 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 2. Get All 30 Computers Telemetry
-  if (url === '/api/computers' && req.method === 'GET') {
+  // All 30 Laptops Telemetry
+  if (pathname === '/api/computers' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(ComputerDatabase.getAll()));
     return;
   }
 
-  // 3. Generate One-Time Registration Token
-  if (url === '/api/generate-token' && req.method === 'POST') {
-    const body = await parseBody(req);
-    const { computerNumber } = body;
-
-    if (!computerNumber) {
+  // Check Registration Status for a Laptop
+  if (pathname === '/api/agents/check' && req.method === 'GET') {
+    const laptopNumber = parsedUrl.searchParams.get('laptopNumber') || parsedUrl.searchParams.get('computerNumber');
+    if (!laptopNumber) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'computerNumber is required (e.g. "01")' }));
+      res.end(JSON.stringify({ error: 'laptopNumber query parameter required' }));
       return;
     }
 
-    const result = ComputerDatabase.generateRegistrationToken(computerNumber);
-    console.log(`[Token Generated] Computer ${computerNumber}: Token ${result.token}`);
+    const checkResult = ComputerDatabase.checkStatus(laptopNumber);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(checkResult));
+    return;
+  }
+
+  // ==================================================================
+  // 3. Token Generation & Registration Handshake
+  // ==================================================================
+
+  // Generate One-Time Registration Token (15-min validity)
+  if ((pathname === '/api/generate-token' || pathname === '/api/agents/generate-token') && req.method === 'POST') {
+    const body = await parseBody(req);
+    const num = body.laptopNumber || body.computerNumber;
+
+    if (!num) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'laptopNumber is required (e.g. "01")' }));
+      return;
+    }
+
+    const result = ComputerDatabase.generateRegistrationToken(num);
+    console.log(`[Token Generated] Laptop ${result.laptopNumber}: Pairing Token ${result.token}`);
 
     broadcastToTeachers({
       type: 'TOKEN_GENERATED',
-      computerNumber,
+      computerNumber: result.laptopNumber,
+      laptopNumber: result.laptopNumber,
       token: result.token,
       expiresAt: result.expiresAt
     });
@@ -115,20 +299,25 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 4. Register Agent via Token (REST Handshake before WS connection)
-  if (url === '/api/register-agent' && req.method === 'POST') {
+  // Register Agent with Pairing Token
+  if ((pathname === '/api/agents/register' || pathname === '/api/register-agent') && req.method === 'POST') {
     const body = await parseBody(req);
-    const { computerNumber, token, hostname } = body;
+    const num = body.laptopNumber || body.computerNumber;
+    const token = body.pairingToken || body.token;
+    const hostname = body.hostname;
     const ip = (req.socket.remoteAddress || '').replace('::ffff:', '');
 
-    const result = ComputerDatabase.registerAgentWithToken(token, computerNumber, hostname, ip);
+    const result = ComputerDatabase.registerAgentWithToken(token, num, hostname, ip);
 
     if (result.success) {
-      console.log(`[Agent Registered] Computer ${computerNumber} (${hostname}) registered successfully`);
+      console.log(`[Agent Registered] Laptop ${num} (${hostname || 'Windows PC'}) registered successfully`);
+
       broadcastToTeachers({
         type: 'AGENT_REGISTERED',
-        computer: ComputerDatabase.getByNumber(computerNumber)
+        computer: ComputerDatabase.getByNumber(num),
+        laptopNumber: num
       });
+
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(result));
     } else {
@@ -138,31 +327,32 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 5. Revoke Agent
-  if (url === '/api/revoke-agent' && req.method === 'POST') {
+  // Revoke Agent Registration
+  if ((pathname === '/api/revoke-agent' || pathname === '/api/agents/revoke') && req.method === 'POST') {
     const body = await parseBody(req);
-    const { computerNumber } = body;
+    const num = body.laptopNumber || body.computerNumber;
 
-    const success = ComputerDatabase.revokeAgent(computerNumber);
+    const success = ComputerDatabase.revokeAgent(num);
     if (success) {
-      // Disconnect active socket if currently connected
-      const ws = activeAgentSockets.get(String(computerNumber).padStart(2, '0'));
+      const formattedNum = String(num).padStart(2, '0');
+      const ws = activeAgentSockets.get(formattedNum);
       if (ws) {
         ws.close(4003, 'Agent Revoked by Administrator');
-        activeAgentSockets.delete(String(computerNumber).padStart(2, '0'));
+        activeAgentSockets.delete(formattedNum);
       }
 
       broadcastToTeachers({
         type: 'AGENT_REVOKED',
-        computerNumber
+        computerNumber: formattedNum,
+        laptopNumber: formattedNum
       });
 
-      console.log(`[Agent Revoked] Computer ${computerNumber} revoked by admin`);
+      console.log(`[Agent Revoked] Laptop ${formattedNum} revoked by administrator`);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: true, message: `Computer ${computerNumber} revoked.` }));
+      res.end(JSON.stringify({ success: true, message: `Laptop ${formattedNum} revoked.` }));
     } else {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: `Computer ${computerNumber} not found.` }));
+      res.end(JSON.stringify({ error: `Laptop ${num} not found.` }));
     }
     return;
   }
@@ -172,19 +362,21 @@ const server = http.createServer(async (req, res) => {
   res.end(JSON.stringify({ error: 'Endpoint not found' }));
 });
 
-// Create WebSocket Server
+// ====================================================================
+// 4. WebSocket Server
+// ====================================================================
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws, req) => {
-  const path = req.url || '';
+  const pathUrl = req.url || '';
   const ip = (req.socket.remoteAddress || '').replace('::ffff:', '');
 
-  // 1. TEACHER DASHBOARD STREAM (/ws/teacher)
-  if (path.includes('/ws/teacher')) {
+  // A. Teacher Dashboard Stream (/ws/teacher)
+  if (pathUrl.includes('/ws/teacher')) {
     activeTeacherSockets.add(ws);
-    console.log(`[Teacher WS Connected] Total active dashboards: ${activeTeacherSockets.size}`);
+    console.log(`[Teacher WS Connected] Active dashboards: ${activeTeacherSockets.size}`);
 
-    // Send initial snapshot of all 30 computers
+    // Send full snapshot of all 30 laptops
     ws.send(
       JSON.stringify({
         type: 'INITIAL_SNAPSHOT',
@@ -199,107 +391,112 @@ wss.on('connection', (ws, req) => {
     return;
   }
 
-  // 2. WINDOWS PC AGENT STREAM (/ws/agent)
-  if (path.includes('/ws/agent')) {
-    let boundComputerNumber = '';
+  // B. Windows Student Laptop Agent Stream (/ws/agent)
+  if (pathUrl.includes('/ws/agent')) {
+    let boundLaptopNumber = '';
 
     ws.on('message', (raw) => {
       try {
         const msg = JSON.parse(raw.toString());
 
-        // A. Agent Authentication Handshake
+        // Handshake Authentication
         if (msg.type === 'auth') {
-          const { computerNumber, agentToken, hostname, agentVersion } = msg;
-          const num = String(computerNumber).padStart(2, '0');
+          const numRaw = msg.laptopNumber || msg.computerNumber;
+          const token = msg.deviceToken || msg.agentToken;
+          const hostname = msg.hostname;
+          const num = String(numRaw).padStart(2, '0');
           const comp = ComputerDatabase.getByNumber(num);
 
           if (!comp || comp.status === 'REVOKED') {
-            ws.send(JSON.stringify({ type: 'auth_error', message: 'Unauthorized or Revoked Computer' }));
+            ws.send(JSON.stringify({ type: 'auth_error', message: 'Unauthorized or Revoked Laptop' }));
             ws.close(4001, 'Unauthorized');
             return;
           }
 
-          boundComputerNumber = num;
+          boundLaptopNumber = num;
           activeAgentSockets.set(num, ws);
           ComputerDatabase.updateHeartbeat(num, ip);
 
-          console.log(`[Agent Authenticated] 💻 Computer ${num} (${hostname || 'Windows PC'}) connected`);
+          console.log(`[Agent Authenticated] Laptop ${num} (${hostname || 'Windows PC'}) connected`);
 
           ws.send(
             JSON.stringify({
               type: 'auth_success',
+              laptopNumber: num,
               computerNumber: num,
               status: 'ONLINE',
               serverTime: new Date().toISOString()
             })
           );
 
-          // Broadcast ONLINE status to Teacher Dashboard
+          // Broadcast ONLINE to Teacher Dashboard
           broadcastToTeachers({
             type: 'COMPUTER_STATUS_CHANGED',
             computerNumber: num,
+            laptopNumber: num,
             status: 'ONLINE',
             lastSeen: new Date().toISOString()
           });
           return;
         }
 
-        // B. Heartbeat Message (Every 5 seconds)
+        // Heartbeat Message (Every 5s)
         if (msg.type === 'heartbeat') {
-          const num = String(msg.computerNumber || boundComputerNumber).padStart(2, '0');
+          const num = String(msg.laptopNumber || msg.computerNumber || boundLaptopNumber).padStart(2, '0');
           const success = ComputerDatabase.updateHeartbeat(num, ip);
 
           if (success) {
-            // Heartbeat Acknowledgement
             ws.send(
               JSON.stringify({
                 type: 'heartbeat_ack',
-                computerNumber: num,
+                laptopNumber: num,
                 timestamp: new Date().toISOString()
               })
             );
 
-            // Broadcast status tick to Teacher Dashboard
             broadcastToTeachers({
               type: 'COMPUTER_HEARTBEAT',
               computerNumber: num,
+              laptopNumber: num,
               lastSeen: new Date().toISOString()
             });
           }
           return;
         }
       } catch (err) {
-        console.warn('[Agent Message Error]', err);
+        console.warn('[Agent WS Message Error]', err);
       }
     });
 
     ws.on('close', () => {
-      if (boundComputerNumber) {
-        activeAgentSockets.delete(boundComputerNumber);
-        console.log(`[Agent Socket Closed] 💻 Computer ${boundComputerNumber}`);
+      if (boundLaptopNumber) {
+        activeAgentSockets.delete(boundLaptopNumber);
+        console.log(`[Agent WS Closed] Laptop ${boundLaptopNumber}`);
       }
     });
     return;
   }
 
-  // Fallback
+  // Fallback for invalid path
   ws.close(1008, 'Invalid WebSocket path');
 });
 
-// Start Watchdog Service
+// Start Watchdog Service (Marks offline if heartbeat absent > 15s)
 startWatchdog((event) => {
   broadcastToTeachers(event);
 });
 
-// Start Listening
-server.listen(PORT, () => {
+// Start Server
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`
 =========================================================
-  CIIS SCHOOL PC AGENT MONITORING SERVER (MVP)
+  CIIS SCHOOL COMPUTER LAB AGENT BACKEND SERVER
 =========================================================
-  * REST API:       http://localhost:${PORT}/health
-  * Teacher WS:     ws://localhost:${PORT}/ws/teacher
-  * Windows Agent:  ws://localhost:${PORT}/ws/agent
+  * Local LAN IP:    ${SERVER_IP}:${PORT}
+  * Installer URL:   http://${SERVER_IP}:${PORT}/install.ps1
+  * REST API:        http://${SERVER_IP}:${PORT}/health
+  * Teacher WS:      ws://${SERVER_IP}:${PORT}/ws/teacher
+  * Windows Agent:   ws://${SERVER_IP}:${PORT}/ws/agent
 =========================================================
 `);
 });

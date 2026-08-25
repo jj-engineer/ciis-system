@@ -8,7 +8,6 @@ type MessageHandler = (data: any) => void;
 
 class LabWebSocketClient {
   private socket: WebSocket | null = null;
-  private url: string = 'ws://localhost:4001/ws/teacher';
   private reconnectInterval: number = 5000;
   private reconnectTimer: any = null;
   private isExplicitlyClosed: boolean = false;
@@ -16,12 +15,20 @@ class LabWebSocketClient {
   private connectionStatusListeners: Set<(connected: boolean) => void> = new Set();
   public isConnected: boolean = false;
 
+  private getWsUrl(): string {
+    if (typeof window !== 'undefined' && window.location) {
+      const host = window.location.hostname || '192.168.0.114';
+      return `ws://${host}:4001/ws/teacher`;
+    }
+    return 'ws://192.168.0.114:4001/ws/teacher';
+  }
+
   constructor() {
     // Lazy connect when mounted in teacher dashboard
   }
 
   public connect(customUrl?: string): void {
-    if (customUrl) this.url = customUrl;
+    const targetUrl = customUrl || this.getWsUrl();
     if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
       return;
     }
@@ -29,7 +36,7 @@ class LabWebSocketClient {
     this.isExplicitlyClosed = false;
 
     try {
-      this.socket = new WebSocket(this.url);
+      this.socket = new WebSocket(targetUrl);
 
       this.socket.onopen = () => {
         this.isConnected = true;

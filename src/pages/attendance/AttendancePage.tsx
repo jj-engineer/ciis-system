@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { getStudentAvatar } from '../../services/avatarLibrary';
 import { Badge, BadgeVariant } from '../../components/common/Badge';
 import { AttendanceStatus } from '../../types';
 import { downloadProfessionalAttendanceExcel } from '../../utils/excelAttendanceExport';
@@ -24,7 +23,8 @@ import {
   RotateCcw,
   FileSpreadsheet,
   FileText,
-  Printer
+  Printer,
+  User
 } from 'lucide-react';
 
 export const AttendancePage: React.FC = () => {
@@ -416,11 +416,9 @@ export const AttendancePage: React.FC = () => {
                       {/* Name & Avatar */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={student.avatarUrl || getStudentAvatar(student.studentId || student.fullName)}
-                            alt={student.fullName}
-                            className="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200 shrink-0"
-                          />
+                          <div className="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs">
+                            <User className="w-4 h-4 text-zinc-100" />
+                          </div>
                           <div>
                             <span className="font-bold text-slate-900 block">{student.fullName}</span>
                             <span className="text-[10px] text-slate-500">{selectedClass?.name}</span>
@@ -492,11 +490,9 @@ export const AttendancePage: React.FC = () => {
                 <div key={student.id} className="p-3.5 rounded-xl bg-slate-50/60 border border-slate-200 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <img
-                        src={student.avatarUrl || getStudentAvatar(student.studentId || student.fullName)}
-                        alt={student.fullName}
-                        className="w-8 h-8 rounded-lg object-cover"
-                      />
+                      <div className="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs">
+                        <User className="w-4 h-4 text-zinc-100" />
+                      </div>
                       <div>
                         <h4 className="font-bold text-xs text-slate-900">{student.fullName}</h4>
                         <span className="text-[10px] text-slate-500 font-mono">{student.studentId}</span>
