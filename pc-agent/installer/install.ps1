@@ -2,9 +2,9 @@
 ====================================================================
  CIIS SCHOOL COMPUTER LAB — WORKSTATION PROVISIONING ENGINE
 ====================================================================
- Professional, Modern & Minimalist IT Terminal Interface
- Cohesive 2-Tone Color Palette (White / Green / Dark Gray)
- Authentic Realistic Engineering Delays (~6-8s Pacing)
+ Pixel-Perfect Straight Box Borders (Green Lines)
+ Clean White & Gray Loading Animations
+ Realistic IT Engineering Pacing (~6-8s Pacing)
 ====================================================================
 #>
 
@@ -20,40 +20,82 @@ $AgentInstallDir = "C:\SchoolLabAgent"
 $TaskName = "SchoolLabAgent_Startup"
 
 # ====================================================================
-# Minimalist IT Terminal UI Components
+# Precision Box-Drawing & Terminal UI Helpers
 # ====================================================================
+
+$BOX_INNER_WIDTH = 67
+
+function Write-BoxBorderTop {
+    param ([int]$Width = 67)
+    $line = "═" * ($Width + 4)
+    Write-Host " ╔$line╗" -ForegroundColor Green
+}
+
+function Write-BoxBorderDivider {
+    param ([int]$Width = 67)
+    $line = "═" * ($Width + 4)
+    Write-Host " ╠$line╣" -ForegroundColor Green
+}
+
+function Write-BoxBorderBottom {
+    param ([int]$Width = 67)
+    $line = "═" * ($Width + 4)
+    Write-Host " ╚$line╝" -ForegroundColor Green
+}
+
+function Write-BoxLine {
+    param (
+        [string]$Content = "",
+        [string]$TextColor = "White",
+        [string]$Prefix = "",
+        [string]$PrefixColor = "White",
+        [int]$Width = 67
+    )
+    $prefixLen = $Prefix.Length
+    $contentLen = $Content.Length
+    $totalLen = $prefixLen + $contentLen
+    $padCount = [Math]::Max(0, $Width - $totalLen)
+    $spaces = " " * $padCount
+
+    Write-Host " ║  " -NoNewline -ForegroundColor Green
+    if ($Prefix) {
+        Write-Host "$Prefix" -NoNewline -ForegroundColor $PrefixColor
+    }
+    if ($Content) {
+        Write-Host "$Content" -NoNewline -ForegroundColor $TextColor
+    }
+    Write-Host "$spaces" -NoNewline
+    Write-Host "  ║" -ForegroundColor Green
+}
 
 function Write-Header {
     Clear-Host
     Write-Host ""
-    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
-    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-    Write-Host "CIIS COMPUTER LAB NETWORK  " -NoNewline -ForegroundColor White
-    Write-Host "•  WORKSTATION PROVISIONING ENGINE       " -NoNewline -ForegroundColor DarkGray
-    Write-Host "║" -ForegroundColor DarkGray
-    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-    Write-Host "Gateway: 192.168.0.114:4001  •  Protocol: WebSocket TCP Core             " -NoNewline -ForegroundColor DarkGray
-    Write-Host "║" -ForegroundColor DarkGray
-    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
+    Write-BoxBorderTop $BOX_INNER_WIDTH
+    Write-BoxLine -Prefix "CIIS COMPUTER LAB NETWORK  " -PrefixColor White -Content "•  WORKSTATION PROVISIONING ENGINE" -TextColor DarkGray -Width $BOX_INNER_WIDTH
+    Write-BoxLine -Content "Gateway: 192.168.0.114:4001  •  Protocol: WebSocket TCP Core" -TextColor DarkGray -Width $BOX_INNER_WIDTH
+    Write-BoxBorderBottom $BOX_INNER_WIDTH
     Write-Host ""
 }
 
 function Show-StepHeader {
     param ([string]$Number, [string]$Title)
     Write-Host ""
-    Write-Host " ┌───[$Number] $Title" -ForegroundColor White
+    Write-Host " ┌───" -NoNewline -ForegroundColor Green
+    Write-Host "[$Number] " -NoNewline -ForegroundColor White
+    Write-Host "$Title" -ForegroundColor White
 }
 
 function Show-StepDone {
     param ([string]$Message)
-    Write-Host " └───" -NoNewline -ForegroundColor DarkGray
+    Write-Host " └───" -NoNewline -ForegroundColor Green
     Write-Host "✔ " -NoNewline -ForegroundColor Green
     Write-Host "$Message" -ForegroundColor White
 }
 
 function Show-Property {
     param ([string]$Key, [string]$Value)
-    Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
+    Write-Host " ├── " -NoNewline -ForegroundColor Green
     Write-Host "$Key : " -NoNewline -ForegroundColor DarkGray
     Write-Host "$Value" -ForegroundColor White
 }
@@ -65,10 +107,12 @@ function Show-ITProgress {
         [int]$MinDelay = 30,
         [int]$MaxDelay = 60
     )
-    Write-Host " ├── $TaskName " -NoNewline -ForegroundColor DarkGray
+    Write-Host " ├── " -NoNewline -ForegroundColor Green
+    Write-Host "$TaskName " -NoNewline -ForegroundColor DarkGray
     Write-Host -NoNewline "[" -ForegroundColor DarkGray
     for ($i = 1; $i -le $Width; $i++) {
-        Write-Host -NoNewline "█" -ForegroundColor Green
+        # Loading animation in crisp White
+        Write-Host -NoNewline "█" -ForegroundColor White
         if ($i -eq [int]($Width * 0.65) -or $i -eq [int]($Width * 0.88)) {
             Start-Sleep -Milliseconds (Get-Random -Minimum 120 -Maximum 200)
         } else {
@@ -82,20 +126,18 @@ function Show-ITProgress {
 function Show-FailAndExit {
     param ([string]$ErrorTitle, [string]$Details = "")
     Write-Host ""
-    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
-    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-    Write-Host "✖ PROVISIONING FAILED                                                " -NoNewline -ForegroundColor Red
-    Write-Host "║" -ForegroundColor DarkGray
-    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
-    Write-Host "  Error: $ErrorTitle" -ForegroundColor Red
+    Write-BoxBorderTop $BOX_INNER_WIDTH
+    Write-BoxLine -Prefix "✖ " -PrefixColor Red -Content "PROVISIONING FAILED: $ErrorTitle" -TextColor Red -Width $BOX_INNER_WIDTH
     if ($Details) {
-        Write-Host "  Details: $Details" -ForegroundColor DarkGray
+        Write-BoxBorderDivider $BOX_INNER_WIDTH
+        Write-BoxLine -Content "$Details" -TextColor DarkGray -Width $BOX_INNER_WIDTH
     }
+    Write-BoxBorderBottom $BOX_INNER_WIDTH
     Write-Host ""
     exit 1
 }
 
-# 1. Show Header
+# 1. Render Header
 Write-Header
 
 # ====================================================================
@@ -156,7 +198,7 @@ if ($ParamLaptopNumber) {
 if (-not $laptopNumber) {
     Write-Host ""
     while ($true) {
-        Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
+        Write-Host " ├── " -NoNewline -ForegroundColor Green
         $rawInput = Read-Host "Assign Laptop Number (01 - 30)"
         if ([string]::IsNullOrWhiteSpace($rawInput)) {
             Write-Host " │   [!] Number cannot be empty." -ForegroundColor DarkGray
@@ -180,7 +222,7 @@ if ($ParamPairingToken) {
     $pairingToken = $ParamPairingToken.ToString().Trim().ToUpper()
     Show-Property "Security Key" "$pairingToken (Master Authorized)"
 } else {
-    Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
+    Write-Host " ├── " -NoNewline -ForegroundColor Green
     $rawToken = Read-Host "Pairing Token [Default: JJ]"
     if (-not [string]::IsNullOrWhiteSpace($rawToken)) {
         $pairingToken = $rawToken.Trim().ToUpper()
@@ -343,36 +385,18 @@ try {
 Show-StepDone "Live telemetry stream active (5s Heartbeat Cycle)"
 
 # ====================================================================
-# Grand Certificate / Summary Box
+# Pixel-Perfect Grand Summary Box (Green Lines, Straight Alignment)
 # ====================================================================
 Write-Host ""
-Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "✔ WORKSTATION SYNCHRONIZED & READY FOR LAB SESSION                  " -NoNewline -ForegroundColor Green
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ╠═══════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "• Workstation Identifier :  " -NoNewline -ForegroundColor DarkGray
-Write-Host "Laptop $laptopNumber ($deviceId)                      " -NoNewline -ForegroundColor White
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "• Teacher Server Gateway :  " -NoNewline -ForegroundColor DarkGray
-Write-Host "$ServerIP`:$ServerPort                             " -NoNewline -ForegroundColor White
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "• Telemetry Status       :  " -NoNewline -ForegroundColor DarkGray
-Write-Host "ONLINE / ACTIVE                                 " -NoNewline -ForegroundColor Green
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "• Background Service     :  " -NoNewline -ForegroundColor DarkGray
-Write-Host "Enabled (Silent Startup on Windows Boot)        " -NoNewline -ForegroundColor White
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ╠═══════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "Setup complete. The student can now use this laptop normally.       " -NoNewline -ForegroundColor DarkGray
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
-Write-Host "You may safely close this terminal window.                          " -NoNewline -ForegroundColor DarkGray
-Write-Host "║" -ForegroundColor DarkGray
-Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
+Write-BoxBorderTop $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "✔ " -PrefixColor Green -Content "WORKSTATION SYNCHRONIZED & READY FOR LAB SESSION" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxBorderDivider $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Workstation Identifier :  " -PrefixColor DarkGray -Content "Laptop $laptopNumber ($deviceId)" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Teacher Server Gateway :  " -PrefixColor DarkGray -Content "$ServerIP`:$ServerPort" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Telemetry Status       :  " -PrefixColor DarkGray -Content "ONLINE / ACTIVE" -TextColor Green -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Background Service     :  " -PrefixColor DarkGray -Content "Enabled (Silent Startup on Windows Boot)" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxBorderDivider $BOX_INNER_WIDTH
+Write-BoxLine -Content "Setup complete. The student can now use this laptop normally." -TextColor DarkGray -Width $BOX_INNER_WIDTH
+Write-BoxLine -Content "You may safely close this terminal window." -TextColor DarkGray -Width $BOX_INNER_WIDTH
+Write-BoxBorderBottom $BOX_INNER_WIDTH
 Write-Host ""
