@@ -132,43 +132,43 @@ export const AssignmentsPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* Top Sub-Tab Navigation Bar */}
-      <div className="flex items-center gap-2 p-1.5 bg-zinc-100/90 rounded-2xl border border-zinc-200/90 max-w-2xl">
+      <div className="flex items-center gap-2 p-1.5 bg-zinc-100/90 rounded-2xl border border-zinc-200/90 max-w-xl">
         <button
           onClick={() => setActiveSubTab('exams')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeSubTab === 'exams'
               ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
               : 'text-zinc-600 hover:text-zinc-950'
           }`}
         >
-          <Trophy className="w-4 h-4 text-zinc-800" />
-          <span>{isKhmer ? 'លទ្ធផលប្រឡងប្រចាំខែ (July Exam)' : 'July Exam Ledger & Top List'}</span>
+          <FileText className="w-4 h-4 text-zinc-700" />
+          <span>{isKhmer ? 'តារាងប្រឡងប្រចាំខែ' : 'Monthly Exams & Scores'}</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('assignments')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeSubTab === 'assignments'
               ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
               : 'text-zinc-600 hover:text-zinc-950'
           }`}
         >
-          <ClipboardList className="w-4 h-4 text-zinc-800" />
+          <ClipboardList className="w-4 h-4 text-zinc-700" />
           <span>{isKhmer ? 'កិច្ចការផ្ទះ & លំហាត់' : 'Assignments & Homework'}</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('practicals')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeSubTab === 'practicals'
               ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
               : 'text-zinc-600 hover:text-zinc-950'
           }`}
         >
-          <Award className="w-4 h-4 text-zinc-800" />
-          <span>{isKhmer ? 'តេស្តអនុវត្តផ្ទាល់' : 'Practical Lab Exams'}</span>
+          <Award className="w-4 h-4 text-zinc-700" />
+          <span>{isKhmer ? 'តេស្តអនុវត្តផ្ទាល់' : 'Practical Lab Tests'}</span>
         </button>
       </div>
 

@@ -24,7 +24,7 @@ export const downloadMonthlyExamPdf = (options: MonthlyExamPdfOptions) => {
     schoolNameEnglish = 'COMMUNITY INTERNAL INSPIRATION SCHOOL',
     centerTitle = 'SHORT COURSES AND FOREIGN LANGUAGES TRAINING CENTER',
     reportTitle = 'Result for July',
-    subject = 'Computer 📖💻🖲️',
+    subject = 'Computer',
     shift = 'Shift Evening 5:30-6:30',
     dateStr = 'CIIS, Date: Friday, July 31, 2026',
     teacherName = 'NUN LANGDY',
