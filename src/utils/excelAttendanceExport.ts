@@ -27,6 +27,29 @@ export interface ExportAttendanceOptions {
   format?: 'excel_table' | 'csv';
 }
 
+export const formatExcelDateWithDay = (dateStr: string): string => {
+  if (!dateStr) return '';
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const d = new Date(year, month, day);
+      
+      const daysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const daysKm = ['អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍'];
+      
+      const dayNameEn = daysEn[d.getDay()];
+      const dayNameKm = daysKm[d.getDay()];
+      return `${dateStr} (${dayNameEn} • ថ្ងៃ${dayNameKm})`;
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+};
+
 export const downloadProfessionalAttendanceExcel = ({
   schoolName = 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស (CIIS)',
   reportTitle = 'OFFICIAL STUDENT ATTENDANCE RECORD SHEET',
@@ -43,6 +66,7 @@ export const downloadProfessionalAttendanceExcel = ({
   const lateCount = items.filter(i => i.status.toLowerCase().includes('late') || i.status === 'មកយឺត').length;
   const permCount = items.filter(i => i.status.toLowerCase().includes('permission') || i.status.toLowerCase().includes('sick') || i.status === 'សុំច្បាប់').length;
   const overallRate = Math.round((presentCount / total) * 100);
+  const formattedDate = formatExcelDateWithDay(date);
 
   if (format === 'csv') {
     // Standard UTF-8 CSV with BOM for Khmer/English
@@ -65,7 +89,7 @@ export const downloadProfessionalAttendanceExcel = ({
       `"${item.fullName}"`,
       `"${item.gender || 'M/F'}"`,
       `"${item.className}"`,
-      date,
+      `"${formattedDate}"`,
       `"${item.status}"`,
       `"${item.attendanceRate}%"`,
       `"${item.standing || (Number(item.attendanceRate) >= 80 ? 'Good Standing' : 'Needs Attention')}"`,
@@ -74,7 +98,7 @@ export const downloadProfessionalAttendanceExcel = ({
 
     const csvContent = '\uFEFF' + [
       `# ${schoolName} - ${reportTitle}`,
-      `# CLASS: ${className} | DATE: ${date} | ACADEMIC YEAR: ${academicYear} | INSTRUCTOR: ${teacherName}`,
+      `# CLASS: ${className} | DATE: ${formattedDate} | ACADEMIC YEAR: ${academicYear} | INSTRUCTOR: ${teacherName}`,
       `# SUMMARY: Total Students: ${total} | Present: ${presentCount} (${overallRate}%) | Absent: ${absentCount} | Late: ${lateCount} | Permission: ${permCount}`,
       headers.join(','),
       ...rows.map(r => r.join(','))
