@@ -462,36 +462,47 @@ wss.on('connection', (ws, req) => {
           const token = msg.deviceToken || msg.agentToken;
           const hostname = msg.hostname;
           const num = String(numRaw).padStart(2, '0');
-          const comp = ComputerDatabase.getByNumber(num);
 
-          if (!comp || comp.status === 'REVOKED') {
-            ws.send(JSON.stringify({ type: 'auth_error', message: 'Unauthorized or Revoked Laptop' }));
-            ws.close(4001, 'Unauthorized');
+          const authCheck = ComputerDatabase.validateAgentToken(num, token);
+
+          if (!authCheck.valid) {
+            console.log(`[Agent Rejected] Laptop ${num} rejected (Reason: ${authCheck.reason})`);
+            ws.send(
+              JSON.stringify({
+                type: 'auth_error',
+                reason: authCheck.reason,
+                message: 'Laptop is not paired. Please run registration with token JJ.'
+              })
+            );
+            ws.close(4001, 'Unpaired');
             return;
           }
 
+          const comp = authCheck.computer;
           boundLaptopNumber = num;
           activeAgentSockets.set(num, ws);
           ComputerDatabase.updateHeartbeat(num, ip);
 
           console.log(`[Agent Authenticated] Laptop ${num} (${hostname || 'Windows PC'}) connected`);
 
+          const currentStatus = comp.isManuallyOffline ? 'OFFLINE' : 'ONLINE';
+
           ws.send(
             JSON.stringify({
               type: 'auth_success',
               laptopNumber: num,
               computerNumber: num,
-              status: 'ONLINE',
+              status: currentStatus,
               serverTime: new Date().toISOString()
             })
           );
 
-          // Broadcast ONLINE to Teacher Dashboard
+          // Broadcast status to Teacher Dashboard
           broadcastToTeachers({
             type: 'COMPUTER_STATUS_CHANGED',
             computerNumber: num,
             laptopNumber: num,
-            status: 'ONLINE',
+            status: currentStatus,
             lastSeen: new Date().toISOString()
           });
           return;
@@ -500,17 +511,25 @@ wss.on('connection', (ws, req) => {
         // Heartbeat Message (Every 5s)
         if (msg.type === 'heartbeat') {
           const num = String(msg.laptopNumber || msg.computerNumber || boundLaptopNumber).padStart(2, '0');
-          const success = ComputerDatabase.updateHeartbeat(num, ip);
+          const comp = ComputerDatabase.getByNumber(num);
 
-          if (success) {
-            ws.send(
-              JSON.stringify({
-                type: 'heartbeat_ack',
-                laptopNumber: num,
-                timestamp: new Date().toISOString()
-              })
-            );
+          if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
+            ws.send(JSON.stringify({ type: 'UNPAIRED', message: 'Laptop has been unpaired' }));
+            ws.close(4003, 'Unpaired');
+            return;
+          }
 
+          ComputerDatabase.updateHeartbeat(num, ip);
+
+          ws.send(
+            JSON.stringify({
+              type: 'heartbeat_ack',
+              laptopNumber: num,
+              timestamp: new Date().toISOString()
+            })
+          );
+
+          if (!comp.isManuallyOffline) {
             broadcastToTeachers({
               type: 'COMPUTER_HEARTBEAT',
               computerNumber: num,

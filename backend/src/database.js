@@ -157,15 +157,43 @@ export const ComputerDatabase = {
     };
   },
 
+  validateAgentToken: (computerNumber, token) => {
+    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const comp = computersMap.get(num);
+    if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
+      return { valid: false, reason: 'UNREGISTERED' };
+    }
+    const cleanToken = (token || '').trim();
+    const isTokenMatch = cleanToken && (
+      cleanToken === comp.deviceToken ||
+      cleanToken === comp.agentToken ||
+      cleanToken.toUpperCase() === 'JJ'
+    );
+    if (!isTokenMatch) {
+      return { valid: false, reason: 'INVALID_TOKEN' };
+    }
+    return { valid: true, computer: comp };
+  },
+
   updateHeartbeat: (computerNumber, ip) => {
     const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
     const comp = computersMap.get(num);
-    if (!comp || comp.status === 'REVOKED') return false;
+    if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
+      return false;
+    }
 
-    comp.status = 'ONLINE';
     comp.lastSeen = new Date().toISOString();
     comp.lastHeartbeatMs = Date.now();
     if (ip) comp.ipAddress = ip;
+
+    // If teacher manually set to OFFLINE, keep it OFFLINE
+    if (comp.isManuallyOffline) {
+      comp.status = 'OFFLINE';
+      computersMap.set(num, comp);
+      return false;
+    }
+
+    comp.status = 'ONLINE';
     computersMap.set(num, comp);
     return true;
   },
@@ -173,8 +201,23 @@ export const ComputerDatabase = {
   setOffline: (computerNumber) => {
     const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
     const comp = computersMap.get(num);
-    if (comp) {
+    if (comp && comp.status !== 'UNREGISTERED') {
       comp.status = 'OFFLINE';
+      comp.isManuallyOffline = true;
+      comp.lastSeen = new Date().toISOString();
+      comp.lastHeartbeatMs = Date.now();
+      computersMap.set(num, comp);
+      return true;
+    }
+    return false;
+  },
+
+  setOnline: (computerNumber) => {
+    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const comp = computersMap.get(num);
+    if (comp && comp.status !== 'UNREGISTERED') {
+      comp.status = 'ONLINE';
+      comp.isManuallyOffline = false;
       comp.lastSeen = new Date().toISOString();
       comp.lastHeartbeatMs = Date.now();
       computersMap.set(num, comp);
@@ -189,6 +232,7 @@ export const ComputerDatabase = {
     if (!comp) return false;
 
     comp.status = 'UNREGISTERED';
+    comp.isManuallyOffline = false;
     comp.deviceId = `device_${num}`;
     comp.agentToken = undefined;
     comp.deviceToken = undefined;
@@ -197,6 +241,7 @@ export const ComputerDatabase = {
     comp.lastHeartbeatMs = undefined;
     comp.registeredAt = undefined;
     comp.registrationToken = undefined;
+    comp.tokenExpiresAt = undefined;
     computersMap.set(num, comp);
     return true;
   },
@@ -207,6 +252,7 @@ export const ComputerDatabase = {
     if (!comp) return false;
 
     comp.status = 'UNREGISTERED';
+    comp.isManuallyOffline = false;
     comp.agentToken = undefined;
     comp.deviceToken = undefined;
     comp.agentId = undefined;

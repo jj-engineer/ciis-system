@@ -126,7 +126,19 @@ while ($true) {
         Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] Connection error: $_" -ForegroundColor DarkGray
     } finally {
         if ($ws) {
+            $closeStatus = $ws.CloseStatus
+            $closeDesc = $ws.CloseStatusDescription
             try { $ws.Dispose() } catch {}
+
+            # If laptop was unpaired or revoked by teacher, clean up and terminate
+            if ($closeStatus -eq 4001 -or $closeStatus -eq 4003 -or $closeDesc -match "Unpaired|Unauthorized|Revoked") {
+                Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] Laptop has been unpaired by teacher. Removing local config..." -ForegroundColor Red
+                if (Test-Path $ConfigFilePath) {
+                    Remove-Item -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
+                }
+                Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] Agent terminated gracefully." -ForegroundColor Yellow
+                exit 0
+            }
         }
     }
 
