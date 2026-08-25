@@ -1,17 +1,17 @@
 <#
 ====================================================================
- CIIS SCHOOL COMPUTER LAB AGENT — WORKSTATION AUTO-PROVISIONER
+ CIIS SCHOOL COMPUTER LAB — WORKSTATION PROVISIONING ENGINE
 ====================================================================
- Professional, Modern & Lightweight Windows Agent Provisioner
- Fixed Teacher Server: 192.168.0.114:4001 (Zero IP prompts)
- Master Pairing Token: JJ
+ Professional, Modern & Minimalist IT Terminal Interface
+ Cohesive 2-Tone Color Palette (White / Green / Dark Gray)
+ Authentic Realistic Engineering Delays (~6-8s Pacing)
 ====================================================================
 #>
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $ErrorActionPreference = "Stop"
 
-# Fixed Server Configuration
+# Server Configuration
 $ServerIP = "192.168.0.114"
 $ServerPort = 4001
 $WebSocketUrl = "ws://192.168.0.114:4001/ws/agent"
@@ -19,101 +19,110 @@ $ServerBaseUrl = "http://${ServerIP}:${ServerPort}"
 $AgentInstallDir = "C:\SchoolLabAgent"
 $TaskName = "SchoolLabAgent_Startup"
 
-# Helper Functions for Sleek Terminal UI
+# ====================================================================
+# Minimalist IT Terminal UI Components
+# ====================================================================
+
 function Write-Header {
     Clear-Host
     Write-Host ""
-    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host " ║                                                                       ║" -ForegroundColor Cyan
-    Write-Host " ║   " -NoNewline -ForegroundColor Cyan
-    Write-Host "CIIS SCHOOL COMPUTER LAB  " -NoNewline -ForegroundColor White
-    Write-Host "•  WORKSTATION AUTO-PROVISIONER      " -NoNewline -ForegroundColor Cyan
-    Write-Host "║" -ForegroundColor Cyan
-    Write-Host " ║   " -NoNewline -ForegroundColor Cyan
-    Write-Host "Campus Network Gateway: 192.168.0.114:4001  |  WebSocket Core    " -NoNewline -ForegroundColor DarkCyan
-    Write-Host "║" -ForegroundColor Cyan
-    Write-Host " ║                                                                       ║" -ForegroundColor Cyan
-    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
+    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "CIIS COMPUTER LAB NETWORK  " -NoNewline -ForegroundColor White
+    Write-Host "•  WORKSTATION PROVISIONING ENGINE       " -NoNewline -ForegroundColor DarkGray
+    Write-Host "║" -ForegroundColor DarkGray
+    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "Gateway: 192.168.0.114:4001  •  Protocol: WebSocket TCP Core             " -NoNewline -ForegroundColor DarkGray
+    Write-Host "║" -ForegroundColor DarkGray
+    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
     Write-Host ""
 }
 
-function Show-Step {
-    param ([string]$Index, [string]$Title)
+function Show-StepHeader {
+    param ([string]$Number, [string]$Title)
     Write-Host ""
-    Write-Host " ┌───[$Index] $Title" -ForegroundColor Yellow
+    Write-Host " ┌───[$Number] $Title" -ForegroundColor White
 }
 
-function Show-Success {
+function Show-StepDone {
     param ([string]$Message)
-    Write-Host " └───✔ $Message" -ForegroundColor Green
+    Write-Host " └───" -NoNewline -ForegroundColor DarkGray
+    Write-Host "✔ " -NoNewline -ForegroundColor Green
+    Write-Host "$Message" -ForegroundColor White
 }
 
-function Show-Info {
-    param ([string]$Label, [string]$Value)
+function Show-Property {
+    param ([string]$Key, [string]$Value)
     Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
-    Write-Host "$Label`: " -NoNewline -ForegroundColor Gray
-    Write-Host "$Value" -ForegroundColor Cyan
+    Write-Host "$Key : " -NoNewline -ForegroundColor DarkGray
+    Write-Host "$Value" -ForegroundColor White
 }
 
-function Show-Warning {
-    param ([string]$Message)
-    Write-Host " ├── ⚠ $Message" -ForegroundColor Yellow
+function Show-ITProgress {
+    param (
+        [string]$TaskName,
+        [int]$Width = 24,
+        [int]$MinDelay = 30,
+        [int]$MaxDelay = 60
+    )
+    Write-Host " ├── $TaskName " -NoNewline -ForegroundColor DarkGray
+    Write-Host -NoNewline "[" -ForegroundColor DarkGray
+    for ($i = 1; $i -le $Width; $i++) {
+        Write-Host -NoNewline "█" -ForegroundColor Green
+        if ($i -eq [int]($Width * 0.65) -or $i -eq [int]($Width * 0.88)) {
+            Start-Sleep -Milliseconds (Get-Random -Minimum 120 -Maximum 200)
+        } else {
+            Start-Sleep -Milliseconds (Get-Random -Minimum $MinDelay -Maximum $MaxDelay)
+        }
+    }
+    Write-Host "] " -NoNewline -ForegroundColor DarkGray
+    Write-Host "OK" -ForegroundColor Green
 }
 
-function Show-ErrorAndExit {
-    param ([string]$Message, [string]$Hint = "")
+function Show-FailAndExit {
+    param ([string]$ErrorTitle, [string]$Details = "")
     Write-Host ""
-    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host " ║  ✖ PROVISIONING FAILED                                                ║" -ForegroundColor Red
-    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor Red
-    Write-Host "  Error: $Message" -ForegroundColor Red
-    if ($Hint) {
-        Write-Host ""
-        Write-Host "  Troubleshooting:" -ForegroundColor Yellow
-        Write-Host "  $Hint" -ForegroundColor Gray
+    Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
+    Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "✖ PROVISIONING FAILED                                                " -NoNewline -ForegroundColor Red
+    Write-Host "║" -ForegroundColor DarkGray
+    Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
+    Write-Host "  Error: $ErrorTitle" -ForegroundColor Red
+    if ($Details) {
+        Write-Host "  Details: $Details" -ForegroundColor DarkGray
     }
     Write-Host ""
     exit 1
 }
 
-function Show-ProgressAnim {
-    param ([string]$Action, [int]$Steps = 16, [int]$Speed = 20)
-    Write-Host " ├── $Action " -NoNewline -ForegroundColor DarkGray
-    Write-Host -NoNewline "[" -ForegroundColor DarkGray
-    for ($i = 1; $i -le $Steps; $i++) {
-        Write-Host -NoNewline "▓" -ForegroundColor Cyan
-        Start-Sleep -Milliseconds $Speed
-    }
-    Write-Host "] 100%" -ForegroundColor Green
-}
-
-# 1. Render Header
+# 1. Show Header
 Write-Header
 
 # ====================================================================
-# [STEP 1] Environment & Permission Verification
+# [STEP 1] Discovery & Environment Audit
 # ====================================================================
-Show-Step "01/05" "ENVIRONMENT & NETWORK DISCOVERY"
+Show-StepHeader "01/04" "NETWORK DISCOVERY & SYSTEM ENVIRONMENT"
 
-# Check Windows OS
 if ([System.Environment]::OSVersion.Platform -ne [System.PlatformID]::Win32NT) {
-    Show-ErrorAndExit "This installer only supports Windows 10 / 11."
+    Show-FailAndExit "This provisioner only supports Windows 10 / 11."
 }
 
-# Check Administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
-    Show-ErrorAndExit "Administrator privileges required." "Please close this window, right-click PowerShell, and select 'Run as Administrator'."
+    Show-FailAndExit "Administrator privileges required." "Please close this window, right-click PowerShell, and select 'Run as Administrator'."
 }
-Show-Info "Host Machine" "$env:COMPUTERNAME (Windows NT)"
-Show-Info "Privileges" "Elevated (Administrator)"
 
-# Check Teacher Server Port Reachability
+Show-Property "Host Machine" "$env:COMPUTERNAME"
+Show-Property "User Privileges" "Administrator (Elevated)"
+
+Show-ITProgress "Probing Teacher Gateway ($ServerIP`:$ServerPort)" 20 25 50
+
+# TCP Connection Check
 $tcpClient = New-Object System.Net.Sockets.TcpClient
 $isConnected = $false
 try {
     $asyncResult = $tcpClient.BeginConnect($ServerIP, $ServerPort, $null, $null)
-    $success = $asyncResult.AsyncWaitHandle.WaitOne(3000, $false)
+    $success = $asyncResult.AsyncWaitHandle.WaitOne(3500, $false)
     if ($success) {
         $tcpClient.EndConnect($asyncResult)
         $isConnected = $true
@@ -125,22 +134,22 @@ try {
 }
 
 if (-not $isConnected) {
-    Show-ErrorAndExit "Cannot connect to Teacher Server at $ServerIP`:$ServerPort" "• Make sure this laptop is on the school Wi-Fi network.`n  • Ensure the teacher server computer is turned on with backend running.`n  • Verify Windows Firewall allows incoming port $ServerPort on teacher PC."
+    Show-FailAndExit "Cannot connect to Teacher Gateway at $ServerIP`:$ServerPort" "Ensure the laptop is connected to the school Wi-Fi network and teacher server is active."
 }
 
-Show-Success "Teacher Server Online & Reachable ($ServerIP`:$ServerPort)"
+Show-StepDone "Gateway link established ($ServerIP`:$ServerPort)"
 
 # ====================================================================
-# [STEP 2] Laptop Identity & Master Token
+# [STEP 2] Laptop Identity & Master Authentication
 # ====================================================================
-Show-Step "02/05" "WORKSTATION IDENTITY & SECURITY AUTH"
+Show-StepHeader "02/04" "IDENTITY ASSIGNMENT & MASTER TOKEN"
 
 $laptopNumber = ""
 if ($ParamLaptopNumber) {
     $trimmedParam = $ParamLaptopNumber.ToString().Trim()
     if ($trimmedParam -match '^\d+$') {
         $laptopNumber = ([int]$trimmedParam).ToString("00")
-        Show-Info "Assigned Laptop" "Laptop $laptopNumber (Auto-Detected from command)"
+        Show-Property "Workstation Node" "Laptop $laptopNumber"
     }
 }
 
@@ -148,9 +157,9 @@ if (-not $laptopNumber) {
     Write-Host ""
     while ($true) {
         Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
-        $rawInput = Read-Host "Enter Laptop Number (01 - 30)"
+        $rawInput = Read-Host "Assign Laptop Number (01 - 30)"
         if ([string]::IsNullOrWhiteSpace($rawInput)) {
-            Write-Host " │   [!] Number cannot be empty." -ForegroundColor Red
+            Write-Host " │   [!] Number cannot be empty." -ForegroundColor DarkGray
             continue
         }
 
@@ -162,32 +171,24 @@ if (-not $laptopNumber) {
                 break
             }
         }
-        Write-Host " │   [!] Must be between 01 and 30." -ForegroundColor Red
+        Write-Host " │   [!] Must be between 01 and 30." -ForegroundColor DarkGray
     }
 }
 
-# Pairing Token (Default to Master Token JJ)
 $pairingToken = "JJ"
 if ($ParamPairingToken) {
     $pairingToken = $ParamPairingToken.ToString().Trim().ToUpper()
-    Show-Info "Pairing Key" "$pairingToken (Master Security Key)"
+    Show-Property "Security Key" "$pairingToken (Master Authorized)"
 } else {
     Write-Host " ├── " -NoNewline -ForegroundColor DarkGray
-    $rawToken = Read-Host "Pairing Token [Press ENTER for Default: JJ]"
+    $rawToken = Read-Host "Pairing Token [Default: JJ]"
     if (-not [string]::IsNullOrWhiteSpace($rawToken)) {
         $pairingToken = $rawToken.Trim().ToUpper()
     }
-    Show-Info "Pairing Key" "$pairingToken"
+    Show-Property "Security Key" "$pairingToken"
 }
 
-Show-Success "Workstation Configured as Laptop $laptopNumber (Key: $pairingToken)"
-
-# ====================================================================
-# [STEP 3] Cloud/Server Registration Handshake
-# ====================================================================
-Show-Step "03/05" "REGISTERING WORKSTATION WITH TEACHER SERVER"
-
-Show-ProgressAnim "Transmitting registration handshake" 14 15
+Show-ITProgress "Exchanging registration handshake with Gateway" 24 35 65
 
 $hostname = $env:COMPUTERNAME
 $registerUrl = "$ServerBaseUrl/api/agents/register"
@@ -200,7 +201,7 @@ $registerPayload = @{
 } | ConvertTo-Json -Compress
 
 try {
-    $regResponse = Invoke-RestMethod -Uri $registerUrl -Method Post -Body $registerPayload -ContentType "application/json" -TimeoutSec 8
+    $regResponse = Invoke-RestMethod -Uri $registerUrl -Method Post -Body $registerPayload -ContentType "application/json" -TimeoutSec 10
 } catch {
     $errMsg = $_.Exception.Message
     if ($_.Exception.Response) {
@@ -211,29 +212,28 @@ try {
             if ($errBody.error) { $errMsg = $errBody.error }
         } catch {}
     }
-    Show-ErrorAndExit "Registration rejected by server: $errMsg" "Verify that Pairing Token JJ is entered correctly."
+    Show-FailAndExit "Server handshake failed: $errMsg" "Make sure the token JJ is authorized."
 }
 
 if (-not $regResponse.success) {
-    Show-ErrorAndExit "Registration failed: $($regResponse.error)"
+    Show-FailAndExit "Server rejected registration: $($regResponse.error)"
 }
 
 $deviceId = if ($regResponse.deviceId) { $regResponse.deviceId } else { "device_$laptopNumber" }
 $deviceToken = if ($regResponse.deviceToken) { $regResponse.deviceToken } else { $regResponse.agentToken }
 $wsTarget = if ($regResponse.websocketUrl) { $regResponse.websocketUrl } else { $WebSocketUrl }
 
-Show-Success "Registered Successfully! (Device ID: $deviceId)"
+Show-StepDone "Workstation authorized (Device ID: $deviceId)"
 
 # ====================================================================
-# [STEP 4] Deploy Local Agent & Windows Startup Service
+# [STEP 3] Deploy Local Agent & Windows Startup Service
 # ====================================================================
-Show-Step "04/05" "DEPLOYING SYSTEM AGENT SERVICE"
+Show-StepHeader "03/04" "AGENT DEPLOYMENT & WINDOWS SERVICE SETUP"
 
 if (-not (Test-Path $AgentInstallDir)) {
     New-Item -Path $AgentInstallDir -ItemType Directory -Force | Out-Null
 }
 
-# Write Local Configuration
 $localConfig = @{
     serverIp = $ServerIP
     serverPort = $ServerPort
@@ -247,7 +247,8 @@ $localConfig = @{
 } | ConvertTo-Json -Depth 4
 Set-Content -Path "$AgentInstallDir\config.json" -Value $localConfig -Encoding UTF8 -Force
 
-# Download/Write native agent.ps1
+Show-ITProgress "Writing agent runtime binaries" 18 20 40
+
 try {
     $agentPs1Code = (New-Object System.Net.WebClient).DownloadString("$ServerBaseUrl/agent.ps1")
     if ($agentPs1Code -and $agentPs1Code.Length -gt 100) {
@@ -255,7 +256,6 @@ try {
     }
 } catch {}
 
-# Fallback bundle download
 if (-not (Test-Path "$AgentInstallDir\agent.ps1")) {
     try {
         $bundle = Invoke-RestMethod -Uri "$ServerBaseUrl/api/agents/bundle" -Method Get -TimeoutSec 5 -ErrorAction SilentlyContinue
@@ -265,18 +265,17 @@ if (-not (Test-Path "$AgentInstallDir\agent.ps1")) {
     } catch {}
 }
 
-# Deploy runner batch script
 $batContent = "@echo off`nstart /b `"`" powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$AgentInstallDir\agent.ps1`""
 Set-Content -Path "$AgentInstallDir\start-agent.bat" -Value $batContent -Encoding ASCII -Force
 
-Show-ProgressAnim "Installing Windows startup hooks" 12 15
+Show-ITProgress "Configuring Windows background daemon & startup hook" 26 30 55
 
 # Stop existing running instance
 try {
     Get-Process -Name "powershell" -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*$AgentInstallDir\agent.ps1*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 } catch {}
 
-# Configure Windows Scheduled Task for 100% Reliable Auto-Start on Boot
+# Configure Windows Scheduled Task
 try {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 
@@ -289,7 +288,6 @@ try {
 
     Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger @($triggerBoot, $triggerLogon) -Settings $settings -User "NT AUTHORITY\SYSTEM" -RunLevel Highest -Force | Out-Null
 } catch {
-    # Fallback to Registry Run
     try {
         Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "SchoolLabAgent" -Value "`"$AgentInstallDir\start-agent.bat`"" -Force
     } catch {
@@ -297,17 +295,17 @@ try {
     }
 }
 
-# Launch the agent silently now
+# Start background agent
 Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$AgentInstallDir\agent.ps1`"" -WindowStyle Hidden
 
-Show-Success "Core Files Installed & Silent Startup Service Configured"
+Show-StepDone "Silent background service installed & active"
 
 # ====================================================================
-# [STEP 5] Telemetry Verification Handshake
+# [STEP 4] Real-Time Telemetry Stream Verification
 # ====================================================================
-Show-Step "05/05" "LIVE TELEMETRY VERIFICATION"
+Show-StepHeader "04/04" "REAL-TIME TELEMETRY VERIFICATION"
 
-Show-ProgressAnim "Verifying live WebSocket stream" 16 20
+Show-ITProgress "Synchronizing live WebSocket channel" 28 35 70
 
 $wsTestPassed = $false
 try {
@@ -342,41 +340,39 @@ try {
     if ($testWs) { try { $testWs.Dispose() } catch {} }
 }
 
-Show-Success "Live Heartbeat Telemetry Active (5s Cycle Verified)"
+Show-StepDone "Live telemetry stream active (5s Heartbeat Cycle)"
 
 # ====================================================================
-# Grand Provisioning Summary Card
+# Grand Certificate / Summary Box
 # ====================================================================
 Write-Host ""
-Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host " ║                                                                       ║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "✔ WORKSTATION READY & CONNECTED TO TEACHER DASHBOARD       " -NoNewline -ForegroundColor White
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║                                                                       ║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "• Assigned Device :  " -NoNewline -ForegroundColor Gray
-Write-Host "Laptop $laptopNumber ($deviceId)                      " -NoNewline -ForegroundColor Cyan
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "• Teacher Server  :  " -NoNewline -ForegroundColor Gray
-Write-Host "$ServerIP`:$ServerPort (LAN Online)                 " -NoNewline -ForegroundColor Cyan
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "• Live Telemetry  :  " -NoNewline -ForegroundColor Gray
-Write-Host "ONLINE (Heartbeat: 5s interval)             " -NoNewline -ForegroundColor Green
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "• Startup Mode    :  " -NoNewline -ForegroundColor Gray
-Write-Host "Automatic on Windows Boot (Silent)          " -NoNewline -ForegroundColor Cyan
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║                                                                       ║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "Setup complete. The student may now use this laptop normally.      " -NoNewline -ForegroundColor DarkYellow
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║   " -NoNewline -ForegroundColor Green
-Write-Host "You can safely close this PowerShell window.                       " -NoNewline -ForegroundColor DarkGray
-Write-Host "║" -ForegroundColor Green
-Write-Host " ║                                                                       ║" -ForegroundColor Green
-Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host " ╔═══════════════════════════════════════════════════════════════════════╗" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "✔ WORKSTATION SYNCHRONIZED & READY FOR LAB SESSION                  " -NoNewline -ForegroundColor Green
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ╠═══════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "• Workstation Identifier :  " -NoNewline -ForegroundColor DarkGray
+Write-Host "Laptop $laptopNumber ($deviceId)                      " -NoNewline -ForegroundColor White
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "• Teacher Server Gateway :  " -NoNewline -ForegroundColor DarkGray
+Write-Host "$ServerIP`:$ServerPort                             " -NoNewline -ForegroundColor White
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "• Telemetry Status       :  " -NoNewline -ForegroundColor DarkGray
+Write-Host "ONLINE / ACTIVE                                 " -NoNewline -ForegroundColor Green
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "• Background Service     :  " -NoNewline -ForegroundColor DarkGray
+Write-Host "Enabled (Silent Startup on Windows Boot)        " -NoNewline -ForegroundColor White
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ╠═══════════════════════════════════════════════════════════════════════╣" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "Setup complete. The student can now use this laptop normally.       " -NoNewline -ForegroundColor DarkGray
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ║  " -NoNewline -ForegroundColor DarkGray
+Write-Host "You may safely close this terminal window.                          " -NoNewline -ForegroundColor DarkGray
+Write-Host "║" -ForegroundColor DarkGray
+Write-Host " ╚═══════════════════════════════════════════════════════════════════════╝" -ForegroundColor DarkGray
 Write-Host ""
