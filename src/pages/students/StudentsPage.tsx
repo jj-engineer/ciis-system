@@ -246,7 +246,7 @@ export const StudentsPage: React.FC = () => {
                   <div className="space-y-0.5 min-w-0 border-l border-zinc-200 pl-2.5">
                     <span className="text-[10px] text-zinc-400 font-bold uppercase block flex items-center gap-1">
                       <Calendar className="w-2.5 h-2.5 text-zinc-500" />
-                      {isKhmer ? 'ថ្ងៃបង់ថ្លៃ ($15)' : 'Tuition Due'}
+                      {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ ($15)' : 'Payment Deadline'}
                     </span>
                     <p className="font-mono font-bold text-zinc-900 text-[11px] truncate">
                       {student.paymentDeadline || '28-Aug-26'}
@@ -295,7 +295,7 @@ export const StudentsPage: React.FC = () => {
           isOpen={showAddStudentModal}
           onClose={() => setShowAddStudentModal(false)}
           title={isKhmer ? 'ចុះឈ្មោះសិស្សថ្មី' : 'Enroll New Student'}
-          subtitle={isKhmer ? 'បញ្ចូលឈ្មោះ ភេទ លេខទូរស័ព្ទ និងកាលបរិច្ឆេទបង់ថ្លៃសិក្សា ($15)' : 'Add student credentials, parent contact, and tuition due date'}
+          subtitle={isKhmer ? 'បញ្ចូលឈ្មោះ ភេទ លេខទូរស័ព្ទ និងកាលបរិច្ឆេទបង់ថ្លៃសិក្សា ($15)' : 'Add student credentials, parent contact, and payment deadline ($15)'}
           maxWidth="md"
         >
           <form onSubmit={handleAddStudentSubmit} className="space-y-4">

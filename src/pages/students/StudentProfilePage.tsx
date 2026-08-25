@@ -142,7 +142,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
               </div>
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-3 h-3 text-zinc-500 shrink-0" />
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">{isKhmer ? 'ថ្ងៃបង់ថ្លៃ៖' : 'Tuition Due:'}</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">{isKhmer ? 'ថ្ងៃផុតកំណត់បង់៖' : 'Payment Deadline:'}</span>
                 <span className="font-mono font-bold text-zinc-900">{student.paymentDeadline || '28-Aug-26'} ($15)</span>
               </div>
               <div className="flex items-center gap-1.5">

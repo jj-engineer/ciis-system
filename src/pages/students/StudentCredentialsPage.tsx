@@ -133,7 +133,7 @@ export const StudentCredentialsPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
             {isKhmer
               ? 'មើលលេខសម្ងាត់ លេខទូរស័ព្ទ កាលបរិច្ឆេទបង់ថ្លៃ ($15) និងព័ត៌មានគណនីសិស្សទាំងអស់។'
-              : 'Secure credentials vault, contact phone directory, and monthly tuition due dates ($15).'}
+              : 'Secure credentials vault, contact phone directory, and monthly payment deadlines ($15).'}
           </p>
         </div>
 
@@ -219,7 +219,7 @@ export const StudentCredentialsPage: React.FC = () => {
                 <th className="py-3 px-4">{isKhmer ? 'ឈ្មោះសិស្ស' : 'Student Name'}</th>
                 <th className="py-3 px-3">{isKhmer ? 'ភេទ' : 'Sex'}</th>
                 <th className="py-3 px-3">{isKhmer ? 'លេខទូរស័ព្ទ' : 'Phone Number'}</th>
-                <th className="py-3 px-3">{isKhmer ? 'ថ្ងៃបង់ថ្លៃ' : 'Tuition Due'}</th>
+                <th className="py-3 px-3">{isKhmer ? 'ថ្ងៃផុតកំណត់បង់' : 'Payment Deadline'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ពាក្យសម្ងាត់' : 'Password'}</th>
                 <th className="py-3 px-4 text-right">{isKhmer ? 'សកម្មភាព' : 'Actions'}</th>
               </tr>
