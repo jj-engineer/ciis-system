@@ -81,12 +81,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
     <div className="space-y-6 antialiased max-w-5xl mx-auto pb-10">
 
       {/* ========================================================================= */}
-      {/* 1. WELCOME HERO CARD (Clean, Warm & Focused with Power Reveal)            */}
+      {/* 1. WELCOME HERO CARD                                                      */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200/90 shadow-sm relative overflow-hidden text-left animate-system-hero power-light-sweep">
-
-        {/* Subtle Ambient Glow */}
-        <div className="absolute -top-10 -right-10 w-64 h-64 bg-pink-100/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm relative overflow-hidden text-left">
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
 
@@ -96,21 +93,21 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
               <img
                 src={activeTeacherData.image}
                 alt={activeTeacherData.nameEn}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-4 ring-pink-800/15 shadow-sm bg-zinc-100 hover:scale-105 transition-transform"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover ring-2 ring-zinc-200 shadow-sm bg-zinc-100"
               />
               <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white" />
             </div>
 
             <div className="space-y-1">
-              <div className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-pink-950/10 text-pink-900 border border-pink-200 text-[11px] font-bold font-mono">
+              <div className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-900 border border-zinc-200 text-[11px] font-bold font-mono">
                 <span>{isKhmer ? activeTeacherData.badgeKh : activeTeacherData.badgeEn}</span>
               </div>
 
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-zinc-950 tracking-tight leading-tight">
                 {isKhmer ? (
-                  <>ជម្រាបសួរលោកគ្រូ <span className="text-pink-800">{activeTeacherData.nameKh}</span></>
+                  <>ជម្រាបសួរលោកគ្រូ <span className="text-zinc-900 font-bold">{activeTeacherData.nameKh}</span></>
                 ) : (
-                  <>Welcome to CIIS LMS, <span className="text-pink-800">{activeTeacherData.nameEn}</span>!</>
+                  <>Welcome to CIIS LMS, <span className="text-zinc-900 font-bold">{activeTeacherData.nameEn}</span>!</>
                 )}
               </h1>
 
@@ -124,8 +121,8 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
 
           {/* Right: Current Class Badge & Shift Selector */}
           <div className="flex flex-col sm:items-end gap-2 shrink-0">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold font-mono shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-100 text-zinc-900 border border-zinc-200 text-xs font-bold font-mono shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>
                 {isKhmer
                   ? `ថ្នាក់បច្ចុប្បន្ន៖ ${activeClassLabel.fullKh}`
@@ -143,11 +140,11 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
                     key={cls.id}
                     onClick={() => setSelectedClassId(cls.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${isSelected
-                        ? 'bg-pink-900 text-white shadow-xs font-black'
+                        ? 'bg-zinc-900 text-white shadow-xs font-bold'
                         : 'text-zinc-600 hover:text-zinc-950 hover:bg-white'
                       }`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-400'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-zinc-400'}`} />
                     <span>{isKhmer ? itemLabel.shortKh : itemLabel.shortEn}</span>
                   </button>
                 );
@@ -158,63 +155,63 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
         </div>
 
         {/* Quick Classroom Actions */}
-        <div className="mt-6 pt-5 border-t border-zinc-100 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-system-actions">
+        <div className="mt-6 pt-5 border-t border-zinc-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
 
           <button
             type="button"
             onClick={() => setActiveTab('attendance')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-pink-50/60 border border-zinc-200/80 transition-all cursor-pointer flex items-center justify-between group text-left transform hover:translate-y-[-2px] hover:shadow-sm active:scale-98"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-pink-100 text-pink-900 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <CheckSquare className="w-4 h-4 text-pink-800" />
+              <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
+                <CheckSquare className="w-4 h-4 text-zinc-100" />
               </div>
               <div>
-                <p className="text-xs font-black text-zinc-950 group-hover:text-pink-900 transition-colors">
+                <p className="text-xs font-bold text-zinc-950">
                   {isKhmer ? 'ស្រង់វត្តមានសិស្ស' : 'Take Attendance'}
                 </p>
                 <p className="text-[10.5px] text-zinc-400 font-mono">&lt; 1 min</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-pink-800 group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 transition-colors" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('lessons')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-pink-50/60 border border-zinc-200/80 transition-all cursor-pointer flex items-center justify-between group text-left transform hover:translate-y-[-2px] hover:shadow-sm active:scale-98"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-pink-100 text-pink-900 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <BookOpen className="w-4 h-4 text-pink-800" />
+              <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-zinc-100" />
               </div>
               <div>
-                <p className="text-xs font-black text-zinc-950 group-hover:text-pink-900 transition-colors">
+                <p className="text-xs font-bold text-zinc-950">
                   {isKhmer ? 'មេរៀន & ឯកសារ' : 'Lessons & Guides'}
                 </p>
                 <p className="text-[10.5px] text-zinc-400 font-mono">Word & Excel</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-pink-800 group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 transition-colors" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('lab')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-pink-50/60 border border-zinc-200/80 transition-all cursor-pointer flex items-center justify-between group text-left transform hover:translate-y-[-2px] hover:shadow-sm active:scale-98"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-pink-100 text-pink-900 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Laptop className="w-4 h-4 text-pink-800" />
+              <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
+                <Laptop className="w-4 h-4 text-zinc-100" />
               </div>
               <div>
-                <p className="text-xs font-black text-zinc-950 group-hover:text-pink-900 transition-colors">
+                <p className="text-xs font-bold text-zinc-950">
                   {isKhmer ? 'បន្ទប់កុំព្យូទ័រ' : 'Computer Lab'}
                 </p>
-                <p className="text-[10.5px] text-zinc-400 font-mono">40+ Stations</p>
+                <p className="text-[10.5px] text-zinc-400 font-mono">30 Stations</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-pink-800 group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 transition-colors" />
           </button>
 
         </div>

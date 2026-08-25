@@ -132,7 +132,7 @@ export const AssignmentsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <ClipboardList className="w-6 h-6 text-pink-700" />
+            <ClipboardList className="w-6 h-6 text-zinc-900" />
             {t('title.assignments', undefined, 'Assignments & File Submissions')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -145,9 +145,9 @@ export const AssignmentsPage: React.FC = () => {
         {isStaff && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2"
+            className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'បង្កើតកិច្ចការថ្មី' : 'Create Assignment'}</span>
           </button>
         )}
@@ -155,8 +155,8 @@ export const AssignmentsPage: React.FC = () => {
 
       {/* Requirement 3: Clean Empty State for Assignments */}
       {assignments.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 border border-slate-200 shadow-sm text-center max-w-2xl mx-auto space-y-4 my-8">
-          <div className="w-16 h-16 rounded-2xl bg-pink-50 text-pink-700 flex items-center justify-center mx-auto border border-pink-100 shadow-sm">
+        <div className="bg-white rounded-3xl p-12 border border-zinc-200 shadow-xs text-center max-w-2xl mx-auto space-y-4 my-8">
+          <div className="w-16 h-16 rounded-2xl bg-zinc-100 text-zinc-800 flex items-center justify-center mx-auto border border-zinc-200 shadow-xs">
             <ClipboardList className="w-8 h-8" />
           </div>
 
@@ -177,9 +177,9 @@ export const AssignmentsPage: React.FC = () => {
             <div className="pt-2">
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-5 py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors inline-flex items-center gap-2"
+                className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-zinc-300" />
                 <span>{isKhmer ? 'បង្កើតកិច្ចការដំបូង' : 'Create Assignment'}</span>
               </button>
             </div>
@@ -190,13 +190,13 @@ export const AssignmentsPage: React.FC = () => {
         <div className="space-y-5">
           {/* Filter Bar */}
           {isStaff && (
-            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-xs overflow-x-auto">
+            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-zinc-200 shadow-xs overflow-x-auto">
               <button
                 onClick={() => setFilterClass('all')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   filterClass === 'all'
-                    ? 'bg-pink-700 text-white'
-                    : 'text-slate-600 hover:bg-slate-50'
+                    ? 'bg-zinc-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-zinc-50'
                 }`}
               >
                 {isKhmer ? 'គ្រប់ថ្នាក់ទាំងអស់' : 'All Classes'}
@@ -207,8 +207,8 @@ export const AssignmentsPage: React.FC = () => {
                   onClick={() => setFilterClass(c.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     filterClass === c.id
-                      ? 'bg-pink-700 text-white'
-                      : 'text-slate-600 hover:bg-slate-50'
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:bg-zinc-50'
                   }`}
                 >
                   {c.name}
@@ -227,16 +227,16 @@ export const AssignmentsPage: React.FC = () => {
               return (
                 <div
                   key={assignment.id}
-                  className="bg-white rounded-3xl p-6 border border-slate-200 hover:border-pink-300 shadow-sm hover:shadow-card-hover transition-all flex flex-col justify-between"
+                  className="bg-white rounded-3xl p-6 border border-zinc-200 hover:border-zinc-300 shadow-xs transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold text-pink-700 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-100 uppercase">
+                      <span className="text-[10px] font-mono font-bold text-zinc-800 bg-zinc-100 px-2.5 py-1 rounded-lg border border-zinc-200 uppercase">
                         {assignment.subjectCode} • {assignment.className}
                       </span>
                       {isStudent && (
                         mySubmission ? (
-                          <Badge variant={mySubmission.status === 'checked' ? 'green' : 'pink'} size="sm">
+                          <Badge variant={mySubmission.status === 'checked' ? 'green' : 'black'} size="sm">
                             {mySubmission.status === 'checked'
                               ? isKhmer ? `ពិន្ទុ៖ ${mySubmission.score}/${mySubmission.maxScore}` : `Graded: ${mySubmission.score}/${mySubmission.maxScore}`
                               : isKhmer ? 'បានបញ្ជូន' : 'Submitted'}
@@ -267,12 +267,12 @@ export const AssignmentsPage: React.FC = () => {
                         {assignment.attachments.map((att) => (
                           <span
                             key={att.id}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-bold text-slate-700"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] font-bold text-zinc-700"
                           >
                             {att.isImage ? (
-                              <ImageIcon className="w-3 h-3 text-pink-700" />
+                              <ImageIcon className="w-3 h-3 text-zinc-700" />
                             ) : (
-                              <FileText className="w-3 h-3 text-pink-700" />
+                              <FileText className="w-3 h-3 text-zinc-700" />
                             )}
                             <span className="truncate max-w-[120px]">{att.name}</span>
                           </span>
@@ -284,7 +284,7 @@ export const AssignmentsPage: React.FC = () => {
                   <div className="pt-4 mt-4 border-t border-slate-100 space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-500">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-pink-700" />
+                        <Calendar className="w-3.5 h-3.5 text-zinc-700" />
                         <span>{isKhmer ? 'ផុតកំណត់៖' : 'Due:'} <strong>{assignment.deadline}</strong></span>
                       </div>
                       <span className="font-mono font-bold text-slate-700">{assignment.maxScore} {isKhmer ? 'ពិន្ទុ' : 'Pts'}</span>
@@ -293,9 +293,9 @@ export const AssignmentsPage: React.FC = () => {
                     {isStudent ? (
                       <button
                         onClick={() => setSelectedAssignmentForStudent(assignment)}
-                        className="w-full py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                       >
-                        <Upload className="w-4 h-4" />
+                        <Upload className="w-4 h-4 text-zinc-300" />
                         <span>
                           {mySubmission
                             ? isKhmer ? 'ពិនិត្យមើល ឬកែប្រែកិច្ចការ' : 'View / Update Submission'
@@ -309,22 +309,18 @@ export const AssignmentsPage: React.FC = () => {
                             const firstSub = classSubs[0];
                             if (firstSub) {
                               setSelectedSubmissionForTeacher(firstSub);
-                            } else {
-                              alert(isKhmer ? `មិនទាន់មានសិស្សបញ្ជូនកិច្ចការសម្រាប់ ${assignment.title} នៅឡើយទេ។` : `No student submissions received yet for ${assignment.title}.`);
                             }
                           }}
-                          className="flex-1 py-2 bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold text-xs rounded-xl border border-pink-200 transition-colors"
+                          disabled={classSubs.length === 0}
+                          className="flex-1 py-2 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-400 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          {isKhmer ? `កែពិន្ទុ (${classSubs.length})` : `Review (${classSubs.length})`}
+                          <CheckCircle className="w-4 h-4 text-zinc-300" />
+                          <span>{isKhmer ? 'កែដាក់ពិន្ទុ' : 'Grade Submissions'}</span>
                         </button>
                         <button
-                          onClick={() => {
-                            if (confirm(`Delete assignment "${assignment.title}"?`)) {
-                              deleteAssignment(assignment.id);
-                            }
-                          }}
-                          className="p-2 text-slate-400 hover:text-rose-600 rounded-xl"
-                          title="Delete Assignment"
+                          onClick={() => deleteAssignment(assignment.id)}
+                          className="p-2 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-colors cursor-pointer"
+                          title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

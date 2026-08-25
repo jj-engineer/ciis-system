@@ -59,7 +59,7 @@ export const LessonsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-pink-700" />
+            <BookOpen className="w-6 h-6 text-zinc-900" />
             {t('title.lessons', undefined, 'Lessons & Study Guides')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -72,9 +72,9 @@ export const LessonsPage: React.FC = () => {
         {isStaff && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2"
+            className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'បង្ហោះមេរៀនថ្មី' : 'Upload New Lesson'}</span>
           </button>
         )}
@@ -82,8 +82,8 @@ export const LessonsPage: React.FC = () => {
 
       {/* Requirement 2: Clean Professional Empty State when no lessons are uploaded */}
       {lessons.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 border border-slate-200 shadow-sm text-center max-w-2xl mx-auto space-y-4 my-8">
-          <div className="w-16 h-16 rounded-2xl bg-pink-50 text-pink-700 flex items-center justify-center mx-auto border border-pink-100 shadow-sm">
+        <div className="bg-white rounded-3xl p-12 border border-zinc-200 shadow-xs text-center max-w-2xl mx-auto space-y-4 my-8">
+          <div className="w-16 h-16 rounded-2xl bg-zinc-100 text-zinc-800 flex items-center justify-center mx-auto border border-zinc-200 shadow-xs">
             <FolderOpen className="w-8 h-8" />
           </div>
 
@@ -100,9 +100,9 @@ export const LessonsPage: React.FC = () => {
             <div className="pt-2">
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-5 py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors inline-flex items-center gap-2"
+                className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-zinc-300" />
                 <span>{t('empty.lessons_upload_btn', undefined, 'Upload First Lesson')}</span>
               </button>
             </div>
@@ -121,11 +121,11 @@ export const LessonsPage: React.FC = () => {
             <div
               key={lesson.id}
               onClick={() => setSelectedLesson(lesson)}
-              className="bg-white rounded-3xl p-6 border border-slate-200 hover:border-pink-300 hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+              className="bg-white rounded-3xl p-6 border border-zinc-200 hover:border-zinc-300 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-pink-700 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-100">
+                  <span className="text-[10px] uppercase font-bold text-zinc-800 bg-zinc-100 px-2.5 py-1 rounded-lg border border-zinc-200">
                     {lesson.subjectCode.toUpperCase()}
                   </span>
                   <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
@@ -139,7 +139,7 @@ export const LessonsPage: React.FC = () => {
               </div>
 
               <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-pink-700 hover:underline">
+                <span className="text-xs font-bold text-zinc-900 hover:underline">
                   {isKhmer ? 'មើលមេរៀន →' : 'View Lesson →'}
                 </span>
               </div>

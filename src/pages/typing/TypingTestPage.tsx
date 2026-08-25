@@ -123,8 +123,8 @@ export const TypingTestPage: React.FC = () => {
       {/* Top Header & Navigation Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 text-pink-900 text-xs font-black border border-pink-200 mb-2 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-pink-700 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-900 text-xs font-bold border border-zinc-200 mb-2 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-zinc-700" />
             <span className="font-mono uppercase">{isKhmer ? 'កន្លែងហ្វឹកហាត់វាយអក្សរ CIIS' : 'CIIS TOUCH TYPING LAB'}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
@@ -138,13 +138,13 @@ export const TypingTestPage: React.FC = () => {
         </div>
 
         {/* Global Tab Navigation */}
-        <div className="flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200 self-start sm:self-auto">
+        <div className="flex items-center p-1 bg-zinc-100 rounded-2xl border border-zinc-200 self-start sm:self-auto">
           <button
             onClick={() => setActiveTab('arena')}
-            className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'arena'
-                ? 'bg-pink-800 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
             <Keyboard className="w-3.5 h-3.5" />
@@ -153,30 +153,30 @@ export const TypingTestPage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('leaderboard')}
-            className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'leaderboard'
-                ? 'bg-pink-800 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
             <span>{isKhmer ? 'ចំណាត់ថ្នាក់សកល' : 'Global Leaderboard'}</span>
-            <span className="px-1.5 py-0.2 bg-pink-200 text-pink-950 rounded-full text-[9px] font-black font-mono">
+            <span className="px-1.5 py-0.2 bg-zinc-200 text-zinc-800 rounded-full text-[9px] font-bold font-mono">
               {typingResults.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'history'
-                ? 'bg-pink-800 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
             <History className="w-3.5 h-3.5" />
             <span>{isKhmer ? 'ប្រវត្តិផ្ទាល់ខ្លួន' : 'My History'}</span>
-            <span className="px-1.5 py-0.2 bg-slate-200 text-slate-800 rounded-full text-[9px] font-black font-mono">
+            <span className="px-1.5 py-0.2 bg-zinc-200 text-zinc-800 rounded-full text-[9px] font-bold font-mono">
               {myHistory.length}
             </span>
           </button>
@@ -189,8 +189,8 @@ export const TypingTestPage: React.FC = () => {
       {activeTab === 'arena' && (
         <div className="space-y-6">
           
-          {/* Main Container with Deep Slate Canvas and Pink Highlights */}
-          <div className="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden">
+          {/* Main Container with Deep Slate Canvas */}
+          <div className="bg-zinc-950 p-6 sm:p-8 rounded-3xl border border-zinc-800 shadow-xl relative overflow-hidden">
             <MonkeytypeArena
               onTestComplete={handleTestComplete}
               customInitialText={activeCustomDrill || undefined}
@@ -200,23 +200,23 @@ export const TypingTestPage: React.FC = () => {
           {/* Quick Stats Pill Bar */}
           {myHistory.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white p-4 rounded-2xl border border-pink-100 shadow-xs flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-pink-100 text-pink-900 flex items-center justify-center font-black">
-                  <Trophy className="w-5 h-5" />
+              <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold border border-zinc-200">
+                  <Trophy className="w-5 h-5 text-zinc-800" />
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                     {isKhmer ? 'ល្បឿនខ្ពស់បំផុតរបស់ខ្ញុំ' : 'My Personal Best'}
                   </p>
-                  <p className="text-xl font-black text-pink-950">
+                  <p className="text-xl font-black text-zinc-950">
                     {myBestWpm} <span className="text-xs text-slate-400 font-mono">WPM</span>
                   </p>
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-2xl border border-pink-100 shadow-xs flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-black">
-                  <CheckCircle2 className="w-5 h-5" />
+              <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-zinc-100 text-zinc-900 flex items-center justify-center font-bold border border-zinc-200">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">

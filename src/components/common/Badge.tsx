@@ -28,16 +28,15 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   // Strict 3-color palette: Black, White, Dark Gradient Pink
   const variantStyles: Record<BadgeVariant, string> = {
-    pink: 'bg-pink-950/10 text-pink-900 border-pink-200',
+    pink: 'bg-zinc-100 text-zinc-900 border-zinc-200',
     black: 'bg-zinc-900 text-white border-zinc-800 shadow-2xs',
-    slate: 'bg-zinc-100 text-zinc-900 border-zinc-200',
-    outline: 'bg-white text-zinc-900 border-zinc-300 shadow-2xs',
-    // Mapped cleanly to the 3-color system
-    green: 'bg-zinc-900 text-pink-200 border-zinc-800',
-    red: 'bg-pink-900 text-white border-pink-950',
-    amber: 'bg-pink-950/10 text-pink-900 border-pink-200',
-    blue: 'bg-zinc-100 text-zinc-900 border-zinc-200',
-    purple: 'bg-pink-950/15 text-pink-900 border-pink-300'
+    slate: 'bg-zinc-100 text-zinc-700 border-zinc-200',
+    outline: 'bg-white text-zinc-800 border-zinc-300 shadow-2xs',
+    green: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    red: 'bg-rose-50 text-rose-800 border-rose-200',
+    amber: 'bg-amber-50 text-amber-800 border-amber-200',
+    blue: 'bg-sky-50 text-sky-800 border-sky-200',
+    purple: 'bg-purple-50 text-purple-800 border-purple-200'
   };
 
   const sizeStyles = {

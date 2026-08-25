@@ -86,7 +86,7 @@ export const CalendarPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <CalendarIcon className="w-6 h-6 text-pink-700" />
+            <CalendarIcon className="w-6 h-6 text-zinc-900" />
             {t('title.calendar', undefined, 'School Calendar & Class Timetable')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -99,9 +99,9 @@ export const CalendarPage: React.FC = () => {
         {isStaff && (
           <button
             onClick={() => setShowAddEventModal(true)}
-            className="px-4 py-2 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'បន្ថែមព្រឹត្តិការណ៍ថ្មី' : 'Add Calendar Event'}</span>
           </button>
         )}
@@ -113,10 +113,10 @@ export const CalendarPage: React.FC = () => {
           <button
             key={opt.id}
             onClick={() => setFilterType(opt.id)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
               filterType === opt.id
-                ? 'bg-pink-700 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                ? 'bg-zinc-900 text-white shadow-xs'
+                : 'bg-white text-zinc-700 hover:bg-zinc-50 border border-zinc-200'
             }`}
           >
             {opt.label}
@@ -129,11 +129,11 @@ export const CalendarPage: React.FC = () => {
         {filteredEvents.map((evt) => (
           <div
             key={evt.id}
-            className="bg-white rounded-3xl p-5 border border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-card-hover transition-all flex flex-col justify-between"
+            className="bg-white rounded-3xl p-5 border border-zinc-200 hover:border-zinc-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-pink-700 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-100">
+                <span className="text-xs font-mono font-bold text-zinc-800 bg-zinc-100 px-2.5 py-1 rounded-lg border border-zinc-200">
                   {evt.date}
                 </span>
                 {getEventBadge(evt.eventType)}
@@ -147,7 +147,7 @@ export const CalendarPage: React.FC = () => {
 
             <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <div className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-pink-700" />
+                <Clock className="w-3.5 h-3.5 text-zinc-700" />
                 <span>{evt.startTime} - {evt.endTime}</span>
               </div>
               {evt.location && (

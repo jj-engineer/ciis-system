@@ -83,7 +83,7 @@ export const StudentsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <Users className="w-6 h-6 text-pink-700" />
+            <Users className="w-6 h-6 text-zinc-900" />
             {t('title.students', undefined, 'Student Directory & Profiles')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -96,16 +96,16 @@ export const StudentsPage: React.FC = () => {
         {isStaff && (
           <button
             onClick={() => setShowAddStudentModal(true)}
-            className="px-4 py-2 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'ចុះឈ្មោះសិស្សថ្មី' : 'Add New Student'}</span>
           </button>
         )}
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -113,7 +113,7 @@ export const StudentsPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isKhmer ? 'ស្វែងរកឈ្មោះ ឬអត្តលេខសិស្ស...' : 'Search student name or ID...'}
-            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-600 transition-all"
+            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400/20 focus:border-zinc-800 transition-all"
           />
         </div>
 
@@ -146,7 +146,7 @@ export const StudentsPage: React.FC = () => {
             <div
               key={student.id}
               onClick={() => setSelectedStudentForProfile(student)}
-              className="bg-white rounded-3xl p-5 border border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-card-hover transition-all cursor-pointer flex flex-col justify-between"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
@@ -170,7 +170,7 @@ export const StudentsPage: React.FC = () => {
                       <p className="text-[11px] text-slate-500 font-mono">{student.studentId || 'STD-001'}</p>
                     </div>
                   </div>
-                  <Badge variant="pink" size="sm">{student.className || 'Grade 10A'}</Badge>
+                  <Badge variant="slate" size="sm">{student.className || 'Grade 10A'}</Badge>
                 </div>
 
                 {/* Quick Performance Indicators */}
@@ -183,7 +183,7 @@ export const StudentsPage: React.FC = () => {
                   </div>
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                     <span className="text-[10px] text-slate-400 block font-semibold">{isKhmer ? 'សរុប' : 'Overall'}</span>
-                    <span className="text-xs font-bold text-pink-700">
+                    <span className="text-xs font-bold text-zinc-900">
                       {analytics.overallProgressPercentage}%
                     </span>
                   </div>
@@ -203,7 +203,7 @@ export const StudentsPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-pink-700 font-bold">
+              <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-zinc-900 font-bold">
                 <span>{isKhmer ? 'មើលប្រវត្តិរូប & កំណត់ចំណាំ' : 'View Full Profile & Notes'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>

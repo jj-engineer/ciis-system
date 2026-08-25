@@ -88,7 +88,7 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <Briefcase className="w-6 h-6 text-pink-700" />
+            <Briefcase className="w-6 h-6 text-zinc-900" />
             {t('title.workspace', undefined, 'Teacher Quick Workspace')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -101,81 +101,81 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('attendance')}
-            className="px-4 py-2.5 bg-gradient-to-r from-pink-800 to-pink-950 hover:from-pink-700 hover:to-pink-900 text-white font-extrabold text-xs rounded-xl shadow-md shadow-pink-950/20 transition-all flex items-center gap-2 cursor-pointer border border-pink-700/30"
+            className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
           >
-            <CheckSquare className="w-4 h-4 text-pink-300" />
+            <CheckSquare className="w-4 h-4 text-zinc-300" />
             <span>{isKhmer ? 'ស្រង់វត្តមានរហ័ស' : 'Fast Attendance'}</span>
           </button>
         </div>
       </div>
 
       {/* 8 Quick Actions Bar */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-3">
+      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-zinc-200 shadow-xs space-y-3">
         <h2 className="text-xs font-black uppercase tracking-wider text-slate-400">
           {t('teacher.quick_actions', undefined, 'Quick Classroom Actions')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5">
           <button
             onClick={() => setActiveTab('attendance')}
-            className="p-3 rounded-2xl bg-pink-50/50 hover:bg-pink-100/60 border border-pink-100 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <CheckSquare className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <CheckSquare className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'វត្តមាន' : 'Attendance'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('assignments')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <ClipboardList className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <ClipboardList className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'កិច្ចការ' : 'Assignment'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('typing')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <Award className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <Award className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'វាយអក្សរ' : 'Typing Lab'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('submissions')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <FileSpreadsheet className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <FileSpreadsheet className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'កិច្ចការផ្ញើ' : 'Upload Inbox'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('classes')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <CheckCircle2 className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <CheckCircle2 className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'ថ្នាក់រៀន' : 'Classes'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('students')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <Users className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <Users className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'បញ្ជីសិស្ស' : 'Students'}</span>
           </button>
 
           <button
             onClick={() => setShowAddReminderModal(true)}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <Plus className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <Plus className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'កំណត់ត្រា' : 'Add Reminder'}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('reports')}
-            className="p-3 rounded-2xl bg-slate-50 hover:bg-pink-50/50 border border-slate-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group"
+            className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-slate-800 text-center transition-all flex flex-col items-center gap-1.5 group cursor-pointer"
           >
-            <BarChart3 className="w-5 h-5 text-pink-700 group-hover:scale-110 transition-transform" />
+            <BarChart3 className="w-5 h-5 text-zinc-800 group-hover:scale-110 transition-transform" />
             <span className="text-[11px] font-bold">{isKhmer ? 'របាយការណ៍' : 'Reports'}</span>
           </button>
         </div>
@@ -186,10 +186,10 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
         {/* Left Column: Today's Work & Tasks (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
           {/* Today's Work Summary Cards */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-black uppercase tracking-wide text-slate-800 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-pink-700" />
+                <Clock className="w-4 h-4 text-zinc-800" />
                 Today's Work & Priorities
               </h2>
               <span className="text-xs font-mono text-slate-400">August 21, 2026</span>
@@ -199,10 +199,10 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
               {/* Attendance Card */}
               <div
                 onClick={() => setActiveTab('attendance')}
-                className="p-4 rounded-2xl border border-emerald-100 bg-emerald-50/30 hover:border-emerald-300 transition-all cursor-pointer space-y-1.5"
+                className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 hover:border-zinc-300 transition-all cursor-pointer space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-900">Attendance</span>
+                  <span className="text-xs font-bold text-zinc-900">Attendance</span>
                   <Badge variant="green" size="sm">Completed</Badge>
                 </div>
                 <p className="text-sm font-extrabold text-slate-900">Grade 10A (32 Present)</p>
@@ -212,11 +212,11 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
               {/* Pending Grading Card */}
               <div
                 onClick={() => setActiveTab('assignments')}
-                className="p-4 rounded-2xl border border-pink-200 bg-pink-50/30 hover:border-pink-300 transition-all cursor-pointer space-y-1.5"
+                className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 hover:border-zinc-300 transition-all cursor-pointer space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-pink-900">Waiting for Grading</span>
-                  <Badge variant="pink" size="sm">{pendingSubmissionsCount} Pending</Badge>
+                  <span className="text-xs font-bold text-zinc-900">Waiting for Grading</span>
+                  <Badge variant="black" size="sm">{pendingSubmissionsCount} Pending</Badge>
                 </div>
                 <p className="text-sm font-extrabold text-slate-900">Student Work & Notes</p>
                 <p className="text-[11px] text-slate-500">Includes Excel exercises & direct notes</p>
@@ -225,10 +225,10 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
               {/* Upcoming Exam Card */}
               <div
                 onClick={() => setActiveTab('practicals')}
-                className="p-4 rounded-2xl border border-purple-100 bg-purple-50/30 hover:border-purple-300 transition-all cursor-pointer space-y-1.5"
+                className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 hover:border-zinc-300 transition-all cursor-pointer space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-purple-900">Upcoming Practical Exam</span>
+                  <span className="text-xs font-bold text-zinc-900">Upcoming Practical Exam</span>
                   <Badge variant="purple" size="sm">Aug 27</Badge>
                 </div>
                 <p className="text-sm font-extrabold text-slate-900">Microsoft Word Practical</p>
@@ -238,10 +238,10 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
               {/* Attention Alert Card */}
               <div
                 onClick={() => setActiveTab('students')}
-                className="p-4 rounded-2xl border border-rose-100 bg-rose-50/30 hover:border-rose-300 transition-all cursor-pointer space-y-1.5"
+                className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 hover:border-zinc-300 transition-all cursor-pointer space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-rose-900">Students Needing Help</span>
+                  <span className="text-xs font-bold text-zinc-900">Students Needing Help</span>
                   <Badge variant="red" size="sm">{attentionStudents.length} Students</Badge>
                 </div>
                 <p className="text-sm font-extrabold text-slate-900">Attendance & Score Warning</p>
@@ -251,15 +251,15 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
           </div>
 
           {/* Teacher Checklist & Reminders */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-black uppercase tracking-wide text-slate-800 flex items-center gap-2">
-                <CheckSquare className="w-4 h-4 text-pink-700" />
+                <CheckSquare className="w-4 h-4 text-zinc-800" />
                 Teacher Reminders & To-Do
               </h2>
               <button
                 onClick={() => setShowAddReminderModal(true)}
-                className="text-xs font-bold text-pink-700 hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-zinc-900 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Task</span>
@@ -273,15 +273,15 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
                   onClick={() => toggleReminder(rem.id)}
                   className={`p-3.5 rounded-2xl border transition-all flex items-start gap-3 cursor-pointer ${
                     rem.isCompleted
-                      ? 'bg-slate-50 border-slate-200/60 opacity-60'
-                      : 'bg-white border-slate-200 hover:border-pink-200'
+                      ? 'bg-zinc-50 border-zinc-200 opacity-60'
+                      : 'bg-white border-zinc-200 hover:border-zinc-300'
                   }`}
                 >
                   <input
                     type="checkbox"
                     checked={rem.isCompleted}
                     onChange={() => {}}
-                    className="accent-pink-700 rounded mt-0.5 cursor-pointer"
+                    className="accent-zinc-900 rounded mt-0.5 cursor-pointer"
                   />
                   <div className="flex-1 min-w-0">
                     <p className={`text-xs font-bold ${rem.isCompleted ? 'line-through text-slate-500' : 'text-slate-900'}`}>
@@ -304,9 +304,9 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
         {/* Right Column: Quick Student Search & Recent Activity (5 Cols) */}
         <div className="lg:col-span-5 space-y-6">
           {/* Quick Student Search */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-xs space-y-4">
             <h2 className="text-sm font-black uppercase tracking-wide text-slate-800 flex items-center gap-2">
-              <Users className="w-4 h-4 text-pink-700" />
+              <Users className="w-4 h-4 text-zinc-800" />
               Quick Student Directory Search
             </h2>
 
@@ -317,7 +317,7 @@ export const TeacherWorkspacePage: React.FC<TeacherWorkspacePageProps> = ({ setA
                 value={studentSearch}
                 onChange={(e) => setStudentSearch(e.target.value)}
                 placeholder="Search by student name, ID (e.g. STD-2026-001) or class..."
-                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pink-500/20 focus:border-pink-600 outline-none transition-all"
+                className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-zinc-400/20 focus:border-zinc-800 outline-none transition-all"
               />
             </div>
 
