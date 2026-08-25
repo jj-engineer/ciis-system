@@ -50,13 +50,13 @@ import {
 
 const STORAGE_KEYS = {
   CURRENT_USER: 'ciis_current_user_live_v1',
-  PROFILES: 'ciis_profiles_live_v1',
-  CLASSES: 'ciis_classes_live_v1',
+  PROFILES: 'ciis_profiles_real_v3',
+  CLASSES: 'ciis_classes_real_v3',
   SUBJECTS: 'ciis_subjects_live_v1',
   LESSONS: 'ciis_lessons_live_v1',
   ASSIGNMENTS: 'ciis_assignments_live_v1',
   SUBMISSIONS: 'ciis_submissions_live_v1',
-  ATTENDANCE: 'ciis_attendance_live_v1',
+  ATTENDANCE: 'ciis_attendance_real_v3',
   TYPING_TESTS: 'ciis_typing_tests_live_v1',
   TYPING_RESULTS: 'ciis_typing_results_live_v1',
   PRACTICAL_EXAMS: 'ciis_practical_exams_live_v1',

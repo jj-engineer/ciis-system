@@ -237,6 +237,7 @@ export const StudentCredentialsPage: React.FC = () => {
               <tr className="bg-slate-50 border-b border-slate-100 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
                 <th className="py-3 px-4">{isKhmer ? 'អត្តលេខ' : 'Student ID'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ឈ្មោះសិស្ស' : 'Student Name'}</th>
+                <th className="py-3 px-3">{isKhmer ? 'ភេទ' : 'Sex'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ថ្នាក់រៀន' : 'Class / Shift'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ពាក្យសម្ងាត់ (Password)' : 'Password'}</th>
                 <th className="py-3 px-4">{isKhmer ? 'ឈ្មោះអ្នកប្រើ & អ៊ីមែល' : 'Username / Email'}</th>
@@ -247,7 +248,7 @@ export const StudentCredentialsPage: React.FC = () => {
             <tbody className="divide-y divide-slate-100 text-xs font-medium">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400">
+                  <td colSpan={8} className="py-8 text-center text-slate-400">
                     {isKhmer ? 'រកមិនឃើញទិន្នន័យសិស្សទេ' : 'No student records found matching your search.'}
                   </td>
                 </tr>
@@ -256,6 +257,7 @@ export const StudentCredentialsPage: React.FC = () => {
                   const isPassVisible = !!visiblePasswords[student.id];
                   const pass = student.password || '123';
                   const isCopied = copiedId === student.id;
+                  const isFemale = student.gender === 'female';
 
                   return (
                     <tr key={student.id} className="hover:bg-pink-50/30 transition-colors">
@@ -277,6 +279,19 @@ export const StudentCredentialsPage: React.FC = () => {
                             <p className="text-[10px] text-slate-400 font-mono">{student.username}</p>
                           </div>
                         </div>
+                      </td>
+
+                      {/* Sex / ភេទ */}
+                      <td className="py-3.5 px-3">
+                        {isFemale ? (
+                          <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
+                            {isKhmer ? 'ស្រី (ស)' : 'Female (F)'}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-bold">
+                            {isKhmer ? 'ប្រុស (ប)' : 'Male (M)'}
+                          </span>
+                        )}
                       </td>
 
                       {/* Class */}

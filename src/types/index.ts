@@ -15,6 +15,7 @@ export interface UserProfile {
   email: string;
   password?: string;
   role: UserRole;
+  gender?: 'female' | 'male' | string; // 'female' (ស) / 'male' (ប)
   avatarUrl?: string;
   classId?: string;
   className?: string;

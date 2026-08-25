@@ -4,6 +4,7 @@ import autoTable from 'jspdf-autotable';
 export interface StudentAttendanceRecord {
   no: number;
   studentName: string;
+  gender?: string;
   isPresent: boolean;
   isAbsent: boolean;
   isLate: boolean;
@@ -130,6 +131,7 @@ export const downloadAttendancePdf = ({
   const tableData = records.map((r) => [
     r.no.toString(),
     sanitizeForPdf(r.studentName) || r.studentName,
+    r.gender || '-',
     r.isPresent ? 'P' : '-',
     r.isAbsent ? 'A' : '-',
     r.isLate ? 'L' : '-',
@@ -140,7 +142,8 @@ export const downloadAttendancePdf = ({
   // Summary Footer Row
   const summaryRow = [
     '',
-    `TOTAL SUMMARY (${totalStudents} Students)`,
+    `TOTAL (${totalStudents} Students)`,
+    '',
     `${totalPresent}`,
     `${totalAbsent}`,
     `${totalLate}`,
@@ -156,6 +159,7 @@ export const downloadAttendancePdf = ({
     head: [[
       'No.',
       'Student Name',
+      'Sex',
       'Present',
       'Absent',
       'Late',
@@ -173,12 +177,13 @@ export const downloadAttendancePdf = ({
     },
     columnStyles: {
       0: { halign: 'center', cellWidth: 12 },
-      1: { halign: 'left', fontStyle: 'bold', cellWidth: 60 },
-      2: { halign: 'center', cellWidth: 22, textColor: [4, 120, 87], fontStyle: 'bold' }, // Emerald
-      3: { halign: 'center', cellWidth: 22, textColor: [185, 28, 28], fontStyle: 'bold' }, // Red
-      4: { halign: 'center', cellWidth: 22, textColor: [180, 83, 9], fontStyle: 'bold' },  // Amber
-      5: { halign: 'center', cellWidth: 22, textColor: [67, 56, 202] },                    // Indigo
-      6: { halign: 'center', cellWidth: 22, textColor: [147, 51, 234] }                    // Purple
+      1: { halign: 'left', fontStyle: 'bold', cellWidth: 54 },
+      2: { halign: 'center', cellWidth: 16 },
+      3: { halign: 'center', cellWidth: 20, textColor: [4, 120, 87], fontStyle: 'bold' }, // Emerald
+      4: { halign: 'center', cellWidth: 20, textColor: [185, 28, 28], fontStyle: 'bold' }, // Red
+      5: { halign: 'center', cellWidth: 20, textColor: [180, 83, 9], fontStyle: 'bold' },  // Amber
+      6: { halign: 'center', cellWidth: 20, textColor: [67, 56, 202] },                    // Indigo
+      7: { halign: 'center', cellWidth: 20, textColor: [147, 51, 234] }                    // Purple
     },
     alternateRowStyles: {
       fillColor: [250, 250, 250] // Zinc-50

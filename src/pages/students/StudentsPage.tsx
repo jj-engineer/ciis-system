@@ -155,7 +155,18 @@ export const StudentsPage: React.FC = () => {
                       <User className="w-6 h-6 text-zinc-100" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 text-sm">{student.fullName}</h3>
+                      <div className="flex items-center gap-1.5">
+                        <h3 className="font-bold text-slate-900 text-sm">{student.fullName}</h3>
+                        {student.gender === 'female' ? (
+                          <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
+                            {isKhmer ? 'ស្រី' : 'F'}
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 text-[10px] font-bold border border-sky-200">
+                            {isKhmer ? 'ប្រុស' : 'M'}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-slate-500 font-mono">{student.studentId || 'STD-001'}</p>
                     </div>
                   </div>

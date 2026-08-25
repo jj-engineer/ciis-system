@@ -144,6 +144,7 @@ export const AttendancePage: React.FC = () => {
       return {
         no: index + 1,
         studentName: s.fullName,
+        gender: s.gender === 'female' ? 'F' : 'M',
         isPresent: draft.status === 'present',
         isAbsent: draft.status === 'absent',
         isLate: draft.status === 'late',
@@ -168,12 +169,13 @@ export const AttendancePage: React.FC = () => {
     const exportItems = classStudents.map((s, index) => {
       const matchAnalytics = studentAnalytics.find(a => a.studentId === s.id);
       const draft = draftStatuses[s.id] || { status: 'present', note: '' };
+      const isFemale = s.gender === 'female';
 
       return {
         no: index + 1,
         studentId: s.studentId || `STD-2026-${String(index + 1).padStart(3, '0')}`,
         fullName: s.fullName,
-        gender: index % 2 === 0 ? 'M' : 'F',
+        gender: isFemale ? (isKhmer ? 'ស្រី (ស)' : 'F') : (isKhmer ? 'ប្រុស (ប)' : 'M'),
         className: selectedClass?.name || 'CIIS Computer {5:30-6:30}',
         status: draft.status === 'present'
           ? (isKhmer ? 'វត្តមាន (មក)' : 'Present')
@@ -402,15 +404,17 @@ export const AttendancePage: React.FC = () => {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50/70 text-slate-500 uppercase font-semibold text-[11px] border-b border-slate-100">
                 <tr>
-                  <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-3">Student ID</th>
-                  <th className="py-3 px-4">Mark Status (1-Click)</th>
-                  <th className="py-3 px-4">Note / Reason</th>
+                  <th className="py-3 px-4">{isKhmer ? 'សិស្ស' : 'Student'}</th>
+                  <th className="py-3 px-3">{isKhmer ? 'ភេទ' : 'Sex'}</th>
+                  <th className="py-3 px-3">{isKhmer ? 'អត្តលេខ' : 'Student ID'}</th>
+                  <th className="py-3 px-4">{isKhmer ? 'វត្តមាន (១-ចុច)' : 'Mark Status (1-Click)'}</th>
+                  <th className="py-3 px-4">{isKhmer ? 'កំណត់ចំណាំ / មូលហេតុ' : 'Note / Reason'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800">
                 {filteredStudents.map((student) => {
                   const draft = draftStatuses[student.id] || { status: 'present', note: '' };
+                  const isFemale = student.gender === 'female';
                   return (
                     <tr key={student.id} className="hover:bg-pink-50/30 transition-colors">
                       {/* Name & Avatar */}
@@ -424,6 +428,19 @@ export const AttendancePage: React.FC = () => {
                             <span className="text-[10px] text-slate-500">{selectedClass?.name}</span>
                           </div>
                         </div>
+                      </td>
+
+                      {/* Sex / ភេទ */}
+                      <td className="py-3 px-3">
+                        {isFemale ? (
+                          <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
+                            {isKhmer ? 'ស្រី (ស)' : 'Female (F)'}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-bold">
+                            {isKhmer ? 'ប្រុស (ប)' : 'Male (M)'}
+                          </span>
+                        )}
                       </td>
 
                       {/* Student ID */}
@@ -486,6 +503,7 @@ export const AttendancePage: React.FC = () => {
           <div className="md:hidden divide-y divide-slate-100 p-2 space-y-3">
             {filteredStudents.map((student) => {
               const draft = draftStatuses[student.id] || { status: 'present', note: '' };
+              const isFemale = student.gender === 'female';
               return (
                 <div key={student.id} className="p-3.5 rounded-xl bg-slate-50/60 border border-slate-200 space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -494,7 +512,18 @@ export const AttendancePage: React.FC = () => {
                         <User className="w-4 h-4 text-zinc-100" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-xs text-slate-900">{student.fullName}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-xs text-slate-900">{student.fullName}</h4>
+                          {isFemale ? (
+                            <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 text-[9.5px] font-bold border border-rose-200">
+                              {isKhmer ? 'ស្រី' : 'F'}
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 text-[9.5px] font-bold border border-sky-200">
+                              {isKhmer ? 'ប្រុស' : 'M'}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-[10px] text-slate-500 font-mono">{student.studentId}</span>
                       </div>
                     </div>

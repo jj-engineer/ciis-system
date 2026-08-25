@@ -394,7 +394,7 @@ Write-BoxBorderDivider $BOX_INNER_WIDTH
 Write-BoxLine -Prefix "• Workstation Identifier :  " -PrefixColor DarkGray -Content "Laptop $laptopNumber ($deviceId)" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxLine -Prefix "• Teacher Server Gateway :  " -PrefixColor DarkGray -Content "$ServerIP`:$ServerPort" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxLine -Prefix "• Telemetry Status       :  " -PrefixColor DarkGray -Content "ONLINE / ACTIVE" -TextColor Green -Width $BOX_INNER_WIDTH
-Write-BoxLine -Prefix "• Background Service     :  " -PrefixColor DarkGray -Content "Enabled (Silent Startup on Windows Boot)" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Background Service     :  " -PrefixColor DarkGray -Content "Enabled" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxBorderDivider $BOX_INNER_WIDTH
 Write-BoxLine -Content "Setup complete. The student can now use this laptop normally." -TextColor DarkGray -Width $BOX_INNER_WIDTH
 Write-BoxLine -Content "You may safely close this terminal window." -TextColor DarkGray -Width $BOX_INNER_WIDTH
