@@ -489,3 +489,52 @@ export interface ExcelFormulaResource {
   exampleResult: string;
   samplePracticalUseCase: string;
 }
+
+// -------------------------------------------------------------
+// MONTHLY EXAMS & OFFICIAL SCORE LEDGER TYPES (CIIS Official)
+// -------------------------------------------------------------
+export interface MonthlyExamStudentScore {
+  id: string;
+  no: number;
+  studentId: string;
+  studentName: string;
+  gender: 'female' | 'male' | string; // 'ស' (Female) / 'ប' (Male)
+  attendance: number; // Max 100
+  typing: number;     // WPM / Score
+  quiz: number;       // Max 100
+  monthlyTest: number;// Max 100
+  total: number;      // Sum (attendance + typing + quiz + monthlyTest)
+  average: number;    // total / 4
+  rank: number;       // 1, 2, 3...
+  mention: 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+  other?: string;
+  isHonor?: boolean;
+}
+
+export interface MonthlyExamQuizQuestion {
+  id: string;
+  questionKhmer: string;
+  questionEnglish: string;
+  options: { label: string; text: string }[];
+  correctAnswer: string;
+  explanation: string;
+  points: number;
+}
+
+export interface MonthlyExam {
+  id: string;
+  month: string; // e.g. "July 2026"
+  monthKhmer: string; // e.g. "កក្កដា ២០២៦"
+  title: string; // "Result for July"
+  subject: string; // "Computer"
+  shift: string; // "Shift Evening 5:30-6:30"
+  classId: string;
+  className: string;
+  examDate: string; // "Friday, July 31, 2026"
+  teacherName: string; // "NUN LANGDY"
+  directorName: string; // "ផល ស្រីណាខ"
+  quizQuestions?: MonthlyExamQuizQuestion[];
+  records: MonthlyExamStudentScore[];
+  createdAt: string;
+  updatedAt: string;
+}

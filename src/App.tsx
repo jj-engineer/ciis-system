@@ -30,6 +30,7 @@ import { StudentProgressPage } from './pages/progress/StudentProgressPage';
 import { ProfilePage } from './pages/profile/ProfilePage';
 import { TeacherProfilePage } from './pages/teachers/TeacherProfilePage';
 import { SettingsPage } from './pages/settings/SettingsPage';
+import { MonthlyExamsPage } from './pages/exams/MonthlyExamsPage';
 
 const AppContent: React.FC = () => {
   const { currentUser, isGuest, isAuthenticated, isStudent, isTeacher, showAuthModal, setShowAuthModal, authModalRole } = useAuth();
@@ -193,6 +194,9 @@ const AppContent: React.FC = () => {
 
       case 'assignments':
         return <AssignmentsPage />;
+
+      case 'exams':
+        return <MonthlyExamsPage />;
 
       case 'typing':
         return <TypingTestPage />;

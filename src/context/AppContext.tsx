@@ -24,7 +24,9 @@ import {
   CommunityPost,
   LearningActivity,
   StudentAnalytics,
-  SubjectCode
+  SubjectCode,
+  MonthlyExam,
+  MonthlyExamStudentScore
 } from '../types';
 
 interface AppContextType {
@@ -67,6 +69,12 @@ interface AppContextType {
   // Attendance
   attendance: AttendanceRecord[];
   saveAttendance: (records: AttendanceRecord[]) => void;
+
+  // Monthly Exams & Official Ledger (CIIS Official Paper)
+  monthlyExams: MonthlyExam[];
+  saveMonthlyExam: (exam: MonthlyExam) => void;
+  updateMonthlyExamScore: (examId: string, updatedRecord: MonthlyExamStudentScore) => void;
+  createMonthlyExam: (examData: Omit<MonthlyExam, 'id' | 'createdAt' | 'updatedAt'>) => void;
 
   // Practical Exams
   practicalExams: PracticalExam[];
@@ -217,6 +225,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [assignments, setAssignments] = useState<Assignment[]>(StorageService.getAssignments());
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>(StorageService.getSubmissions());
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(StorageService.getAttendance());
+  const [monthlyExams, setMonthlyExams] = useState<MonthlyExam[]>(() => StorageService.getMonthlyExams());
   const [practicalExams, setPracticalExams] = useState<PracticalExam[]>(StorageService.getPracticalExams());
   const [practicalResults, setPracticalResults] = useState<PracticalExamResult[]>(StorageService.getPracticalResults());
   const [excelPracticeTasks, setExcelPracticeTasks] = useState<ExcelPracticeTask[]>(StorageService.getExcelPracticeTasks());
@@ -488,6 +497,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       message: `Your score: ${resultData.totalScore}/${resultData.maxScore} (${resultData.percentage}%) - Grade ${resultData.grade}.`,
       iconType: 'grade',
       linkUrl: 'practicals'
+    });
+  };
+
+  // Monthly Exams & Official Ledger
+  const saveMonthlyExam = (exam: MonthlyExam) => {
+    const updated = StorageService.saveMonthlyExam(exam);
+    setMonthlyExams([...updated]);
+  };
+
+  const updateMonthlyExamScore = (examId: string, updatedRecord: MonthlyExamStudentScore) => {
+    const updated = StorageService.updateMonthlyExamScore(examId, updatedRecord);
+    setMonthlyExams([...updated]);
+
+    addNotification({
+      userId: updatedRecord.studentId,
+      title: `លទ្ធផលប្រឡងប្រចាំខែត្រូវបានកែប្រែ (Exam Result Updated)`,
+      message: `ពិន្ទុសរុប: ${updatedRecord.total}/400 • មធ្យមភាគ: ${updatedRecord.average}% • ចំណាត់ថ្នាក់: #${updatedRecord.rank} • និទ្ទេស: ${updatedRecord.mention}`,
+      iconType: 'grade',
+      linkUrl: 'assignments'
+    });
+  };
+
+  const createMonthlyExam = (examData: Omit<MonthlyExam, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newExam: MonthlyExam = {
+      ...examData,
+      id: `exam-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const updated = StorageService.saveMonthlyExam(newExam);
+    setMonthlyExams([...updated]);
+
+    addNotification({
+      title: `Official Exam Published: ${newExam.title}`,
+      message: `Teacher ${currentUser.fullName} published monthly exam records for ${newExam.className}.`,
+      iconType: 'announcement',
+      linkUrl: 'assignments'
     });
   };
 
@@ -824,6 +870,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         gradeSubmission,
         attendance,
         saveAttendance,
+        monthlyExams,
+        saveMonthlyExam,
+        updateMonthlyExamScore,
+        createMonthlyExam,
         practicalExams,
         createPracticalExam,
         practicalResults,

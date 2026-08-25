@@ -20,7 +20,9 @@ import {
   TeacherReminder,
   CommunityPost,
   LearningActivity,
-  StudentAnalytics
+  StudentAnalytics,
+  MonthlyExam,
+  MonthlyExamStudentScore
 } from '../types';
 
 import {
@@ -45,7 +47,8 @@ import {
   INITIAL_TEACHER_REMINDERS,
   INITIAL_CALENDAR_EVENTS,
   INITIAL_NOTIFICATIONS,
-  INITIAL_LEARNING_ACTIVITIES
+  INITIAL_LEARNING_ACTIVITIES,
+  INITIAL_MONTHLY_EXAMS
 } from './mockData';
 
 const STORAGE_KEYS = {
@@ -61,6 +64,7 @@ const STORAGE_KEYS = {
   TYPING_RESULTS: 'ciis_typing_results_live_v1',
   PRACTICAL_EXAMS: 'ciis_practical_exams_live_v1',
   PRACTICAL_RESULTS: 'ciis_practical_results_live_v1',
+  MONTHLY_EXAMS: 'ciis_monthly_exams_live_v1',
   EXCEL_PRACTICE_TASKS: 'ciis_excel_practice_tasks_live_v1',
   EXCEL_PRACTICE_SUBMISSIONS: 'ciis_excel_practice_submissions_live_v1',
   DEVICE_SESSIONS: 'ciis_device_sessions_live_v1',
@@ -304,6 +308,45 @@ export const StorageService = {
     }
     setItem(STORAGE_KEYS.PRACTICAL_RESULTS, results);
     return results;
+  },
+
+  // Monthly Exams & Official Ledger (CIIS)
+  getMonthlyExams: (): MonthlyExam[] => {
+    return getItem<MonthlyExam[]>(STORAGE_KEYS.MONTHLY_EXAMS, INITIAL_MONTHLY_EXAMS);
+  },
+  saveMonthlyExam: (exam: MonthlyExam) => {
+    const exams = StorageService.getMonthlyExams();
+    const index = exams.findIndex(e => e.id === exam.id);
+    if (index >= 0) {
+      exams[index] = exam;
+    } else {
+      exams.unshift(exam);
+    }
+    setItem(STORAGE_KEYS.MONTHLY_EXAMS, exams);
+    return exams;
+  },
+  updateMonthlyExamScore: (examId: string, updatedRecord: MonthlyExamStudentScore) => {
+    const exams = StorageService.getMonthlyExams();
+    const exam = exams.find(e => e.id === examId);
+    if (!exam) return exams;
+
+    const recIdx = exam.records.findIndex(r => r.id === updatedRecord.id || r.studentId === updatedRecord.studentId);
+    if (recIdx >= 0) {
+      exam.records[recIdx] = updatedRecord;
+    } else {
+      exam.records.push(updatedRecord);
+    }
+
+    // Re-rank records based on average
+    exam.records.sort((a, b) => b.average - a.average);
+    exam.records.forEach((r, idx) => {
+      r.no = idx + 1;
+      r.rank = idx + 1;
+    });
+
+    exam.updatedAt = new Date().toISOString();
+    setItem(STORAGE_KEYS.MONTHLY_EXAMS, exams);
+    return exams;
   },
 
   // Typing Tests & Results

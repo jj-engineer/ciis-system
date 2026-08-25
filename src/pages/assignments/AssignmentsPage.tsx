@@ -7,6 +7,8 @@ import { Modal } from '../../components/common/Modal';
 import { StudentSubmissionModal } from '../../components/assignments/StudentSubmissionModal';
 import { TeacherGradingModal } from '../../components/assignments/TeacherGradingModal';
 import { Assignment, AssignmentAttachment, AssignmentSubmission, SubjectCode } from '../../types';
+import { MonthlyExamsPage } from '../exams/MonthlyExamsPage';
+import { PracticalExamsPage } from '../exams/PracticalExamsPage';
 import {
   ClipboardList,
   Plus,
@@ -23,7 +25,9 @@ import {
   File,
   Eye,
   Trash2,
-  Paperclip
+  Paperclip,
+  Trophy,
+  Award
 } from 'lucide-react';
 
 export const AssignmentsPage: React.FC = () => {
@@ -37,6 +41,7 @@ export const AssignmentsPage: React.FC = () => {
     submissions
   } = useApp();
 
+  const [activeSubTab, setActiveSubTab] = useState<'exams' | 'assignments' | 'practicals'>('exams');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAssignmentForStudent, setSelectedAssignmentForStudent] = useState<Assignment | null>(null);
   const [selectedSubmissionForTeacher, setSelectedSubmissionForTeacher] = useState<AssignmentSubmission | null>(null);
@@ -127,69 +132,88 @@ export const AssignmentsPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <ClipboardList className="w-6 h-6 text-zinc-900" />
-            {t('title.assignments', undefined, 'Assignments & File Submissions')}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            {isKhmer
-              ? 'កិច្ចការផ្ទះ លំហាត់អនុវត្តកុំព្យូទ័រ និងការកែដាក់ពិន្ទុជូនសិស្ស។'
-              : 'Practical computer assignments, image worksheets, and student homework grading.'}
-          </p>
-        </div>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Top Sub-Tab Navigation Bar */}
+      <div className="flex items-center gap-2 p-1.5 bg-zinc-100/90 rounded-2xl border border-zinc-200/90 max-w-2xl">
+        <button
+          onClick={() => setActiveSubTab('exams')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            activeSubTab === 'exams'
+              ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
+              : 'text-zinc-600 hover:text-zinc-950'
+          }`}
+        >
+          <Trophy className="w-4 h-4 text-zinc-800" />
+          <span>{isKhmer ? 'លទ្ធផលប្រឡងប្រចាំខែ (July Exam)' : 'July Exam Ledger & Top List'}</span>
+        </button>
 
-        {isStaff && (
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <Plus className="w-4 h-4 text-zinc-300" />
-            <span>{isKhmer ? 'បង្កើតកិច្ចការថ្មី' : 'Create Assignment'}</span>
-          </button>
-        )}
+        <button
+          onClick={() => setActiveSubTab('assignments')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            activeSubTab === 'assignments'
+              ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
+              : 'text-zinc-600 hover:text-zinc-950'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4 text-zinc-800" />
+          <span>{isKhmer ? 'កិច្ចការផ្ទះ & លំហាត់' : 'Assignments & Homework'}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab('practicals')}
+          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            activeSubTab === 'practicals'
+              ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200'
+              : 'text-zinc-600 hover:text-zinc-950'
+          }`}
+        >
+          <Award className="w-4 h-4 text-zinc-800" />
+          <span>{isKhmer ? 'តេស្តអនុវត្តផ្ទាល់' : 'Practical Lab Exams'}</span>
+        </button>
       </div>
 
-      {/* Requirement 3: Clean Empty State for Assignments */}
-      {assignments.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 border border-zinc-200 shadow-xs text-center max-w-2xl mx-auto space-y-4 my-8">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-100 text-zinc-800 flex items-center justify-center mx-auto border border-zinc-200 shadow-xs">
-            <ClipboardList className="w-8 h-8" />
-          </div>
+      {/* Subtab View 1: Official Monthly Exams & Top Show List */}
+      {activeSubTab === 'exams' && (
+        <MonthlyExamsPage />
+      )}
 
-          <div className="space-y-1.5">
-            <h2 className="text-lg font-black text-slate-900">
-              {isStaff
-                ? t('empty.assignments_teacher_title', undefined, 'No assignments yet')
-                : t('empty.assignments_student_title', undefined, 'No assignments available right now')}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-              {isStaff
-                ? t('empty.assignments_teacher_desc', undefined, 'Create an assignment to give work to your students.')
-                : t('empty.assignments_student_desc', undefined, "Your teacher hasn't posted any assignments yet.")}
-            </p>
-          </div>
+      {/* Subtab View 2: Practical Exams */}
+      {activeSubTab === 'practicals' && (
+        <PracticalExamsPage />
+      )}
 
-          {isStaff && (
-            <div className="pt-2">
+      {/* Subtab View 3: Homework & Assignments List */}
+      {activeSubTab === 'assignments' && (
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black text-zinc-950 flex items-center gap-2.5">
+                <ClipboardList className="w-6 h-6 text-zinc-900" />
+                {t('title.assignments', undefined, 'Assignments & File Submissions')}
+              </h1>
+              <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
+                {isKhmer
+                  ? 'កិច្ចការផ្ទះ លំហាត់អនុវត្តកុំព្យូទ័រ និងការកែដាក់ពិន្ទុជូនសិស្ស។'
+                  : 'Practical computer assignments, image worksheets, and student homework grading.'}
+              </p>
+            </div>
+
+            {isStaff && (
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4 text-zinc-300" />
-                <span>{isKhmer ? 'បង្កើតកិច្ចការដំបូង' : 'Create Assignment'}</span>
+                <span>{isKhmer ? 'បង្កើតកិច្ចការថ្មី' : 'Create Assignment'}</span>
               </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        /* Assignments List */
-        <div className="space-y-5">
-          {/* Filter Bar */}
-          {isStaff && (
+            )}
+          </div>
+
+          {/* Assignments List */}
+          <div className="space-y-5">
+            {/* Filter Bar */}
+            {isStaff && (
             <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-zinc-200 shadow-xs overflow-x-auto">
               <button
                 onClick={() => setFilterClass('all')}
@@ -332,7 +356,8 @@ export const AssignmentsPage: React.FC = () => {
             })}
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* Redesigned Create Assignment Modal with Multi-File & Image Upload */}
       {showCreateModal && (
