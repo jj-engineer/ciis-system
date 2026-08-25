@@ -103,17 +103,18 @@ const server = http.createServer(async (req, res) => {
   // ==================================================================
 
   // Ultra-Short One-Line PowerShell Installers:
-  // 1) irm 192.168.0.114:4001|iex
-  // 2) irm 192.168.0.114:4001/i|iex
-  // 3) irm 192.168.0.114:4001/02/REG-02-XXXX|iex  (Zero prompts, auto-paired!)
-  const paramMatch = pathname.match(/^\/(\d{1,2})\/([A-Za-z0-9\-_]+)$/);
+  // 1) irm 192.168.0.114:4001/01|iex   (Auto-pairs Laptop 01 with master token JJ)
+  // 2) irm 192.168.0.114:4001|iex      (Prompts for laptop number, defaults to JJ)
+  const singleNumMatch = pathname.match(/^\/(\d{1,2})$/);
+  const fullParamMatch = pathname.match(/^\/(\d{1,2})\/([A-Za-z0-9\-_]+)$/);
   const isInstallerRoute =
     pathname === '/' ||
     pathname === '/i' ||
     pathname === '/in' ||
     pathname === '/install' ||
     pathname === '/install.ps1' ||
-    !!paramMatch;
+    !!singleNumMatch ||
+    !!fullParamMatch;
 
   if (isInstallerRoute && req.method === 'GET') {
     const installPs1Path = path.resolve(installerDir, 'install.ps1');
@@ -121,24 +122,36 @@ const server = http.createServer(async (req, res) => {
     if (content) {
       let output = content;
 
-      // Check URL Path /:laptopNum/:token (e.g. /02/REG-02-T3IL)
-      let paramLaptop = paramMatch ? paramMatch[1] : null;
-      let paramToken = paramMatch ? paramMatch[2] : null;
+      let paramLaptop = null;
+      let paramToken = 'JJ'; // Default master token is JJ
 
-      // Check Query Params (?pc=02&token=REG-02-T3IL)
+      if (singleNumMatch) {
+        paramLaptop = singleNumMatch[1];
+        paramToken = 'JJ';
+      } else if (fullParamMatch) {
+        paramLaptop = fullParamMatch[1];
+        paramToken = fullParamMatch[2] || 'JJ';
+      }
+
+      // Check Query Params (?pc=01&token=JJ)
       if (!paramLaptop) {
         paramLaptop = parsedUrl.searchParams.get('pc') || parsedUrl.searchParams.get('laptop') || parsedUrl.searchParams.get('n');
       }
-      if (!paramToken) {
-        paramToken = parsedUrl.searchParams.get('token') || parsedUrl.searchParams.get('t');
+      const qToken = parsedUrl.searchParams.get('token') || parsedUrl.searchParams.get('t');
+      if (qToken) {
+        paramToken = qToken;
       }
 
+      let headerCode = '';
       if (paramLaptop) {
         const cleanNum = String(paramLaptop).replace(/\D/g, '').padStart(2, '0');
-        let headerCode = `$ParamLaptopNumber = "${cleanNum}";\n`;
-        if (paramToken) {
-          headerCode += `$ParamPairingToken = "${paramToken.trim().toUpperCase()}";\n`;
-        }
+        headerCode += `$ParamLaptopNumber = "${cleanNum}";\n`;
+      }
+      if (paramToken) {
+        headerCode += `$ParamPairingToken = "${paramToken.trim().toUpperCase()}";\n`;
+      }
+
+      if (headerCode) {
         output = headerCode + content;
       }
 

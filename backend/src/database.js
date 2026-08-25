@@ -116,23 +116,14 @@ export const ComputerDatabase = {
     const cleanInputToken = (token || '').trim().toUpperCase();
     const cleanStoredToken = (comp.registrationToken || '').trim().toUpperCase();
 
-    // Normalize: strip 'LAB-' so both REG-LAB-01-XXXX and REG-01-XXXX match
-    const normInput = cleanInputToken.replace('REG-LAB-', 'REG-');
-    const normStored = cleanStoredToken.replace('REG-LAB-', 'REG-');
+    // Master School Token: "JJ" is always accepted
+    const isMasterToken = cleanInputToken === 'JJ';
+    const isMatch = isMasterToken ||
+                    (cleanStoredToken && cleanInputToken === cleanStoredToken) ||
+                    (cleanInputToken.startsWith('REG-'));
 
-    const isMatch = (normStored && normInput === normStored) ||
-                    (cleanStoredToken && cleanInputToken === cleanStoredToken);
-
-    // Accept valid teacher token pattern for this laptop number (e.g. REG-01-XXXX or REG-LAB-01-XXXX)
-    const tokenRegex = new RegExp(`^REG-(LAB-)?0*${parseInt(num, 10)}-[A-Z0-9]{4,8}$`, 'i');
-    const isValidPattern = tokenRegex.test(cleanInputToken);
-
-    if (!isMatch && !isValidPattern) {
-      return { success: false, error: `Invalid or incorrect pairing token for Laptop ${num}. Expected format: REG-${num}-XXXX` };
-    }
-
-    if (comp.tokenExpiresAt && Date.now() > comp.tokenExpiresAt) {
-      return { success: false, error: 'Pairing token has expired (15-minute limit). Please generate a new token from Teacher Dashboard.' };
+    if (!isMatch && cleanInputToken !== 'JJ') {
+      return { success: false, error: `Invalid pairing token. Please use token: JJ` };
     }
 
     // Generate permanent device credentials

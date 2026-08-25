@@ -24,17 +24,17 @@ Installer URL  : http://192.168.0.114:4001/install.ps1
 Open **PowerShell as Administrator** on any student laptop:
 
 ### Option A: 1-Click Auto Install (Zero Typing — Recommended)
-Copy the exact command generated from the Teacher Dashboard:
+For Laptop `01` (or `02`, `03` ... `30`):
 ```powershell
-irm 192.168.0.114:4001/01/REG-01-9F2A|iex
+irm 192.168.0.114:4001/01|iex
 ```
-*(Instantly registers Laptop 01 and enables background monitoring without asking any questions)*
+*(Instantly pairs Laptop 01 with master token `JJ` and enables background monitoring with zero questions)*
 
-### Option B: 2-Word Generic Command
+### Option B: Generic Command
 ```powershell
 irm 192.168.0.114:4001|iex
 ```
-*(Prompts for Laptop Number and Pairing Token interactively)*
+*(Prompts for Laptop Number `01-30`, token defaults to `JJ`)*
 
 ---
 

@@ -168,21 +168,15 @@ if ($isAlreadyRegistered -and (-not $ParamPairingToken)) {
 $pairingToken = ""
 if ($ParamPairingToken) {
     $pairingToken = $ParamPairingToken.ToString().Trim().ToUpper()
-    Write-Host "  * Pairing Token: $pairingToken (Auto-configured)" -ForegroundColor Cyan
+    Write-Host "  * Pairing Token: $pairingToken" -ForegroundColor Cyan
 } else {
-    while ($true) {
-        $rawToken = Read-Host "Pairing Token (e.g. REG-$laptopNumber-XXXX)"
-        if ([string]::IsNullOrWhiteSpace($rawToken)) {
-            Write-Host "  [!] Pairing token cannot be empty." -ForegroundColor Red
-            continue
-        }
-
+    $rawToken = Read-Host "Pairing Token [Default: JJ]"
+    if ([string]::IsNullOrWhiteSpace($rawToken)) {
+        $pairingToken = "JJ"
+    } else {
         $pairingToken = $rawToken.Trim().ToUpper()
-        if ($pairingToken.Length -ge 6) {
-            break
-        }
-        Write-Host "  [!] Invalid token format. Please enter the full pairing token from teacher dashboard." -ForegroundColor Red
     }
+    Write-Host "  * Pairing Token: $pairingToken" -ForegroundColor Cyan
 }
 
 # ====================================================================
