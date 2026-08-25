@@ -17,13 +17,13 @@ import {
 } from './labMockData';
 
 const STORAGE_KEYS = {
-  COMPUTERS_LAB_A: 'ciis_lab_a_computers_v1',
-  COMPUTERS_LAB_B: 'ciis_lab_b_computers_v1',
-  COMPUTERS_LAB_C: 'ciis_lab_c_computers_v1',
-  ACTIVE_SESSION: 'ciis_lab_active_session_v1',
-  AUDIT_LOGS: 'ciis_lab_audit_logs_v1',
-  SELECTED_LAB: 'ciis_lab_selected_group_v1',
-  DEMO_MODE: 'ciis_lab_demo_mode_v1'
+  COMPUTERS_LAB_A: 'ciis_school_lab_computers_v3',
+  COMPUTERS_LAB_B: 'ciis_school_lab_computers_v3',
+  COMPUTERS_LAB_C: 'ciis_school_lab_computers_v3',
+  ACTIVE_SESSION: 'ciis_lab_active_session_v3',
+  AUDIT_LOGS: 'ciis_lab_audit_logs_v3',
+  SELECTED_LAB: 'ciis_lab_selected_group_v3',
+  DEMO_MODE: 'ciis_lab_demo_mode_v3'
 };
 
 function getItem<T>(key: string, fallback: T): T {
@@ -112,7 +112,7 @@ export const LabStorageService = {
   },
 
   isDemoMode: (): boolean => {
-    return getItem<boolean>(STORAGE_KEYS.DEMO_MODE, true);
+    return getItem<boolean>(STORAGE_KEYS.DEMO_MODE, false);
   },
 
   setDemoMode: (isDemo: boolean): void => {

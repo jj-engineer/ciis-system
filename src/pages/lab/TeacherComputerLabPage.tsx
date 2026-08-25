@@ -69,14 +69,14 @@ export const TeacherComputerLabPage: React.FC = () => {
       {/* 1. Header: Real Title, Connection Pill & Quick Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-zinc-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-pink-900 text-white flex items-center justify-center shadow-xs font-black">
+          <div className="w-10 h-10 rounded-2xl bg-zinc-950 text-white flex items-center justify-center shadow-xs font-black">
             <Laptop className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-xl font-black text-zinc-950 tracking-tight flex items-center gap-2">
               <span>{isKhmer ? 'បន្ទប់កុំព្យូទ័រ' : 'School Computer Lab'}</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-mono font-bold">
-                {selectedLab}
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-mono font-bold border border-zinc-200">
+                {isKhmer ? '៣០ Laptops' : '30 Laptops'}
               </span>
             </h1>
             <p className="text-xs text-zinc-500 font-medium">
@@ -87,12 +87,10 @@ export const TeacherComputerLabPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Toolbar: Connection Status, Pair Button, Logs */}
+        {/* Right Toolbar: Clean Minimalist Actions */}
         <div className="flex items-center gap-2 flex-wrap">
           <ConnectionStatus
             isWsConnected={isWsConnected}
-            isDemoMode={isDemoMode}
-            onToggleDemoMode={toggleDemoMode}
             onReconnect={reconnect}
           />
 
@@ -102,15 +100,15 @@ export const TeacherComputerLabPage: React.FC = () => {
               const unreg = computers.find((c) => c.status === 'UNREGISTERED') || computers[0];
               setTokenModalComputer(unreg);
             }}
-            className="px-3 py-1.5 rounded-xl bg-pink-800 hover:bg-pink-700 text-white text-xs font-black transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+            className="px-3.5 py-1.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
           >
-            <KeyRound className="w-3.5 h-3.5" />
+            <KeyRound className="w-3.5 h-3.5 text-zinc-300" />
             <span>{isKhmer ? 'ចុះឈ្មោះ Laptop' : 'Pair Laptop'}</span>
           </button>
 
           <button
             onClick={() => setIsAuditModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-white border border-zinc-200 hover:border-zinc-300 text-zinc-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
           >
             <History className="w-3.5 h-3.5 text-zinc-500" />
             <span>{isKhmer ? 'កំណត់ត្រា' : 'Logs'}</span>

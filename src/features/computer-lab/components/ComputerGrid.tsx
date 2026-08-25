@@ -1,17 +1,10 @@
 // ====================================================================
 // Component: ComputerGrid
-// Clean, Realistic School Lab Workstation Grid
+// Clean, Realistic School Lab Workstation Grid (30 Laptops)
 // ====================================================================
 
 import React from 'react';
-import {
-  Search,
-  Building,
-  RefreshCw,
-  Radio,
-  SlidersHorizontal,
-  Plus
-} from 'lucide-react';
+import { Search, RefreshCw, Laptop } from 'lucide-react';
 import { ComputerWorkstation, LabGroup } from '../types/lab';
 import { ComputerCard } from './ComputerCard';
 import { StatusFilterOption } from '../hooks/useLabComputers';
@@ -19,8 +12,8 @@ import { useLanguage } from '../../../context/LanguageContext';
 
 interface ComputerGridProps {
   computers: ComputerWorkstation[];
-  selectedLab: LabGroup;
-  onSelectLab: (group: LabGroup) => void;
+  selectedLab?: LabGroup;
+  onSelectLab?: (group: LabGroup) => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   statusFilter: StatusFilterOption;
@@ -36,11 +29,8 @@ interface ComputerGridProps {
 
 export const ComputerGrid: React.FC<ComputerGridProps> = ({
   computers,
-  selectedLab,
-  onSelectLab,
   searchQuery,
   onSearchChange,
-  statusFilter,
   selectedIds,
   onToggleSelect,
   onComputerClick,
@@ -49,35 +39,14 @@ export const ComputerGrid: React.FC<ComputerGridProps> = ({
 }) => {
   const { isKhmer } = useLanguage();
 
-  const labRooms: { id: LabGroup; label: string; count: number }[] = [
-    { id: 'Lab A', label: isKhmer ? 'បន្ទប់ Lab A (៣០ Laptops)' : 'Lab A (Room 101 • 30 Laptops)', count: 30 },
-    { id: 'Lab B', label: isKhmer ? 'បន្ទប់ Lab B (២៥ Laptops)' : 'Lab B (Room 102 • 25 Laptops)', count: 25 },
-    { id: 'Lab C', label: isKhmer ? 'បន្ទប់ Lab C (២០ Laptops)' : 'Lab C (Room 103 • 20 Laptops)', count: 20 }
-  ];
-
   return (
     <div className="space-y-4">
-      {/* 1. Clean Toolbar: Lab Room Switcher & Instant Search */}
+      {/* 1. Clean Toolbar: Lab Room Title & Instant Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-zinc-200/90 shadow-2xs">
-        {/* Lab Room Selector */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-100/90 border border-zinc-200/80">
-          {labRooms.map((room) => {
-            const isActive = selectedLab === room.id;
-            return (
-              <button
-                key={room.id}
-                onClick={() => onSelectLab(room.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-white text-zinc-950 shadow-2xs font-black'
-                    : 'text-zinc-600 hover:text-zinc-950'
-                }`}
-              >
-                <Building className="w-3.5 h-3.5 text-pink-800" />
-                <span>{room.label}</span>
-              </button>
-            );
-          })}
+        {/* Single Lab Room Badge */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100/90 border border-zinc-200/80 text-xs font-bold text-zinc-900 select-none">
+          <Laptop className="w-4 h-4 text-pink-900" />
+          <span>{isKhmer ? 'បន្ទប់កុំព្យូទ័រ CIIS (៣០ Laptops)' : 'School Computer Lab (30 Laptops)'}</span>
         </div>
 
         {/* Search Bar & Refresh */}
@@ -96,7 +65,7 @@ export const ComputerGrid: React.FC<ComputerGridProps> = ({
           <button
             onClick={onRefresh}
             className="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 transition-all cursor-pointer shrink-0"
-            title="Refresh Status"
+            title={isKhmer ? 'ផ្ទុកឡើងវិញ' : 'Refresh Status'}
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
