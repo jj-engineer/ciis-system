@@ -340,29 +340,73 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Revoke Agent Registration
-  if ((pathname === '/api/revoke-agent' || pathname === '/api/agents/revoke') && req.method === 'POST') {
+  // Unpair / Remove Laptop Registration
+  if (
+    (pathname === '/api/unpair-laptop' ||
+      pathname === '/api/agents/unpair' ||
+      pathname === '/api/revoke-agent' ||
+      pathname === '/api/agents/revoke') &&
+    req.method === 'POST'
+  ) {
     const body = await parseBody(req);
     const num = body.laptopNumber || body.computerNumber;
 
-    const success = ComputerDatabase.revokeAgent(num);
+    const formattedNum = String(num).replace(/\D/g, '').padStart(2, '0');
+    const success = ComputerDatabase.unpairLaptop(formattedNum);
     if (success) {
-      const formattedNum = String(num).padStart(2, '0');
       const ws = activeAgentSockets.get(formattedNum);
       if (ws) {
-        ws.close(4003, 'Agent Revoked by Administrator');
+        try {
+          ws.send(JSON.stringify({ type: 'UNPAIRED', message: 'Laptop unpaired by teacher' }));
+          ws.close(4003, 'Unpaired by Teacher');
+        } catch {}
         activeAgentSockets.delete(formattedNum);
       }
 
       broadcastToTeachers({
-        type: 'AGENT_REVOKED',
+        type: 'COMPUTER_STATUS_CHANGED',
         computerNumber: formattedNum,
-        laptopNumber: formattedNum
+        laptopNumber: formattedNum,
+        status: 'UNREGISTERED'
       });
 
-      console.log(`[Agent Revoked] Laptop ${formattedNum} revoked by administrator`);
+      console.log(`[Laptop Unpaired] Laptop ${formattedNum} reset to UNREGISTERED`);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: true, message: `Laptop ${formattedNum} revoked.` }));
+      res.end(JSON.stringify({ success: true, message: `Laptop ${formattedNum} unpaired successfully.` }));
+    } else {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: `Laptop ${num} not found.` }));
+    }
+    return;
+  }
+
+  // Set Laptop to Offline
+  if ((pathname === '/api/set-offline' || pathname === '/api/agents/set-offline') && req.method === 'POST') {
+    const body = await parseBody(req);
+    const num = body.laptopNumber || body.computerNumber;
+
+    const formattedNum = String(num).replace(/\D/g, '').padStart(2, '0');
+    const success = ComputerDatabase.setOffline(formattedNum);
+    if (success) {
+      const ws = activeAgentSockets.get(formattedNum);
+      if (ws) {
+        try {
+          ws.close(4000, 'Set offline by Teacher');
+        } catch {}
+        activeAgentSockets.delete(formattedNum);
+      }
+
+      broadcastToTeachers({
+        type: 'COMPUTER_STATUS_CHANGED',
+        computerNumber: formattedNum,
+        laptopNumber: formattedNum,
+        status: 'OFFLINE',
+        lastSeen: new Date().toISOString()
+      });
+
+      console.log(`[Laptop Offline] Laptop ${formattedNum} manually set to OFFLINE`);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: `Laptop ${formattedNum} set to offline.` }));
     } else {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: `Laptop ${num} not found.` }));

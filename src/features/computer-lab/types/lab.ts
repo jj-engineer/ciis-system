@@ -23,7 +23,9 @@ export type LabCommandType =
   | 'OPEN_ASSIGNMENT'
   | 'COLLECT_FILES'
   | 'GENERATE_TOKEN'
-  | 'REVOKE_AGENT';
+  | 'REVOKE_AGENT'
+  | 'SET_OFFLINE'
+  | 'UNPAIR_LAPTOP';
 
 export type CommandExecutionStatus = 'pending' | 'sent' | 'acknowledged' | 'failed' | 'completed';
 

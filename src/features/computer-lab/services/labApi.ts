@@ -107,10 +107,35 @@ export const LabApiService = {
       }
 
       case 'REVOKE_AGENT':
-        updated.status = 'REVOKED';
+      case 'UNPAIR_LAPTOP': {
+        const num = String(updated.computerNumber || updated.computerCode).replace(/\D/g, '').padStart(2, '0');
+        updated.status = 'UNREGISTERED';
         updated.agentId = '';
         updated.registrationToken = undefined;
+        updated.lastSeen = undefined;
+
+        // Sync with backend server
+        fetch('http://192.168.0.114:4001/api/unpair-laptop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ laptopNumber: num })
+        }).catch(() => {});
         break;
+      }
+
+      case 'SET_OFFLINE': {
+        const num = String(updated.computerNumber || updated.computerCode).replace(/\D/g, '').padStart(2, '0');
+        updated.status = 'OFFLINE';
+        updated.lastSeen = new Date().toISOString();
+
+        // Sync with backend server
+        fetch('http://192.168.0.114:4001/api/set-offline', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ laptopNumber: num })
+        }).catch(() => {});
+        break;
+      }
     }
 
     LabStorageService.updateSingleComputer(updated);

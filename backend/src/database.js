@@ -173,10 +173,32 @@ export const ComputerDatabase = {
   setOffline: (computerNumber) => {
     const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
     const comp = computersMap.get(num);
-    if (comp && comp.status === 'ONLINE') {
+    if (comp) {
       comp.status = 'OFFLINE';
+      comp.lastSeen = new Date().toISOString();
+      comp.lastHeartbeatMs = Date.now();
       computersMap.set(num, comp);
+      return true;
     }
+    return false;
+  },
+
+  unpairLaptop: (computerNumber) => {
+    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const comp = computersMap.get(num);
+    if (!comp) return false;
+
+    comp.status = 'UNREGISTERED';
+    comp.deviceId = `device_${num}`;
+    comp.agentToken = undefined;
+    comp.deviceToken = undefined;
+    comp.agentId = undefined;
+    comp.lastSeen = undefined;
+    comp.lastHeartbeatMs = undefined;
+    comp.registeredAt = undefined;
+    comp.registrationToken = undefined;
+    computersMap.set(num, comp);
+    return true;
   },
 
   revokeAgent: (computerNumber) => {
@@ -184,10 +206,11 @@ export const ComputerDatabase = {
     const comp = computersMap.get(num);
     if (!comp) return false;
 
-    comp.status = 'REVOKED';
+    comp.status = 'UNREGISTERED';
     comp.agentToken = undefined;
     comp.deviceToken = undefined;
     comp.agentId = undefined;
+    comp.lastSeen = undefined;
     computersMap.set(num, comp);
     return true;
   }

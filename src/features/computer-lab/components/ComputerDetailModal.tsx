@@ -181,45 +181,63 @@ export const ComputerDetailModal: React.FC<ComputerDetailModalProps> = ({
                 <span>{isKhmer ? 'ពិនិត្យសញ្ញា Ping' : 'Ping Heartbeat'}</span>
               </button>
 
-              {/* Generate Pairing Token */}
+              {/* Show Pair Command */}
               <button
                 onClick={() => onDispatchCommand('GENERATE_TOKEN', computer)}
-                className="p-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-pink-900 border border-pink-200 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="p-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <KeyRound className="w-4 h-4 text-pink-800" />
-                <span>{isKhmer ? 'កូដចុះឈ្មោះ' : 'Pairing Token'}</span>
+                <KeyRound className="w-4 h-4 text-zinc-300" />
+                <span>{isKhmer ? 'ពាក្យបញ្ជាចុះឈ្មោះ' : 'Pair Command'}</span>
               </button>
             </div>
 
-            {/* Revoke Agent Button */}
-            {!confirmRevoke ? (
+            {/* Set Offline Button (if Online) */}
+            {isOnline && (
               <button
-                onClick={() => setConfirmRevoke(true)}
-                className="w-full mt-2 py-2.5 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                onClick={() => {
+                  onDispatchCommand('SET_OFFLINE', computer);
+                  onClose();
+                }}
+                className="w-full mt-1.5 py-2.5 rounded-xl border border-zinc-300 text-zinc-700 hover:bg-zinc-100 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <ShieldAlert className="w-3.5 h-3.5" />
-                <span>{isKhmer ? 'ដកសិទ្ធិ Laptop នេះ' : 'Revoke Device Authorization'}</span>
+                <WifiOff className="w-3.5 h-3.5 text-zinc-500" />
+                <span>{isKhmer ? 'កំណត់ទៅ Offline' : 'Set to Offline'}</span>
               </button>
-            ) : (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-2">
-                <span className="text-[11px] text-rose-900 font-bold">
-                  {isKhmer ? 'តើអ្នកប្រាកដទេថានឹងដកសិទ្ធិ Laptop នេះ?' : 'Revoke Laptop credentials?'}
-                </span>
-                <div className="flex items-center gap-1.5">
+            )}
+
+            {/* Remove / Unpair Laptop Button (if Registered or Online or Offline) */}
+            {!isUnregistered && (
+              <>
+                {!confirmRevoke ? (
                   <button
-                    onClick={() => setConfirmRevoke(false)}
-                    className="px-2.5 py-1 text-xs font-bold text-zinc-600 hover:bg-zinc-200/60 rounded-lg cursor-pointer"
+                    onClick={() => setConfirmRevoke(true)}
+                    className="w-full mt-1 py-2.5 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    Cancel
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <span>{isKhmer ? 'លុប / ផ្ដាច់ការចុះឈ្មោះ Laptop នេះ' : 'Remove / Unpair Laptop'}</span>
                   </button>
-                  <button
-                    onClick={handleConfirmRevoke}
-                    className="px-3 py-1 text-xs font-black text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-2xs cursor-pointer"
-                  >
-                    Confirm Revoke
-                  </button>
-                </div>
-              </div>
+                ) : (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-rose-900 font-bold">
+                      {isKhmer ? 'តើអ្នកប្រាកដទេថានឹងលុប Laptop នេះ?' : 'Unpair & reset Laptop to Unregistered?'}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setConfirmRevoke(false)}
+                        className="px-2.5 py-1 text-xs font-bold text-zinc-600 hover:bg-zinc-200/60 rounded-lg cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleConfirmRevoke}
+                        className="px-3 py-1 text-xs font-black text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-2xs cursor-pointer"
+                      >
+                        Confirm Remove
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
