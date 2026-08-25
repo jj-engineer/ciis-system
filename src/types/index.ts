@@ -20,6 +20,9 @@ export interface UserProfile {
   classId?: string;
   className?: string;
   phone?: string;
+  paymentDeadline?: string; // e.g. "1-Aug-26" or "2026-08-01"
+  paymentAmount?: number; // e.g. 15 ($15/month)
+  paymentStatus?: 'paid' | 'pending' | 'overdue';
   bio?: string;
   isActive: boolean;
   createdAt: string;

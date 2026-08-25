@@ -27,6 +27,7 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { ComputerDatabase } from './database.js';
@@ -35,8 +36,20 @@ import { startWatchdog } from './watchdog.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export function getLocalIp() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name] || []) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return '192.168.1.27';
+}
+
 const PORT = process.env.PORT || 4001;
-const SERVER_IP = '192.168.0.114';
+const SERVER_IP = process.env.SERVER_IP || getLocalIp();
 
 // Locate pc-agent directories for static installer serving
 const rootDir = path.resolve(__dirname, '../../');
@@ -116,11 +129,13 @@ const server = http.createServer(async (req, res) => {
     !!singleNumMatch ||
     !!fullParamMatch;
 
+  const reqHost = req.headers.host ? req.headers.host.split(':')[0] : SERVER_IP;
+
   if (isInstallerRoute && req.method === 'GET') {
     const installPs1Path = path.resolve(installerDir, 'install.ps1');
     const content = readFileSafe(installPs1Path);
     if (content) {
-      let output = content;
+      let output = content.replace(/192\.168\.0\.114/g, reqHost);
 
       let paramLaptop = null;
       let paramToken = 'JJ'; // Default master token is JJ
@@ -152,7 +167,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (headerCode) {
-        output = headerCode + content;
+        output = headerCode + output;
       }
 
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -169,8 +184,9 @@ const server = http.createServer(async (req, res) => {
     const batPath = path.resolve(installerDir, 'install.bat');
     const content = readFileSafe(batPath);
     if (content) {
+      const output = content.replace(/192\.168\.0\.114/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end(content);
+      res.end(output);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('rem install.bat not found');
@@ -183,8 +199,9 @@ const server = http.createServer(async (req, res) => {
     const uninstPath = path.resolve(installerDir, 'uninstall.ps1');
     const content = readFileSafe(uninstPath);
     if (content) {
+      const output = content.replace(/192\.168\.0\.114/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end(content);
+      res.end(output);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('# uninstall.ps1 not found');
@@ -197,8 +214,9 @@ const server = http.createServer(async (req, res) => {
     const agentPs1Path = path.resolve(agentDir, 'agent.ps1');
     const content = readFileSafe(agentPs1Path);
     if (content) {
+      const output = content.replace(/192\.168\.0\.114/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end(content);
+      res.end(output);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('# agent.ps1 not found');
@@ -211,8 +229,9 @@ const server = http.createServer(async (req, res) => {
     const agentJsPath = path.resolve(agentDir, 'agent.js');
     const content = readFileSafe(agentJsPath);
     if (content) {
+      const output = content.replace(/192\.168\.0\.114/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
-      res.end(content);
+      res.end(output);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('// agent.js not found');
@@ -222,10 +241,15 @@ const server = http.createServer(async (req, res) => {
 
   // Agent Bundle API (Fast single-payload download for remote laptops)
   if (pathname === '/api/agents/bundle' && req.method === 'GET') {
-    const agentPs1 = readFileSafe(path.resolve(agentDir, 'agent.ps1')) || '';
-    const agentJs = readFileSafe(path.resolve(agentDir, 'agent.js')) || '';
-    const runnerVbs = readFileSafe(path.resolve(agentDir, 'runner.vbs')) || '';
-    const startBat = readFileSafe(path.resolve(agentDir, 'start-agent.bat')) || '';
+    const rawAgentPs1 = readFileSafe(path.resolve(agentDir, 'agent.ps1')) || '';
+    const rawAgentJs = readFileSafe(path.resolve(agentDir, 'agent.js')) || '';
+    const rawRunnerVbs = readFileSafe(path.resolve(agentDir, 'runner.vbs')) || '';
+    const rawStartBat = readFileSafe(path.resolve(agentDir, 'start-agent.bat')) || '';
+
+    const agentPs1 = rawAgentPs1.replace(/192\.168\.0\.114/g, reqHost);
+    const agentJs = rawAgentJs.replace(/192\.168\.0\.114/g, reqHost);
+    const runnerVbs = rawRunnerVbs.replace(/192\.168\.0\.114/g, reqHost);
+    const startBat = rawStartBat.replace(/192\.168\.0\.114/g, reqHost);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(

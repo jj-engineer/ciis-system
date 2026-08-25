@@ -103,31 +103,45 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
       </div>
 
       {/* Profile Overview Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-sm ring-4 ring-pink-100">
+          <div className="w-20 h-20 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800 shadow-xs">
             <User className="w-10 h-10 text-zinc-100" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-extrabold text-slate-900">{student.fullName}</h2>
-              <Badge variant="pink" size="sm">{student.className || 'Grade 10A'}</Badge>
+              {student.gender === 'female' ? (
+                <span className="px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold border border-rose-200">
+                  {isKhmer ? 'ស្រី (ស)' : 'Female'}
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-lg bg-sky-50 text-sky-700 text-xs font-bold border border-sky-200">
+                  {isKhmer ? 'ប្រុស (ប)' : 'Male'}
+                </span>
+              )}
+              <Badge variant="slate" size="sm">{student.className || 'CIIS Computer'}</Badge>
             </div>
             <p className="text-xs text-slate-500 font-mono">Student ID: {student.studentId || 'STD-001'}</p>
-            <p className="text-xs text-slate-500">Portal Username: {student.username || 'student.login'}</p>
+            <p className="text-xs text-slate-500">
+              {isKhmer ? 'លេខទូរស័ព្ទ៖' : 'Phone:'} <strong className="text-zinc-900 font-mono">{student.phone || '012 345 678'}</strong>
+            </p>
+            <p className="text-xs text-slate-500">
+              {isKhmer ? 'កាលបរិច្ឆេទបង់ថ្លៃសិក្សា ($15)៖' : 'Tuition Deadline ($15):'} <strong className="text-zinc-900 font-mono">{student.paymentDeadline || '28-Aug-26'}</strong>
+            </p>
           </div>
         </div>
 
         {/* Big Overall Grade Badge */}
-        <div className="p-4 rounded-2xl bg-pink-50/80 border border-pink-200 text-center w-full md:w-44">
-          <span className="text-xs font-bold text-pink-700 uppercase tracking-wider block">
-            Overall Competency
+        <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-center w-full md:w-48 shadow-xs">
+          <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block">
+            {isKhmer ? 'លទ្ធផលសិក្សារួម' : 'Overall Competency'}
           </span>
-          <span className="text-3xl font-black text-pink-900 block my-0.5">
+          <span className="text-3xl font-black text-zinc-900 block my-0.5">
             {analytics.overallProgressPercentage}%
           </span>
-          <span className="text-[11px] text-pink-700 font-semibold">
-            {analytics.overallProgressPercentage >= 80 ? 'Grade A (Distinction)' : 'Grade B'}
+          <span className="text-[11px] text-zinc-700 font-bold">
+            {analytics.overallProgressPercentage >= 80 ? (isKhmer ? 'និទ្ទេស A (ឆ្នើម)' : 'Grade A (Top)') : 'Grade B'}
           </span>
         </div>
       </div>

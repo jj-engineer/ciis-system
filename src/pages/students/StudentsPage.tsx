@@ -17,7 +17,10 @@ import {
   ShieldCheck,
   Mail,
   UserCheck,
-  User
+  User,
+  Phone,
+  Calendar,
+  CreditCard
 } from 'lucide-react';
 import { StudentProfilePage } from './StudentProfilePage';
 
@@ -33,28 +36,36 @@ export const StudentsPage: React.FC = () => {
   // New Student Form
   const [newFullName, setNewFullName] = useState('');
   const [newStudentId, setNewStudentId] = useState('');
+  const [newGender, setNewGender] = useState<'female' | 'male'>('female');
+  const [newPhone, setNewPhone] = useState('');
+  const [newPaymentDeadline, setNewPaymentDeadline] = useState('28-Aug-26');
   const [newClassId, setNewClassId] = useState(selectedClassId);
-  const [newUsername, setNewUsername] = useState('');
-  const [newEmail, setNewEmail] = useState('');
 
   const students = allProfiles.filter(p => p.role === 'student');
 
   const filteredStudents = students.filter(s => {
-    const matchesSearch = s.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (s.studentId && s.studentId.toLowerCase().includes(searchQuery.toLowerCase()));
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = s.fullName.toLowerCase().includes(q) ||
+                          (s.studentId && s.studentId.toLowerCase().includes(q)) ||
+                          (s.phone && s.phone.toLowerCase().includes(q));
     const matchesClass = selectedClassId === 'all' || s.classId === selectedClassId;
     return matchesSearch && matchesClass;
   });
 
   const handleAddStudentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newFullName.trim() || !newStudentId.trim()) return;
+    if (!newFullName.trim()) return;
 
     const targetClass = classes.find(c => c.id === newClassId);
 
     registerStudent({
-      fullName: newFullName,
-      studentId: newStudentId,
+      fullName: newFullName.trim(),
+      studentId: newStudentId.trim() || undefined,
+      gender: newGender,
+      phone: newPhone.trim(),
+      paymentDeadline: newPaymentDeadline.trim(),
+      paymentAmount: 15,
+      paymentStatus: 'pending',
       classId: newClassId,
       className: targetClass?.name || 'CIIS Computer {5:30-6:30}',
       password: '123'
@@ -63,8 +74,8 @@ export const StudentsPage: React.FC = () => {
     setShowAddStudentModal(false);
     setNewFullName('');
     setNewStudentId('');
-    setNewUsername('');
-    setNewEmail('');
+    setNewPhone('');
+    setNewPaymentDeadline('28-Aug-26');
   };
 
   // If a student is selected to view their detailed profile, show the profile view
@@ -88,8 +99,8 @@ export const StudentsPage: React.FC = () => {
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {isKhmer
-              ? 'គ្រប់គ្រងបញ្ជីឈ្មោះសិស្ស មើលលទ្ធផលសិក្សា និងកត់ត្រាការសង្កេតរបស់គ្រូ។'
-              : 'Manage student records, view performance metrics, and log teacher behavioral notes.'}
+              ? 'គ្រប់គ្រងបញ្ជីវត្តមាន លេខទូរស័ព្ទ កាលបរិច្ឆេទបង់ថ្លៃសិក្សា ($15) និងលទ្ធផលរៀនសូត្រ។'
+              : 'Manage student records, parent phone contacts, monthly tuition deadlines ($15), and grades.'}
           </p>
         </div>
 
@@ -112,7 +123,7 @@ export const StudentsPage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isKhmer ? 'ស្វែងរកឈ្មោះ ឬអត្តលេខសិស្ស...' : 'Search student name or ID...'}
+            placeholder={isKhmer ? 'ស្វែងរកឈ្មោះ អត្តលេខ ឬលេខទូរស័ព្ទ...' : 'Search student name, ID or phone...'}
             className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400/20 focus:border-zinc-800 transition-all"
           />
         </div>
@@ -122,7 +133,7 @@ export const StudentsPage: React.FC = () => {
           <select
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
-            className="bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 outline-none"
+            className="bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 outline-none cursor-pointer"
           >
             <option value="all">{isKhmer ? 'គ្រប់ថ្នាក់ទាំងអស់' : 'All Classes'}</option>
             {classes.map(c => (
@@ -134,7 +145,7 @@ export const StudentsPage: React.FC = () => {
 
       {/* Students Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredStudents.map((student) => {
+        {filteredStudents.map((student, idx) => {
           const analytics = studentAnalytics.find(a => a.studentId === student.id) || {
             attendancePercentage: 95,
             overallProgressPercentage: 85,
@@ -146,7 +157,7 @@ export const StudentsPage: React.FC = () => {
             <div
               key={student.id}
               onClick={() => setSelectedStudentForProfile(student)}
-              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex flex-col justify-between"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
@@ -167,27 +178,50 @@ export const StudentsPage: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-500 font-mono">{student.studentId || 'STD-001'}</p>
+                      <p className="text-[11px] text-slate-500 font-mono">{student.studentId || `STD-${String(idx + 1).padStart(3, '0')}`}</p>
                     </div>
                   </div>
-                  <Badge variant="slate" size="sm">{student.className || 'Grade 10A'}</Badge>
+                  <Badge variant="slate" size="sm">{student.className || 'CIIS Computer'}</Badge>
+                </div>
+
+                {/* Contact & Payment Info Row */}
+                <div className="p-2.5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500 text-[11px] flex items-center gap-1">
+                      <Phone className="w-3 h-3 text-zinc-700" />
+                      {isKhmer ? 'លេខទូរស័ព្ទ៖' : 'Phone:'}
+                    </span>
+                    <span className="font-mono font-bold text-zinc-900 text-[11px] truncate max-w-[170px]">
+                      {student.phone || '012 345 678'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-zinc-200/60">
+                    <span className="text-zinc-500 text-[11px] flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-zinc-700" />
+                      {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ថ្លៃ៖' : 'Tuition Deadline:'}
+                    </span>
+                    <span className="font-mono font-bold text-zinc-900 text-[11px]">
+                      {student.paymentDeadline || '28-Aug-26'} ($15)
+                    </span>
+                  </div>
                 </div>
 
                 {/* Quick Performance Indicators */}
                 <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200">
                     <span className="text-[10px] text-slate-400 block font-semibold">{isKhmer ? 'វត្តមាន' : 'Attendance'}</span>
                     <span className={`text-xs font-bold ${analytics.attendancePercentage < 80 ? 'text-rose-600' : 'text-slate-800'}`}>
                       {analytics.attendancePercentage}%
                     </span>
                   </div>
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200">
                     <span className="text-[10px] text-slate-400 block font-semibold">{isKhmer ? 'សរុប' : 'Overall'}</span>
                     <span className="text-xs font-bold text-zinc-900">
                       {analytics.overallProgressPercentage}%
                     </span>
                   </div>
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200">
                     <span className="text-[10px] text-slate-400 block font-semibold">{isKhmer ? 'វាយអក្សរ' : 'Typing'}</span>
                     <span className="text-xs font-bold text-slate-800">
                       {analytics.typingWpm} WPM
@@ -203,7 +237,7 @@ export const StudentsPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-zinc-900 font-bold">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-zinc-900 font-bold">
                 <span>{isKhmer ? 'មើលប្រវត្តិរូប & កំណត់ចំណាំ' : 'View Full Profile & Notes'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
@@ -218,51 +252,95 @@ export const StudentsPage: React.FC = () => {
           isOpen={showAddStudentModal}
           onClose={() => setShowAddStudentModal(false)}
           title={isKhmer ? 'ចុះឈ្មោះសិស្សថ្មី' : 'Enroll New Student'}
-          subtitle={isKhmer ? 'បញ្ចូលឈ្មោះ និងថ្នាក់រៀនសម្រាប់សិស្ស' : 'Add student account credentials and assign to class'}
+          subtitle={isKhmer ? 'បញ្ចូលឈ្មោះ ភេទ លេខទូរស័ព្ទ និងកាលបរិច្ឆេទបង់ថ្លៃសិក្សា' : 'Add student credentials, phone contact, and tuition deadline'}
+          maxWidth="md"
         >
           <form onSubmit={handleAddStudentSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                {isKhmer ? 'ឈ្មោះពេញរបស់សិស្ស' : 'Full Name'}
+                {isKhmer ? 'ឈ្មោះពេញរបស់សិស្ស' : 'Full Name'} *
               </label>
               <input
                 type="text"
                 required
                 value={newFullName}
                 onChange={(e) => setNewFullName(e.target.value)}
-                placeholder="e.g. SOK Dara"
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                placeholder="ឧ. សុខ បញ្ញា"
+                className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-zinc-900 focus:border-zinc-800"
+                autoFocus
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {isKhmer ? 'ភេទ' : 'Gender'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewGender('female')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      newGender === 'female'
+                        ? 'bg-rose-50 border-rose-300 text-rose-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ស្រី (ស)' : 'Female'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewGender('male')}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      newGender === 'male'
+                        ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-xs'
+                        : 'bg-white border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isKhmer ? 'ប្រុស (ប)' : 'Male'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   {isKhmer ? 'អត្តលេខសិស្ស' : 'Student ID'}
                 </label>
                 <input
                   type="text"
-                  required
                   value={newStudentId}
                   onChange={(e) => setNewStudentId(e.target.value)}
-                  placeholder="e.g. STD-2026-036"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  placeholder="STD-020"
+                  className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono font-bold text-zinc-900 focus:border-zinc-800"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {isKhmer ? 'លេខទូរស័ព្ទទំនាក់ទំនង' : 'Phone Number'}
+                </label>
+                <input
+                  type="text"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  placeholder="012 345 678"
+                  className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono font-bold text-zinc-900 focus:border-zinc-800"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  {isKhmer ? 'ថ្នាក់រៀន' : 'Class Assignment'}
+                  {isKhmer ? 'ថ្ងៃផុតកំណត់បង់ថ្លៃ' : 'Payment Deadline'}
                 </label>
-                <select
-                  value={newClassId}
-                  onChange={(e) => setNewClassId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none font-semibold"
-                >
-                  {classes.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={newPaymentDeadline}
+                  onChange={(e) => setNewPaymentDeadline(e.target.value)}
+                  placeholder="28-Aug-26"
+                  className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono font-bold text-zinc-900 focus:border-zinc-800"
+                />
               </div>
             </div>
 
@@ -270,13 +348,13 @@ export const StudentsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowAddStudentModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
+                className="px-4 py-2 text-xs font-bold text-zinc-600 hover:bg-zinc-100 rounded-xl transition-colors cursor-pointer"
               >
                 {t('action.cancel', undefined, 'Cancel')}
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-pink-700 hover:bg-pink-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors"
+                className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
               >
                 {isKhmer ? 'រក្សាទុកសិស្ស' : 'Register Student'}
               </button>

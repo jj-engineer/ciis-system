@@ -27,6 +27,10 @@ interface AuthContextType {
     studentId?: string;
     avatarUrl?: string;
     gender?: 'female' | 'male' | string;
+    phone?: string;
+    paymentDeadline?: string;
+    paymentAmount?: number;
+    paymentStatus?: 'paid' | 'pending' | 'overdue';
   }) => UserProfile;
   registerTeacher: (data: {
     fullName: string;
@@ -173,6 +177,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     studentId?: string;
     avatarUrl?: string;
     gender?: 'female' | 'male' | string;
+    phone?: string;
+    paymentDeadline?: string;
+    paymentAmount?: number;
+    paymentStatus?: 'paid' | 'pending' | 'overdue';
   }): UserProfile => {
     const autoStudentId = data.studentId || StorageService.getNextStudentId();
     const cleanUsername = data.fullName
@@ -186,6 +194,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       studentId: autoStudentId,
       fullName: data.fullName.trim(),
       gender: data.gender || 'male',
+      phone: data.phone || '',
+      paymentDeadline: data.paymentDeadline || '28-Aug-26',
+      paymentAmount: data.paymentAmount || 15,
+      paymentStatus: data.paymentStatus || 'pending',
       username: cleanUsername,
       email: `${autoStudentId.toLowerCase()}@student.school.edu`,
       password: data.password || '123',

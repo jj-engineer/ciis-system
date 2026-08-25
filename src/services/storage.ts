@@ -122,16 +122,30 @@ export const StorageService = {
   getProfiles: (): UserProfile[] => {
     const stored = getItem<UserProfile[]>(STORAGE_KEYS.PROFILES, INITIAL_PROFILES);
     let updated = false;
-    const initialTeachers = INITIAL_PROFILES.filter(p => p.role === 'teacher' || p.role === 'admin');
     
-    for (const initT of initialTeachers) {
-      const idx = stored.findIndex(p => p.id === initT.id || p.username === initT.username || p.email === initT.email);
+    // Sync teachers and initial students
+    for (const initP of INITIAL_PROFILES) {
+      const idx = stored.findIndex(p => p.id === initP.id || (initP.studentId && p.studentId === initP.studentId));
       if (idx === -1) {
-        stored.unshift(initT);
+        stored.push(initP);
         updated = true;
       } else {
-        if (stored[idx].avatarUrl !== initT.avatarUrl || stored[idx].fullName !== initT.fullName) {
-          stored[idx] = { ...stored[idx], ...initT };
+        if (
+          stored[idx].fullName !== initP.fullName ||
+          stored[idx].gender !== initP.gender ||
+          stored[idx].phone !== initP.phone ||
+          stored[idx].paymentDeadline !== initP.paymentDeadline ||
+          stored[idx].paymentAmount !== initP.paymentAmount
+        ) {
+          stored[idx] = {
+            ...stored[idx],
+            fullName: initP.fullName,
+            gender: initP.gender,
+            phone: initP.phone,
+            paymentDeadline: initP.paymentDeadline,
+            paymentAmount: initP.paymentAmount,
+            paymentStatus: stored[idx].paymentStatus || initP.paymentStatus
+          };
           updated = true;
         }
       }
