@@ -172,9 +172,13 @@ const server = http.createServer(async (req, res) => {
       if (paramLaptop) {
         const cleanNum = String(paramLaptop).replace(/\D/g, '').padStart(2, '0');
         headerCode += `$ParamLaptopNumber = "${cleanNum}";\n`;
+      } else {
+        headerCode += `$ParamLaptopNumber = $null;\n`;
       }
       if (paramToken) {
         headerCode += `$ParamPairingToken = "${paramToken.trim().toUpperCase()}";\n`;
+      } else {
+        headerCode += `$ParamPairingToken = $null;\n`;
       }
 
       if (headerCode) {
@@ -499,12 +503,18 @@ wss.on('connection', (ws, req) => {
     console.log(`[Teacher WS Connected] Active dashboards: ${activeTeacherSockets.size}`);
 
     // Send full snapshot of all 30 laptops
-    ws.send(
-      JSON.stringify({
-        type: 'INITIAL_SNAPSHOT',
-        computers: ComputerDatabase.getAll()
-      })
-    );
+    try {
+      ws.send(
+        JSON.stringify({
+          type: 'INITIAL_SNAPSHOT',
+          computers: ComputerDatabase.getAll()
+        })
+      );
+    } catch {}
+
+    ws.on('error', (err) => {
+      console.warn('[Teacher WS Error]', err.message);
+    });
 
     ws.on('close', () => {
       activeTeacherSockets.delete(ws);
@@ -516,6 +526,10 @@ wss.on('connection', (ws, req) => {
   // B. Windows Student Laptop Agent Stream (/ws/agent)
   if (pathUrl.includes('/ws/agent')) {
     let boundLaptopNumber = '';
+
+    ws.on('error', (err) => {
+      console.warn(`[Agent WS Error ${boundLaptopNumber}]`, err.message);
+    });
 
     ws.on('message', (raw) => {
       try {
@@ -533,14 +547,16 @@ wss.on('connection', (ws, req) => {
 
           if (!authCheck.valid) {
             console.log(`[Agent Rejected] Laptop ${num} rejected (Reason: ${authCheck.reason})`);
-            ws.send(
-              JSON.stringify({
-                type: 'auth_error',
-                reason: authCheck.reason,
-                message: 'Laptop is not paired. Please run registration with token JJ.'
-              })
-            );
-            ws.close(4001, 'Unpaired');
+            try {
+              ws.send(
+                JSON.stringify({
+                  type: 'auth_error',
+                  reason: authCheck.reason,
+                  message: 'Laptop is not paired. Please run registration with token JJ.'
+                })
+              );
+              ws.close(4001, 'Unpaired');
+            } catch {}
             return;
           }
 
@@ -553,17 +569,19 @@ wss.on('connection', (ws, req) => {
 
           const currentStatus = comp.isManuallyOffline ? 'OFFLINE' : 'ONLINE';
 
-          ws.send(
-            JSON.stringify({
-              type: 'auth_success',
-              laptopNumber: num,
-              computerNumber: num,
-              studentName: comp.studentName || '',
-              deviceOwnership: comp.deviceOwnership || (comp.isPersonal ? 'PERSONAL' : 'SCHOOL'),
-              status: currentStatus,
-              serverTime: new Date().toISOString()
-            })
-          );
+          try {
+            ws.send(
+              JSON.stringify({
+                type: 'auth_success',
+                laptopNumber: num,
+                computerNumber: num,
+                studentName: comp.studentName || '',
+                deviceOwnership: comp.deviceOwnership || (comp.isPersonal ? 'PERSONAL' : 'SCHOOL'),
+                status: currentStatus,
+                serverTime: new Date().toISOString()
+              })
+            );
+          } catch {}
 
           // Broadcast status to Teacher Dashboard
           broadcastToTeachers({
@@ -586,20 +604,24 @@ wss.on('connection', (ws, req) => {
           const comp = ComputerDatabase.getByNumber(num);
 
           if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
-            ws.send(JSON.stringify({ type: 'UNPAIRED', message: 'Laptop has been unpaired' }));
-            ws.close(4003, 'Unpaired');
+            try {
+              ws.send(JSON.stringify({ type: 'UNPAIRED', message: 'Laptop has been unpaired' }));
+              ws.close(4003, 'Unpaired');
+            } catch {}
             return;
           }
 
           ComputerDatabase.updateHeartbeat(num, ip);
 
-          ws.send(
-            JSON.stringify({
-              type: 'heartbeat_ack',
-              laptopNumber: num,
-              timestamp: new Date().toISOString()
-            })
-          );
+          try {
+            ws.send(
+              JSON.stringify({
+                type: 'heartbeat_ack',
+                laptopNumber: num,
+                timestamp: new Date().toISOString()
+              })
+            );
+          } catch {}
 
           if (!comp.isManuallyOffline) {
             broadcastToTeachers({
@@ -627,7 +649,17 @@ wss.on('connection', (ws, req) => {
   }
 
   // Fallback for invalid path
-  ws.close(1008, 'Invalid WebSocket path');
+  try {
+    ws.close(1008, 'Invalid WebSocket path');
+  } catch {}
+});
+
+// Process Crash Guards
+process.on('uncaughtException', (err) => {
+  console.error('[Process Uncaught Exception]', err.message);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Process Unhandled Rejection]', reason);
 });
 
 // Start Watchdog Service (Marks offline if heartbeat absent > 15s)
