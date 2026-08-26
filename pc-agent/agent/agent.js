@@ -23,9 +23,9 @@ const localPath = path.resolve(__dirname, 'config.json');
 let configPath = fs.existsSync(defaultSystemPath) ? defaultSystemPath : localPath;
 
 let config = {
-  serverIp: '192.168.0.114',
+  serverIp: '192.168.0.107',
   serverPort: 4001,
-  websocketUrl: 'ws://192.168.0.114:4001/ws/agent',
+  websocketUrl: 'ws://192.168.0.107:4001/ws/agent',
   laptopNumber: '01',
   deviceId: 'device_01',
   deviceToken: 'token_01',
@@ -42,7 +42,7 @@ if (fs.existsSync(configPath)) {
   }
 }
 
-const serverTarget = config.websocketUrl || `ws://${config.serverIp || '192.168.0.114'}:${config.serverPort || 4001}/ws/agent`;
+const serverTarget = config.websocketUrl || `ws://${config.serverIp || '192.168.0.107'}:${config.serverPort || 4001}/ws/agent`;
 
 console.log(`
 =========================================================

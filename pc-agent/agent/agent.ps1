@@ -38,7 +38,7 @@ try {
     exit 1
 }
 
-$ServerIp = if ($configJson.serverIp) { $configJson.serverIp } else { "192.168.0.114" }
+$ServerIp = if ($configJson.serverIp) { $configJson.serverIp } else { "192.168.0.107" }
 $ServerPort = if ($configJson.serverPort) { $configJson.serverPort } else { 4001 }
 $WebSocketUrl = if ($configJson.websocketUrl) { $configJson.websocketUrl } else { "ws://$($ServerIp):$($ServerPort)/ws/agent" }
 $LaptopNumber = if ($configJson.laptopNumber) { $configJson.laptopNumber } else { "01" }

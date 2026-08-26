@@ -61,7 +61,7 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname.startsWith('192.168.')
     );
-    const host = isLocalHost ? window.location.hostname : '192.168.0.114';
+    const host = isLocalHost ? window.location.hostname : '192.168.0.107';
 
     // 1. Initial REST API Sync from real backend
     fetch(`http://${host}:4001/api/computers`)

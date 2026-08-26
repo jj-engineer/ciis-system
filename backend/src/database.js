@@ -27,14 +27,25 @@ import os from 'os';
 
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
+  const validIps = [];
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name] || []) {
       if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
+        if (!iface.address.startsWith('169.254.')) {
+          validIps.push({ name, address: iface.address });
+        }
       }
     }
   }
-  return '192.168.1.27';
+
+  const preferred = validIps.find(i => 
+    i.name.toLowerCase().includes('wi-fi') || 
+    i.name.toLowerCase().includes('ethernet') || 
+    i.name.toLowerCase().includes('wlan') ||
+    i.name.toLowerCase().includes('lan')
+  ) || validIps[0];
+
+  return preferred ? preferred.address : '192.168.0.107';
 }
 
 const SERVER_IP = process.env.SERVER_IP || getLocalIp();

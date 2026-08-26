@@ -12,9 +12,9 @@
 $ErrorActionPreference = "Stop"
 
 # Server Configuration
-$ServerIP = "192.168.0.114"
+$ServerIP = if ($env:SERVER_IP) { $env:SERVER_IP } else { "192.168.0.107" }
 $ServerPort = 4001
-$WebSocketUrl = "ws://192.168.0.114:4001/ws/agent"
+$WebSocketUrl = "ws://${ServerIP}:4001/ws/agent"
 $ServerBaseUrl = "http://${ServerIP}:${ServerPort}"
 $AgentInstallDir = "C:\SchoolLabAgent"
 $TaskName = "SchoolLabAgent_Startup"
@@ -73,7 +73,7 @@ function Write-Header {
     Write-Host ""
     Write-BoxBorderTop $BOX_INNER_WIDTH
     Write-BoxLine -Prefix "CIIS COMPUTER LAB NETWORK  " -PrefixColor White -Content "•  WORKSTATION PROVISIONING ENGINE" -TextColor DarkGray -Width $BOX_INNER_WIDTH
-    Write-BoxLine -Content "Gateway: 192.168.0.114:4001  •  Protocol: WebSocket TCP Core" -TextColor DarkGray -Width $BOX_INNER_WIDTH
+    Write-BoxLine -Content "Gateway: ${ServerIP}:${ServerPort}  •  Protocol: WebSocket TCP Core" -TextColor DarkGray -Width $BOX_INNER_WIDTH
     Write-BoxBorderBottom $BOX_INNER_WIDTH
     Write-Host ""
 }

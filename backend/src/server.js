@@ -38,14 +38,25 @@ const __dirname = path.dirname(__filename);
 
 export function getLocalIp() {
   const interfaces = os.networkInterfaces();
+  const validIps = [];
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name] || []) {
       if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
+        if (!iface.address.startsWith('169.254.')) {
+          validIps.push({ name, address: iface.address });
+        }
       }
     }
   }
-  return '192.168.1.27';
+
+  const preferred = validIps.find(i => 
+    i.name.toLowerCase().includes('wi-fi') || 
+    i.name.toLowerCase().includes('ethernet') || 
+    i.name.toLowerCase().includes('wlan') ||
+    i.name.toLowerCase().includes('lan')
+  ) || validIps[0];
+
+  return preferred ? preferred.address : '192.168.0.107';
 }
 
 const PORT = process.env.PORT || 4001;
@@ -135,7 +146,7 @@ const server = http.createServer(async (req, res) => {
     const installPs1Path = path.resolve(installerDir, 'install.ps1');
     const content = readFileSafe(installPs1Path);
     if (content) {
-      let output = content.replace(/192\.168\.0\.114/g, reqHost);
+      let output = content.replace(/192\.168\.\d+\.\d+/g, reqHost);
 
       let paramLaptop = null;
       let paramToken = 'JJ'; // Default master token is JJ
@@ -184,7 +195,7 @@ const server = http.createServer(async (req, res) => {
     const batPath = path.resolve(installerDir, 'install.bat');
     const content = readFileSafe(batPath);
     if (content) {
-      const output = content.replace(/192\.168\.0\.114/g, reqHost);
+      const output = content.replace(/192\.168\.\d+\.\d+/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end(output);
     } else {
@@ -199,7 +210,7 @@ const server = http.createServer(async (req, res) => {
     const uninstPath = path.resolve(installerDir, 'uninstall.ps1');
     const content = readFileSafe(uninstPath);
     if (content) {
-      const output = content.replace(/192\.168\.0\.114/g, reqHost);
+      const output = content.replace(/192\.168\.\d+\.\d+/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end(output);
     } else {
@@ -214,7 +225,7 @@ const server = http.createServer(async (req, res) => {
     const agentPs1Path = path.resolve(agentDir, 'agent.ps1');
     const content = readFileSafe(agentPs1Path);
     if (content) {
-      const output = content.replace(/192\.168\.0\.114/g, reqHost);
+      const output = content.replace(/192\.168\.\d+\.\d+/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end(output);
     } else {
@@ -229,7 +240,7 @@ const server = http.createServer(async (req, res) => {
     const agentJsPath = path.resolve(agentDir, 'agent.js');
     const content = readFileSafe(agentJsPath);
     if (content) {
-      const output = content.replace(/192\.168\.0\.114/g, reqHost);
+      const output = content.replace(/192\.168\.\d+\.\d+/g, reqHost);
       res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
       res.end(output);
     } else {
@@ -246,10 +257,10 @@ const server = http.createServer(async (req, res) => {
     const rawRunnerVbs = readFileSafe(path.resolve(agentDir, 'runner.vbs')) || '';
     const rawStartBat = readFileSafe(path.resolve(agentDir, 'start-agent.bat')) || '';
 
-    const agentPs1 = rawAgentPs1.replace(/192\.168\.0\.114/g, reqHost);
-    const agentJs = rawAgentJs.replace(/192\.168\.0\.114/g, reqHost);
-    const runnerVbs = rawRunnerVbs.replace(/192\.168\.0\.114/g, reqHost);
-    const startBat = rawStartBat.replace(/192\.168\.0\.114/g, reqHost);
+    const agentPs1 = rawAgentPs1.replace(/192\.168\.\d+\.\d+/g, reqHost);
+    const agentJs = rawAgentJs.replace(/192\.168\.\d+\.\d+/g, reqHost);
+    const runnerVbs = rawRunnerVbs.replace(/192\.168\.\d+\.\d+/g, reqHost);
+    const startBat = rawStartBat.replace(/192\.168\.\d+\.\d+/g, reqHost);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(

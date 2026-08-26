@@ -18,12 +18,12 @@ class LabWebSocketClient {
   private getWsUrl(): string {
     if (typeof window !== 'undefined' && window.location) {
       const host = window.location.hostname;
-      if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.')) {
+      if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
         return `ws://${host}:4001/ws/teacher`;
       }
-      return 'ws://192.168.0.114:4001/ws/teacher';
+      return 'ws://192.168.0.107:4001/ws/teacher';
     }
-    return 'ws://192.168.0.114:4001/ws/teacher';
+    return 'ws://192.168.0.107:4001/ws/teacher';
   }
 
   constructor() {

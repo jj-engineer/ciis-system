@@ -114,8 +114,14 @@ export const LabApiService = {
         updated.registrationToken = undefined;
         updated.lastSeen = undefined;
 
+        const host = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.startsWith('192.168.')
+        ) ? window.location.hostname : '192.168.0.107';
+
         // Sync with backend server
-        fetch('http://192.168.0.114:4001/api/unpair-laptop', {
+        fetch(`http://${host}:4001/api/unpair-laptop`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ laptopNumber: num })
@@ -128,8 +134,14 @@ export const LabApiService = {
         updated.status = 'OFFLINE';
         updated.lastSeen = new Date().toISOString();
 
+        const host = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.startsWith('192.168.')
+        ) ? window.location.hostname : '192.168.0.107';
+
         // Sync with backend server
-        fetch('http://192.168.0.114:4001/api/set-offline', {
+        fetch(`http://${host}:4001/api/set-offline`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ laptopNumber: num })

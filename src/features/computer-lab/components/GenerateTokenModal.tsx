@@ -36,7 +36,16 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
   const rawNum = computer?.computerNumber || computer?.computerCode || '01';
   const computerNumber = String(rawNum).replace(/\D/g, '').padStart(2, '0') || '01';
   const masterToken = 'JJ';
-  const autoCommand = `irm 192.168.0.114:4001/${computerNumber}|iex`;
+
+  const isLocalHost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.startsWith('10.') ||
+    window.location.hostname.startsWith('172.')
+  );
+  const currentHost = isLocalHost ? window.location.hostname : '192.168.0.107';
+  const autoCommand = `irm ${currentHost}:4001/${computerNumber}|iex`;
 
   if (!isOpen || !computer || typeof document === 'undefined') return null;
 
