@@ -1,3 +1,5 @@
 Set WshShell = CreateObject("WScript.Shell")
-currentDir = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName)
-WshShell.Run "cmd /c node """ & currentDir & "\backend\src\server.js""", 0, False
+Set fso = CreateObject("Scripting.FileSystemObject")
+currentDir = fso.GetParentFolderName(WScript.ScriptFullName)
+WshShell.CurrentDirectory = currentDir
+WshShell.Run "cmd /c cd /d """ & currentDir & """ && node """ & currentDir & "\backend\src\server.js""", 0, False
