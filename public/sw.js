@@ -37,13 +37,18 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // Bypass service worker entirely for local dev, Vite HMR, or non-http protocols
+  // Bypass service worker entirely for local dev, Vite HMR, API routes, or non-same-origin protocols
   if (
     url.hostname === 'localhost' ||
     url.hostname === '127.0.0.1' ||
     url.pathname.startsWith('/@') ||
     url.pathname.startsWith('/src/') ||
-    url.pathname.startsWith('/node_modules/')
+    url.pathname.startsWith('/node_modules/') ||
+    url.pathname.startsWith('/api/') ||
+    url.port === '4001' ||
+    url.protocol === 'ws:' ||
+    url.protocol === 'wss:' ||
+    url.origin !== self.location.origin
   ) {
     return;
   }

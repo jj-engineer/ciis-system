@@ -156,11 +156,18 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
 
   // Connect and sync with real-time WebSocket backend & REST API
   useEffect(() => {
+    const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
     const isLocalHost = typeof window !== 'undefined' && (
       window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname.startsWith('192.168.')
     );
+
+    // On public HTTPS cloud (e.g. Vercel), do not attempt insecure http:// to local LAN IP
+    if (isHttps && !isLocalHost) {
+      return;
+    }
+
     const host = isLocalHost ? window.location.hostname : '192.168.0.107';
 
     // 1. Initial REST API Sync from real backend

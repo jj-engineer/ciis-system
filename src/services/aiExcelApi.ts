@@ -135,10 +135,10 @@ export function fileToBase64(file: File): Promise<{ base64: string; mimeType: st
  * Check backend Gemini AI service status
  */
 export async function checkAIExcelStatus(): Promise<AIExcelStatusResponse> {
-  const urls = [
-    '/api/ai/excel/status',
-    `http://${window.location.hostname}:4001/api/ai/excel/status`
-  ];
+  const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const urls = isHttps
+    ? ['/api/ai/excel/status']
+    : ['/api/ai/excel/status', `http://${window.location.hostname}:4001/api/ai/excel/status`];
 
   for (const url of urls) {
     try {
@@ -171,10 +171,10 @@ export async function analyzeExcelImageFile(
     solveMode
   };
 
-  const urls = [
-    '/api/ai/excel/analyze',
-    `http://${window.location.hostname}:4001/api/ai/excel/analyze`
-  ];
+  const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const urls = isHttps
+    ? ['/api/ai/excel/analyze']
+    : ['/api/ai/excel/analyze', `http://${window.location.hostname}:4001/api/ai/excel/analyze`];
 
   let lastError: Error | null = null;
 
@@ -189,8 +189,17 @@ export async function analyzeExcelImageFile(
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
-      return data;
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        try {
+          const errData = await response.json();
+          return errData;
+        } catch {
+          lastError = new Error(`Server returned status ${response.status}`);
+        }
+      }
     } catch (err: any) {
       lastError = err;
     }
@@ -199,6 +208,9 @@ export async function analyzeExcelImageFile(
   return {
     success: false,
     error: 'NETWORK_ERROR',
-    message: lastError?.message || 'Unable to connect to the AI backend server. Please make sure the backend is running.'
+    message:
+      lastError?.message ||
+      'Unable to connect to the AI service. Please verify your internet connection or GEMINI_API_KEY settings.'
   };
 }
+

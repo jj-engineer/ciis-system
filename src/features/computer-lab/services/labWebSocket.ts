@@ -15,15 +15,22 @@ class LabWebSocketClient {
   private connectionStatusListeners: Set<(connected: boolean) => void> = new Set();
   public isConnected: boolean = false;
 
-  private getWsUrl(): string {
+  private getWsUrl(): string | null {
     if (typeof window !== 'undefined' && window.location) {
+      const isHttps = window.location.protocol === 'https:';
       const host = window.location.hostname;
+
+      // When running on public HTTPS domains (like Vercel), do not attempt insecure ws:// to local private LAN IPs
+      if (isHttps && !host.startsWith('192.168.') && host !== 'localhost' && host !== '127.0.0.1') {
+        return null;
+      }
+
       if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
         return `ws://${host}:4001/ws/teacher`;
       }
       return 'ws://192.168.0.107:4001/ws/teacher';
     }
-    return 'ws://192.168.0.107:4001/ws/teacher';
+    return null;
   }
 
   constructor() {
@@ -32,6 +39,10 @@ class LabWebSocketClient {
 
   public connect(customUrl?: string): void {
     const targetUrl = customUrl || this.getWsUrl();
+    if (!targetUrl) {
+      return;
+    }
+
     if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
       return;
     }
