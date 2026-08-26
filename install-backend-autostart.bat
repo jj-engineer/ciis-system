@@ -23,26 +23,32 @@ if %ERRORLEVEL% EQU 0 (
     echo       [WARNING] Could not set firewall rule.
 )
 
-:: 2. Create Windows Startup Shortcut
-echo [2/3] Adding shortcut to Windows Startup folder...
-set "STARTUP_DIR=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
+:: 2. Create Windows Startup Shortcuts (Current User + All Users + Registry)
+echo [2/3] Adding shortcut to Windows Startup folder & Registry...
+set "USER_STARTUP=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
+set "ALL_STARTUP=C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
 set "TARGET_VBS=%~dp0start-backend-silent.vbs"
 
-powershell -NoProfile -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%STARTUP_DIR%\CIIS_School_Backend.lnk'); $s.TargetPath = 'wscript.exe'; $s.Arguments = '\"%TARGET_VBS%\"'; $s.WorkingDirectory = '%~dp0'; $s.Save()"
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "$ws = New-Object -ComObject WScript.Shell; " ^
+  "if (Test-Path '%USER_STARTUP%') { $s1 = $ws.CreateShortcut('%USER_STARTUP%\CIIS_School_Backend.lnk'); $s1.TargetPath = 'wscript.exe'; $s1.Arguments = '\"%TARGET_VBS%\"'; $s1.WorkingDirectory = '%~dp0'; $s1.Save() }; " ^
+  "if (Test-Path '%ALL_STARTUP%') { $s2 = $ws.CreateShortcut('%ALL_STARTUP%\CIIS_School_Backend.lnk'); $s2.TargetPath = 'wscript.exe'; $s2.Arguments = '\"%TARGET_VBS%\"'; $s2.WorkingDirectory = '%~dp0'; $s2.Save() }; " ^
+  "try { Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'CIIS_School_Backend' -Value 'wscript.exe \"%TARGET_VBS%\"' -Force } catch {}"
 
 if %ERRORLEVEL% EQU 0 (
-    echo       [OK] Auto-start shortcut created successfully.
+    echo       [OK] Auto-start shortcuts and Registry Run entry created successfully.
 ) else (
-    echo       [ERROR] Failed to create startup shortcut.
+    echo       [WARNING] Could not create all shortcuts.
 )
 
-:: 3. Start Backend Server Now
-echo [3/3] Starting backend server in background...
+:: 3. Start Backend Server Supervisor Now
+echo [3/3] Starting backend server supervisor in background...
 wscript.exe "%TARGET_VBS%"
-echo       [OK] Backend server is running.
+echo       [OK] Backend server supervisor is running silently.
 echo.
 echo ========================================================
-echo   SUCCESS: Setup Complete!
+echo   SUCCESS: CIIS Server is installed & running in background!
+echo   Even if you close this window or IDE, the server stays online.
 echo ========================================================
 echo.
 pause

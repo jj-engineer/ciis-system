@@ -32,9 +32,44 @@ import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { ComputerDatabase } from './database.js';
 import { startWatchdog } from './watchdog.js';
+import { analyzeExcelImage } from './aiExcelService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Automatic .env loader (workspace root and backend folder)
+function loadEnv() {
+  const envPaths = [
+    path.resolve(__dirname, '../../.env'),
+    path.resolve(__dirname, '../.env'),
+    path.resolve(process.cwd(), '.env')
+  ];
+  for (const p of envPaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const lines = fs.readFileSync(p, 'utf8').split('\n');
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const eqIdx = trimmed.indexOf('=');
+          if (eqIdx > 0) {
+            const key = trimmed.slice(0, eqIdx).trim();
+            let val = trimmed.slice(eqIdx + 1).trim();
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+              val = val.slice(1, -1);
+            }
+            if (!process.env[key]) {
+              process.env[key] = val;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[Env] Error loading', p, err.message);
+      }
+    }
+  }
+}
+loadEnv();
 
 export function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -479,6 +514,72 @@ const server = http.createServer(async (req, res) => {
     } else {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: `Laptop ${num} not found.` }));
+    }
+    return;
+  }
+
+  // ==================================================================
+  // 4. AI Excel Problem Solver & Teacher Assistant API
+  // ==================================================================
+
+  // Status check (check if GEMINI_API_KEY is configured on server)
+  if (pathname === '/api/ai/excel/status' && req.method === 'GET') {
+    const hasKey = !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== '' && process.env.GEMINI_API_KEY !== 'your_gemini_api_key');
+    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      success: true,
+      configured: hasKey,
+      model
+    }));
+    return;
+  }
+
+  // Analyze Excel Image with Gemini Vision
+  if (pathname === '/api/ai/excel/analyze' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const base64Data = body.image || body.base64Data || body.file;
+      const mimeType = body.mimeType || 'image/jpeg';
+      const solveMode = body.solveMode || body.mode || 'all';
+
+      if (!base64Data) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          error: 'NO_IMAGE_PROVIDED',
+          message: 'Please upload an Excel exercise image.'
+        }));
+        return;
+      }
+
+      console.log(`[AI Excel Analyze] Starting analysis (mode: ${solveMode}, mime: ${mimeType})...`);
+      const analysisResult = await analyzeExcelImage({
+        base64Data,
+        mimeType,
+        solveMode
+      });
+
+      if (analysisResult.success) {
+        console.log(`[AI Excel Analyze] Completed successfully via ${analysisResult.modelUsed}.`);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(analysisResult));
+      } else {
+        console.warn(`[AI Excel Analyze] Failed: ${analysisResult.error} - ${analysisResult.message}`);
+        const statusCode = analysisResult.error === 'INVALID_API_KEY' ? 401 :
+                           analysisResult.error === 'RATE_LIMITED' ? 429 :
+                           analysisResult.error === 'GEMINI_API_KEY_MISSING' ? 503 : 400;
+        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(analysisResult));
+      }
+    } catch (err) {
+      console.error('[AI Excel Analyze] Server Error:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: false,
+        error: 'SERVER_ERROR',
+        message: err.message || 'An unexpected error occurred during AI analysis. Please try again.'
+      }));
     }
     return;
   }
