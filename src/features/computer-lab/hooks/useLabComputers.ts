@@ -19,19 +19,119 @@ export type StatusFilterOption =
   | 'IN_USE'
   | 'LOCKED';
 
+function isCodeMatch(aCode: string, bCode: string): boolean {
+  if (!aCode || !bCode) return false;
+  const aClean = aCode.trim().toUpperCase();
+  const bClean = bCode.trim().toUpperCase();
+  if (aClean === bClean) return true;
+  const aNum = aClean.replace(/\D/g, '').padStart(2, '0');
+  const bNum = bClean.replace(/\D/g, '').padStart(2, '0');
+  return aNum.length > 0 && aNum === bNum;
+}
+
 function updateMatchingComputer(
   prev: ComputerWorkstation[],
   targetNumRaw: string | number,
-  updater: (pc: ComputerWorkstation) => ComputerWorkstation
+  updater: (pc: ComputerWorkstation) => ComputerWorkstation,
+  fallbackData?: Partial<ComputerWorkstation>
 ): ComputerWorkstation[] {
-  const targetNum = String(targetNumRaw).replace(/\D/g, '').padStart(2, '0');
-  return prev.map((pc) => {
-    const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
-    if (pcNum === targetNum) {
+  const targetStr = String(targetNumRaw || '').trim();
+  let found = false;
+
+  const updated = prev.map((pc) => {
+    const pcCode = pc.computerNumber || pc.computerCode || '';
+    if (isCodeMatch(pcCode, targetStr)) {
+      found = true;
       return updater(pc);
     }
     return pc;
   });
+
+  if (found) return updated;
+
+  // If this is a personal BYOD device not in initial 30 list, append it dynamically
+  if (targetStr.toUpperCase().startsWith('BYOD') || targetStr.toUpperCase().startsWith('PERS') || fallbackData?.isPersonal) {
+    const newPersonalPc: ComputerWorkstation = {
+      id: `comp-${targetStr.toLowerCase().replace('-', '_')}`,
+      computerNumber: targetStr.toUpperCase(),
+      computerCode: targetStr.toUpperCase(),
+      hostname: fallbackData?.hostname || `BYOD-${targetStr}`,
+      ipAddress: fallbackData?.ipAddress,
+      agentId: `agent-${targetStr.toLowerCase()}`,
+      labGroup: 'Lab A',
+      status: (fallbackData?.status as ComputerStatus) || 'ONLINE',
+      deviceOwnership: 'PERSONAL',
+      isPersonal: true,
+      studentName: fallbackData?.studentName || 'Student',
+      currentApp: 'Desktop Idle',
+      sessionDuration: 0,
+      lastHeartbeat: new Date().toISOString(),
+      lastSeen: new Date().toISOString(),
+      agentVersion: '1.0.0',
+      isLocked: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    return [...updated, updater(newPersonalPc)];
+  }
+
+  return updated;
+}
+
+function mergeComputersWithBackend(prev: ComputerWorkstation[], backendComputers: any[]): ComputerWorkstation[] {
+  if (!Array.isArray(backendComputers) || backendComputers.length === 0) return prev;
+
+  const matchedSet = new Set<string>();
+  const next = prev.map((pc) => {
+    const pcNum = pc.computerNumber || pc.computerCode || '';
+    const found = backendComputers.find((b) => isCodeMatch(b.computerNumber || b.laptopNumber, pcNum));
+
+    if (found) {
+      matchedSet.add(String(found.computerNumber || found.laptopNumber).toUpperCase());
+      return {
+        ...pc,
+        status: found.status as ComputerStatus,
+        hostname: found.hostname || pc.hostname,
+        ipAddress: found.ipAddress || pc.ipAddress,
+        deviceOwnership: found.deviceOwnership || pc.deviceOwnership || 'SCHOOL',
+        isPersonal: found.isPersonal || pc.isPersonal || false,
+        studentName: found.studentName || pc.studentName,
+        lastSeen: found.lastSeen,
+        lastHeartbeat: found.lastSeen || new Date().toISOString()
+      };
+    }
+    return pc;
+  });
+
+  // Append any extra BYOD / Personal laptops registered on the backend
+  for (const b of backendComputers) {
+    const bCode = String(b.computerNumber || b.laptopNumber || '').toUpperCase();
+    if (!matchedSet.has(bCode) && (bCode.startsWith('BYOD') || bCode.startsWith('PERS') || b.isPersonal)) {
+      next.push({
+        id: b.id || `comp-${bCode.toLowerCase().replace('-', '_')}`,
+        computerNumber: bCode,
+        computerCode: bCode,
+        hostname: b.hostname || `BYOD-${bCode}`,
+        ipAddress: b.ipAddress,
+        agentId: b.agentId || `agent-${bCode.toLowerCase()}`,
+        labGroup: 'Lab A',
+        status: b.status as ComputerStatus,
+        deviceOwnership: 'PERSONAL',
+        isPersonal: true,
+        studentName: b.studentName || 'Student',
+        currentApp: 'Desktop Idle',
+        sessionDuration: 0,
+        lastHeartbeat: b.lastSeen || new Date().toISOString(),
+        lastSeen: b.lastSeen,
+        agentVersion: b.agentVersion || '1.0.0',
+        isLocked: false,
+        createdAt: b.registeredAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    }
+  }
+
+  return next;
 }
 
 export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
@@ -68,25 +168,7 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
       .then((res) => res.json())
       .then((backendComputers: any[]) => {
         if (Array.isArray(backendComputers) && backendComputers.length > 0) {
-          setComputers((prev) => {
-            return prev.map((pc) => {
-              const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
-              const found = backendComputers.find(
-                (b) => String(b.computerNumber || b.laptopNumber).replace(/\D/g, '').padStart(2, '0') === pcNum
-              );
-              if (found) {
-                return {
-                  ...pc,
-                  status: found.status as ComputerStatus,
-                  hostname: found.hostname || pc.hostname,
-                  ipAddress: found.ipAddress || pc.ipAddress,
-                  lastSeen: found.lastSeen,
-                  lastHeartbeat: found.lastSeen || new Date().toISOString()
-                };
-              }
-              return pc;
-            });
-          });
+          setComputers((prev) => mergeComputersWithBackend(prev, backendComputers));
         }
       })
       .catch(() => {});
@@ -94,25 +176,7 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
     // 2. WebSocket Real-time Event Subscriptions
     const unsubSnapshot = labWsClient.on('INITIAL_SNAPSHOT', (data: any) => {
       if (data && Array.isArray(data.computers)) {
-        setComputers((prev) => {
-          return prev.map((pc) => {
-            const pcNum = (pc.computerNumber || pc.computerCode || '').replace(/\D/g, '').padStart(2, '0');
-            const found = data.computers.find(
-              (b: any) => String(b.computerNumber || b.laptopNumber).replace(/\D/g, '').padStart(2, '0') === pcNum
-            );
-            if (found) {
-              return {
-                ...pc,
-                status: found.status as ComputerStatus,
-                hostname: found.hostname || pc.hostname,
-                ipAddress: found.ipAddress || pc.ipAddress,
-                lastSeen: found.lastSeen,
-                lastHeartbeat: found.lastSeen || new Date().toISOString()
-              };
-            }
-            return pc;
-          });
-        });
+        setComputers((prev) => mergeComputersWithBackend(prev, data.computers));
       }
     });
 
@@ -123,9 +187,11 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
           updateMatchingComputer(prev, num, (pc) => ({
             ...pc,
             status: data.status as ComputerStatus,
+            studentName: data.studentName || pc.studentName,
+            deviceOwnership: data.deviceOwnership || pc.deviceOwnership,
             lastSeen: data.lastSeen || new Date().toISOString(),
             lastHeartbeat: new Date().toISOString()
-          }))
+          }), data)
         );
       }
     });
@@ -137,9 +203,10 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
           updateMatchingComputer(prev, num, (pc) => ({
             ...pc,
             status: 'ONLINE',
+            studentName: data.studentName || pc.studentName,
             lastSeen: data.lastSeen || new Date().toISOString(),
             lastHeartbeat: new Date().toISOString()
-          }))
+          }), data)
         );
       }
     });
@@ -153,9 +220,12 @@ export function useLabComputers(initialGroup: LabGroup = 'Lab A') {
             status: 'ONLINE',
             hostname: data.computer?.hostname || pc.hostname,
             ipAddress: data.computer?.ipAddress || pc.ipAddress,
+            studentName: data.studentName || data.computer?.studentName || pc.studentName,
+            deviceOwnership: data.deviceOwnership || data.computer?.deviceOwnership || pc.deviceOwnership,
+            isPersonal: data.deviceOwnership === 'PERSONAL' || data.computer?.isPersonal || pc.isPersonal,
             lastSeen: new Date().toISOString(),
             lastHeartbeat: new Date().toISOString()
-          }))
+          }), data.computer || data)
         );
       }
     });

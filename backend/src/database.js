@@ -69,14 +69,58 @@ for (let i = 1; i <= 30; i++) {
 
 export const ComputerDatabase = {
   getAll: () => {
-    return Array.from(computersMap.values()).sort((a, b) =>
-      a.computerNumber.localeCompare(b.computerNumber)
-    );
+    return Array.from(computersMap.values()).sort((a, b) => {
+      // Sort school laptops (01-30) first, then personal BYOD laptops
+      const aIsByod = a.computerNumber.startsWith('BYOD') || a.isPersonal;
+      const bIsByod = b.computerNumber.startsWith('BYOD') || b.isPersonal;
+      if (aIsByod && !bIsByod) return 1;
+      if (!aIsByod && bIsByod) return -1;
+      return a.computerNumber.localeCompare(b.computerNumber);
+    });
+  },
+
+  getAvailableSchoolLaptops: () => {
+    const available = [];
+    const unregistered = [];
+    const all = [];
+
+    for (let i = 1; i <= 30; i++) {
+      const num = String(i).padStart(2, '0');
+      const comp = computersMap.get(num);
+      const isOnline = comp && (comp.status === 'ONLINE' || comp.status === 'IN_USE');
+      const isUnpaired = !comp || comp.status === 'UNREGISTERED';
+
+      all.push({
+        computerNumber: num,
+        status: comp ? comp.status : 'UNREGISTERED',
+        isAvailable: !isOnline,
+        isUnpaired
+      });
+
+      if (!isOnline) {
+        available.push(num);
+      }
+      if (isUnpaired) {
+        unregistered.push(num);
+      }
+    }
+
+    return {
+      total: 30,
+      availableCount: available.length,
+      availableNumbers: available,
+      unregisteredNumbers: unregistered,
+      list: all
+    };
   },
 
   getByNumber: (computerNumber) => {
     if (!computerNumber) return undefined;
-    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const raw = String(computerNumber).trim();
+    if (raw.toUpperCase().startsWith('BYOD') || raw.toUpperCase().startsWith('PERS') || raw.includes('-')) {
+      return computersMap.get(raw.toUpperCase()) || computersMap.get(raw);
+    }
+    const num = raw.replace(/\D/g, '').padStart(2, '0');
     return computersMap.get(num);
   },
 
@@ -90,7 +134,9 @@ export const ComputerDatabase = {
   },
 
   checkStatus: (computerNumber) => {
-    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const raw = String(computerNumber).trim();
+    const isByod = raw.toUpperCase().startsWith('BYOD') || raw.toUpperCase().startsWith('PERS');
+    const num = isByod ? raw.toUpperCase() : raw.replace(/\D/g, '').padStart(2, '0');
     const comp = computersMap.get(num);
     if (!comp) {
       return { exists: false, laptopNumber: num, isRegistered: false };
@@ -102,7 +148,9 @@ export const ComputerDatabase = {
       isRegistered,
       deviceId: comp.deviceId || `device_${num}`,
       status: comp.status,
-      lastSeen: comp.lastSeen
+      lastSeen: comp.lastSeen,
+      studentName: comp.studentName,
+      deviceOwnership: comp.deviceOwnership || (isByod ? 'PERSONAL' : 'SCHOOL')
     };
   },
 
@@ -130,7 +178,73 @@ export const ComputerDatabase = {
     };
   },
 
-  registerAgentWithToken: (token, computerNumber, hostname, ip) => {
+  registerAgentWithToken: (token, computerNumber, hostname, ip, extraData = {}) => {
+    const isPersonal =
+      extraData.deviceOwnership === 'PERSONAL' ||
+      String(computerNumber || '').toUpperCase().startsWith('BYOD') ||
+      String(computerNumber || '').toUpperCase().startsWith('PERS') ||
+      String(computerNumber || '').toUpperCase().includes('AUTO');
+
+    const cleanInputToken = (token || '').trim().toUpperCase();
+
+    // Master School Token: "JJ" is always accepted
+    const isMasterToken = cleanInputToken === 'JJ';
+
+    // 1. Personal Laptop (BYOD) Registration
+    if (isPersonal) {
+      if (!isMasterToken && !cleanInputToken.startsWith('REG-')) {
+        return { success: false, error: 'Invalid pairing token. Please use token: JJ' };
+      }
+
+      // Count existing BYOD laptops to assign unique code: BYOD-01, BYOD-02...
+      let byodCount = 0;
+      for (const k of computersMap.keys()) {
+        if (k.startsWith('BYOD-')) byodCount++;
+      }
+      const byodCode = `BYOD-${String(byodCount + 1).padStart(2, '0')}`;
+      const studentName = (extraData.studentName || 'Student').trim();
+      const deviceToken = `agent-sec-${byodCode.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+      const deviceId = `device_${byodCode.toLowerCase().replace('-', '_')}`;
+
+      const comp = {
+        id: `comp-ciis-${byodCode.toLowerCase()}`,
+        computerNumber: byodCode,
+        computerCode: byodCode,
+        deviceId,
+        agentId: `agent-${byodCode.toLowerCase()}`,
+        agentToken: deviceToken,
+        deviceToken: deviceToken,
+        status: 'ONLINE',
+        lastSeen: new Date().toISOString(),
+        lastHeartbeatMs: Date.now(),
+        hostname: hostname || `BYOD-${studentName.replace(/\s+/g, '_')}`,
+        ipAddress: ip,
+        registeredAt: new Date().toISOString(),
+        deviceOwnership: 'PERSONAL',
+        isPersonal: true,
+        studentName: studentName,
+        grade: extraData.grade || 'Student',
+        agentVersion: '1.0.0'
+      };
+
+      computersMap.set(byodCode, comp);
+
+      return {
+        success: true,
+        deviceId,
+        deviceToken,
+        laptopNumber: byodCode,
+        computerNumber: byodCode,
+        studentName,
+        deviceOwnership: 'PERSONAL',
+        isPersonal: true,
+        websocketUrl: WS_URL,
+        serverIp: SERVER_IP,
+        serverPort: SERVER_PORT
+      };
+    }
+
+    // 2. School Lab Laptop (01 - 30) Registration
     const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
     const comp = computersMap.get(num);
 
@@ -138,16 +252,12 @@ export const ComputerDatabase = {
       return { success: false, error: `Laptop ${num} not found in system (Valid range: 01-30)` };
     }
 
-    const cleanInputToken = (token || '').trim().toUpperCase();
     const cleanStoredToken = (comp.registrationToken || '').trim().toUpperCase();
-
-    // Master School Token: "JJ" is always accepted
-    const isMasterToken = cleanInputToken === 'JJ';
     const isMatch = isMasterToken ||
                     (cleanStoredToken && cleanInputToken === cleanStoredToken) ||
                     (cleanInputToken.startsWith('REG-'));
 
-    if (!isMatch && cleanInputToken !== 'JJ') {
+    if (!isMatch) {
       return { success: false, error: `Invalid pairing token. Please use token: JJ` };
     }
 
@@ -167,6 +277,11 @@ export const ComputerDatabase = {
     comp.registeredAt = new Date().toISOString();
     comp.registrationToken = undefined; // Single-use consumption
     comp.tokenExpiresAt = undefined;
+    comp.deviceOwnership = 'SCHOOL';
+    comp.isPersonal = false;
+    if (extraData.studentName) {
+      comp.studentName = extraData.studentName.trim();
+    }
 
     computersMap.set(num, comp);
 
@@ -176,6 +291,8 @@ export const ComputerDatabase = {
       deviceToken,
       laptopNumber: num,
       computerNumber: num,
+      deviceOwnership: 'SCHOOL',
+      studentName: comp.studentName || '',
       websocketUrl: WS_URL,
       serverIp: SERVER_IP,
       serverPort: SERVER_PORT
@@ -183,16 +300,21 @@ export const ComputerDatabase = {
   },
 
   validateAgentToken: (computerNumber, token) => {
-    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const raw = String(computerNumber || '').trim();
+    const isByod = raw.toUpperCase().startsWith('BYOD') || raw.toUpperCase().startsWith('PERS');
+    const num = isByod ? raw.toUpperCase() : raw.replace(/\D/g, '').padStart(2, '0');
+
     let comp = computersMap.get(num);
     if (!comp) {
       comp = {
-        id: `comp-ciis-${num}`,
+        id: `comp-ciis-${num.toLowerCase()}`,
         computerNumber: num,
-        deviceId: `device_${num}`,
+        deviceId: `device_${num.toLowerCase().replace('-', '_')}`,
         status: 'ONLINE',
         agentVersion: '1.0.0',
-        hostname: `LAPTOP-CIIS-${num}`
+        hostname: `LAPTOP-CIIS-${num}`,
+        deviceOwnership: isByod ? 'PERSONAL' : 'SCHOOL',
+        isPersonal: isByod
       };
       computersMap.set(num, comp);
     }
@@ -222,7 +344,10 @@ export const ComputerDatabase = {
   },
 
   updateHeartbeat: (computerNumber, ip) => {
-    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const raw = String(computerNumber || '').trim();
+    const isByod = raw.toUpperCase().startsWith('BYOD') || raw.toUpperCase().startsWith('PERS');
+    const num = isByod ? raw.toUpperCase() : raw.replace(/\D/g, '').padStart(2, '0');
+
     const comp = computersMap.get(num);
     if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
       return false;
@@ -245,7 +370,10 @@ export const ComputerDatabase = {
   },
 
   setOffline: (computerNumber) => {
-    const num = String(computerNumber).replace(/\D/g, '').padStart(2, '0');
+    const raw = String(computerNumber || '').trim();
+    const isByod = raw.toUpperCase().startsWith('BYOD') || raw.toUpperCase().startsWith('PERS');
+    const num = isByod ? raw.toUpperCase() : raw.replace(/\D/g, '').padStart(2, '0');
+
     const comp = computersMap.get(num);
     if (comp && comp.status !== 'UNREGISTERED') {
       comp.status = 'OFFLINE';

@@ -47,12 +47,21 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
   const currentHost = isLocalHost ? window.location.hostname : '192.168.0.107';
   const autoCommand = `irm ${currentHost}:4001/${computerNumber}|iex`;
 
+  const generalCommand = `irm ${currentHost}:4001/|iex`;
+  const [copiedGeneral, setCopiedGeneral] = useState(false);
+
   if (!isOpen || !computer || typeof document === 'undefined') return null;
 
   const handleCopyCommand = () => {
     navigator.clipboard.writeText(autoCommand);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyGeneral = () => {
+    navigator.clipboard.writeText(generalCommand);
+    setCopiedGeneral(true);
+    setTimeout(() => setCopiedGeneral(false), 2000);
   };
 
   const handleCopyToken = () => {
@@ -80,7 +89,7 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
               <h3 className="text-base font-black text-zinc-950 flex items-center gap-2">
                 <span>{isKhmer ? `ចុះឈ្មោះ Laptop ${computerNumber}` : `Pair Laptop ${computerNumber}`}</span>
               </h3>
-              <p className="text-xs text-zinc-500 font-mono">School Computer Lab Agent</p>
+              <p className="text-xs text-zinc-500 font-mono">School Lab & Personal BYOD Agent</p>
             </div>
           </div>
           <button
@@ -93,12 +102,12 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
 
         {/* Content */}
         <div className="p-6 space-y-4">
-          {/* 1-Click Command Box */}
-          <div className="space-y-2">
+          {/* 1. Direct School Laptop Command */}
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-zinc-800 flex items-center gap-1.5 font-mono">
                 <Terminal className="w-3.5 h-3.5 text-zinc-600" />
-                <span>{isKhmer ? 'ពាក្យបញ្ជាដំឡើងលើ Laptop សិស្ស' : 'Command for Student Laptop'}</span>
+                <span>{isKhmer ? `សម្រាប់ Laptop សាលា ${computerNumber}` : `For School Laptop ${computerNumber}`}</span>
               </span>
               <button
                 type="button"
@@ -117,6 +126,35 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
             >
               {autoCommand}
             </div>
+          </div>
+
+          {/* 2. Interactive / BYOD Personal Laptop Command */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold text-indigo-700 flex items-center gap-1.5 font-mono">
+                <Laptop className="w-3.5 h-3.5 text-indigo-600" />
+                <span>{isKhmer ? 'សម្រាប់ Laptop ផ្ទាល់ខ្លួនរបស់សិស្ស (BYOD)' : 'For Student Personal Laptop (BYOD)'}</span>
+              </span>
+              <button
+                type="button"
+                onClick={handleCopyGeneral}
+                className="px-2.5 py-1 rounded-lg bg-indigo-900 text-white text-[11px] font-bold hover:bg-indigo-800 transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+              >
+                {copiedGeneral ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedGeneral ? (isKhmer ? 'ចម្លងរួច!' : 'Copied!') : (isKhmer ? 'ចម្លង' : 'Copy')}</span>
+              </button>
+            </div>
+
+            <div
+              onClick={handleCopyGeneral}
+              className="p-2.5 rounded-2xl bg-zinc-900 text-indigo-200 font-mono text-[11.5px] break-all border border-indigo-900/60 cursor-pointer hover:border-indigo-600 transition-colors"
+              title="Click to copy"
+            >
+              {generalCommand}
+            </div>
+            <p className="text-[11px] text-zinc-400">
+              {isKhmer ? 'ផ្ដល់ជម្រើស [1] Laptop សាលា ឬ [2] Laptop ផ្ទាល់ខ្លួន ជាមួយឈ្មោះសិស្ស' : 'Prompts student to pick [1] School Laptop or [2] Personal Laptop with Name'}
+            </p>
           </div>
 
           {/* Simple Details Pill */}
@@ -144,9 +182,9 @@ export const GenerateTokenModal: React.FC<GenerateTokenModalProps> = ({
               <span>{isKhmer ? 'របៀបដំឡើង (២ វិនាទី):' : 'Easy Setup Steps (2 seconds):'}</span>
             </div>
             <ol className="list-decimal list-inside space-y-1 text-[11px] text-zinc-600 leading-relaxed">
-              <li>{isKhmer ? 'បើក PowerShell ជា Administrator លើ Laptop សិស្ស' : 'Open PowerShell as Administrator on Student Laptop'}</li>
+              <li>{isKhmer ? 'បើក PowerShell ជា Administrator លើ Laptop' : 'Open PowerShell as Administrator on Laptop'}</li>
               <li>{isKhmer ? 'Paste ពាក្យបញ្ជាខាងលើ រួចចុច Enter' : 'Paste the command above and press Enter'}</li>
-              <li>{isKhmer ? 'Laptop នឹងភ្ជាប់មកកាន់ផ្ទាំងគ្រប់គ្រងដោយស្វ័យប្រវត្ត' : 'Laptop automatically registers and turns Online!'}</li>
+              <li>{isKhmer ? 'Laptop នឹងភ្ជាប់មកកាន់ផ្ទាំងគ្រប់គ្រងដោយស្វ័យប្រវត្ត' : 'Laptop automatically registers and appears Online!'}</li>
             </ol>
           </div>
         </div>

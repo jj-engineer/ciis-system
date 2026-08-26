@@ -40,16 +40,21 @@ export type TargetApplication =
 
 export type LabGroup = 'Lab A' | 'Lab B' | 'Lab C';
 
+export type DeviceOwnership = 'SCHOOL' | 'PERSONAL';
+
 export interface ComputerWorkstation {
   id: string;
-  computerNumber?: string; // e.g. "01", "02", ... "30"
-  computerCode: string; // e.g. "01" or "LAB-01"
+  computerNumber?: string; // e.g. "01", "02", ... "30" or "BYOD-01"
+  computerCode: string; // e.g. "01" or "LAB-01" or "BYOD-01"
   hostname: string; // e.g. "LAPTOP-CIIS-01"
   ipAddress?: string;
   macAddress?: string;
   agentId: string;
   labGroup: LabGroup;
   status: ComputerStatus;
+  deviceOwnership?: DeviceOwnership;
+  isPersonal?: boolean;
+  grade?: string;
   studentId?: string;
   studentName?: string;
   studentAvatar?: string;

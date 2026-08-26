@@ -294,7 +294,14 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // All 30 Laptops Telemetry
+  // Available School Laptops Query
+  if ((pathname === '/api/available-laptops' || pathname === '/api/laptops/available') && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(ComputerDatabase.getAvailableSchoolLaptops()));
+    return;
+  }
+
+  // All Laptops Telemetry (School + BYOD)
   if (pathname === '/api/computers' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(ComputerDatabase.getAll()));
@@ -347,23 +354,46 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Register Agent with Pairing Token
+  // Register Agent with Pairing Token (Supports School & Personal BYOD Laptops)
   if ((pathname === '/api/agents/register' || pathname === '/api/register-agent') && req.method === 'POST') {
     const body = await parseBody(req);
     const num = body.laptopNumber || body.computerNumber;
     const token = body.pairingToken || body.token;
     const hostname = body.hostname;
     const ip = (req.socket.remoteAddress || '').replace('::ffff:', '');
+    const deviceOwnership = body.deviceOwnership || 'SCHOOL';
+    const studentName = body.studentName || '';
+    const grade = body.grade || '';
 
-    const result = ComputerDatabase.registerAgentWithToken(token, num, hostname, ip);
+    const result = ComputerDatabase.registerAgentWithToken(token, num, hostname, ip, {
+      deviceOwnership,
+      studentName,
+      grade
+    });
 
     if (result.success) {
-      console.log(`[Agent Registered] Laptop ${num} (${hostname || 'Windows PC'}) registered successfully`);
+      const assignedNum = result.laptopNumber || num;
+      const registeredComp = ComputerDatabase.getByNumber(assignedNum);
+
+      console.log(
+        `[Agent Registered] ${deviceOwnership === 'PERSONAL' ? 'Personal Device' : 'School Laptop'} ${assignedNum} (${studentName ? studentName + ' - ' : ''}${hostname || 'Windows PC'}) registered successfully`
+      );
 
       broadcastToTeachers({
         type: 'AGENT_REGISTERED',
-        computer: ComputerDatabase.getByNumber(num),
-        laptopNumber: num
+        computer: registeredComp,
+        laptopNumber: assignedNum,
+        computerNumber: assignedNum,
+        deviceOwnership,
+        studentName: registeredComp?.studentName || studentName
+      });
+
+      broadcastToTeachers({
+        type: 'COMPUTER_STATUS_CHANGED',
+        computerNumber: assignedNum,
+        laptopNumber: assignedNum,
+        status: 'ONLINE',
+        lastSeen: new Date().toISOString()
       });
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -493,10 +523,11 @@ wss.on('connection', (ws, req) => {
 
         // Handshake Authentication
         if (msg.type === 'auth') {
-          const numRaw = msg.laptopNumber || msg.computerNumber;
+          const numRaw = msg.laptopNumber || msg.computerNumber || '';
           const token = msg.deviceToken || msg.agentToken;
           const hostname = msg.hostname;
-          const num = String(numRaw).padStart(2, '0');
+          const isByod = String(numRaw).toUpperCase().startsWith('BYOD') || String(numRaw).toUpperCase().startsWith('PERS');
+          const num = isByod ? String(numRaw).trim().toUpperCase() : String(numRaw).replace(/\D/g, '').padStart(2, '0');
 
           const authCheck = ComputerDatabase.validateAgentToken(num, token);
 
@@ -518,7 +549,7 @@ wss.on('connection', (ws, req) => {
           activeAgentSockets.set(num, ws);
           ComputerDatabase.updateHeartbeat(num, ip);
 
-          console.log(`[Agent Authenticated] Laptop ${num} (${hostname || 'Windows PC'}) connected`);
+          console.log(`[Agent Authenticated] ${comp.isPersonal ? 'Personal Device' : 'Laptop'} ${num} (${comp.studentName ? comp.studentName + ' - ' : ''}${hostname || 'Windows PC'}) connected`);
 
           const currentStatus = comp.isManuallyOffline ? 'OFFLINE' : 'ONLINE';
 
@@ -527,6 +558,8 @@ wss.on('connection', (ws, req) => {
               type: 'auth_success',
               laptopNumber: num,
               computerNumber: num,
+              studentName: comp.studentName || '',
+              deviceOwnership: comp.deviceOwnership || (comp.isPersonal ? 'PERSONAL' : 'SCHOOL'),
               status: currentStatus,
               serverTime: new Date().toISOString()
             })
@@ -537,6 +570,8 @@ wss.on('connection', (ws, req) => {
             type: 'COMPUTER_STATUS_CHANGED',
             computerNumber: num,
             laptopNumber: num,
+            studentName: comp.studentName || '',
+            deviceOwnership: comp.deviceOwnership || (comp.isPersonal ? 'PERSONAL' : 'SCHOOL'),
             status: currentStatus,
             lastSeen: new Date().toISOString()
           });
@@ -545,7 +580,9 @@ wss.on('connection', (ws, req) => {
 
         // Heartbeat Message (Every 5s)
         if (msg.type === 'heartbeat') {
-          const num = String(msg.laptopNumber || msg.computerNumber || boundLaptopNumber).padStart(2, '0');
+          const rawNum = msg.laptopNumber || msg.computerNumber || boundLaptopNumber || '';
+          const isByod = String(rawNum).toUpperCase().startsWith('BYOD') || String(rawNum).toUpperCase().startsWith('PERS');
+          const num = isByod ? String(rawNum).trim().toUpperCase() : String(rawNum).replace(/\D/g, '').padStart(2, '0');
           const comp = ComputerDatabase.getByNumber(num);
 
           if (!comp || comp.status === 'UNREGISTERED' || comp.status === 'REVOKED') {
@@ -569,6 +606,7 @@ wss.on('connection', (ws, req) => {
               type: 'COMPUTER_HEARTBEAT',
               computerNumber: num,
               laptopNumber: num,
+              studentName: comp.studentName || '',
               lastSeen: new Date().toISOString()
             });
           }

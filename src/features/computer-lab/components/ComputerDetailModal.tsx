@@ -81,7 +81,9 @@ export const ComputerDetailModal: React.FC<ComputerDetailModalProps> = ({
             <div
               className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black shadow-xs ${
                 isOnline
-                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                  ? computer.isPersonal
+                    ? 'bg-indigo-100 text-indigo-900 border border-indigo-200'
+                    : 'bg-emerald-100 text-emerald-900 border border-emerald-200'
                   : isOffline
                   ? 'bg-rose-100 text-rose-900 border border-rose-200'
                   : 'bg-zinc-100 text-zinc-600 border border-zinc-200'
@@ -92,12 +94,14 @@ export const ComputerDetailModal: React.FC<ComputerDetailModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-black text-zinc-950 font-mono">
-                  Laptop {computerNumber}
+                  {computer.isPersonal && computer.studentName ? computer.studentName : `Laptop ${computerNumber}`}
                 </h3>
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded-full font-bold font-mono border ${
                     isOnline
-                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                      ? computer.isPersonal
+                        ? 'bg-indigo-100 text-indigo-900 border-indigo-300'
+                        : 'bg-emerald-100 text-emerald-900 border-emerald-300'
                       : isOffline
                       ? 'bg-rose-100 text-rose-900 border-rose-300'
                       : isRevoked
@@ -107,9 +111,14 @@ export const ComputerDetailModal: React.FC<ComputerDetailModalProps> = ({
                 >
                   {isOnline ? 'ONLINE' : isOffline ? 'OFFLINE' : isRevoked ? 'REVOKED' : 'UNPAIRED'}
                 </span>
+                {computer.isPersonal && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold font-mono bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    BYOD • {computerNumber}
+                  </span>
+                )}
               </div>
               <p className="text-xs text-zinc-400 font-mono">
-                {computer.hostname || `LAPTOP-CIIS-${computerNumber}`} • {computer.labGroup}
+                {computer.hostname || `LAPTOP-CIIS-${computerNumber}`} • {computer.isPersonal ? 'Personal Device' : computer.labGroup}
               </p>
             </div>
           </div>
@@ -132,9 +141,9 @@ export const ComputerDetailModal: React.FC<ComputerDetailModalProps> = ({
 
             <div className="grid grid-cols-2 gap-2.5 text-xs">
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/80">
-                <span className="text-[10px] text-zinc-400 font-mono block">IP Address</span>
+                <span className="text-[10px] text-zinc-400 font-mono block">Device Type</span>
                 <span className="font-bold text-zinc-900 font-mono">
-                  {computer.ipAddress || `192.168.10.${100 + Number(computerNumber || 1)}`}
+                  {computer.isPersonal ? `Personal Laptop (${computer.studentName || 'Student'})` : `School Laptop ${computerNumber}`}
                 </span>
               </div>
 

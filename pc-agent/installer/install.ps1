@@ -103,24 +103,19 @@ function Show-Property {
 function Show-ITProgress {
     param (
         [string]$TaskName,
-        [int]$Width = 24,
-        [int]$MinDelay = 30,
-        [int]$MaxDelay = 60
+        [int]$Width = 14,
+        [int]$MinDelay = 15,
+        [int]$MaxDelay = 35
     )
     Write-Host " ├── " -NoNewline -ForegroundColor Green
     Write-Host "$TaskName " -NoNewline -ForegroundColor DarkGray
-    Write-Host -NoNewline "[" -ForegroundColor DarkGray
+    Write-Host -NoNewline "[ " -ForegroundColor DarkGray
     for ($i = 1; $i -le $Width; $i++) {
-        # Loading animation in crisp White
-        Write-Host -NoNewline "█" -ForegroundColor White
-        if ($i -eq [int]($Width * 0.65) -or $i -eq [int]($Width * 0.88)) {
-            Start-Sleep -Milliseconds (Get-Random -Minimum 120 -Maximum 200)
-        } else {
-            Start-Sleep -Milliseconds (Get-Random -Minimum $MinDelay -Maximum $MaxDelay)
-        }
+        Write-Host -NoNewline "━" -ForegroundColor Cyan
+        Start-Sleep -Milliseconds (Get-Random -Minimum $MinDelay -Maximum $MaxDelay)
     }
-    Write-Host "] " -NoNewline -ForegroundColor DarkGray
-    Write-Host "OK" -ForegroundColor Green
+    Write-Host -NoNewline " ] " -ForegroundColor DarkGray
+    Write-Host "READY" -ForegroundColor Green
 }
 
 function Show-FailAndExit {
@@ -157,7 +152,7 @@ if (-not $isAdmin) {
 Show-Property "Host Machine" "$env:COMPUTERNAME"
 Show-Property "User Privileges" "Administrator (Elevated)"
 
-Show-ITProgress "Probing Teacher Gateway ($ServerIP`:$ServerPort)" 20 25 50
+Show-ITProgress "Probing Teacher Gateway ($($ServerIP):$($ServerPort))" 14 15 30
 
 # TCP Connection Check
 $tcpClient = New-Object System.Net.Sockets.TcpClient
@@ -176,47 +171,101 @@ try {
 }
 
 if (-not $isConnected) {
-    Show-FailAndExit "Cannot connect to Teacher Gateway at $ServerIP`:$ServerPort" "Ensure the laptop is connected to the school Wi-Fi network and teacher server is active."
+    Show-FailAndExit "Cannot connect to Teacher Gateway at $($ServerIP):$($ServerPort)" "Ensure the laptop is connected to the school Wi-Fi network and teacher server is active."
 }
 
-Show-StepDone "Gateway link established ($ServerIP`:$ServerPort)"
+Show-StepDone "Gateway link established ($($ServerIP):$($ServerPort))"
 
 # ====================================================================
-# [STEP 2] Laptop Identity & Master Authentication
+# [STEP 2] Device Category & Workstation Identification
 # ====================================================================
-Show-StepHeader "02/04" "IDENTITY ASSIGNMENT & MASTER TOKEN"
+Show-StepHeader "02/04" "DEVICE CATEGORY & WORKSTATION IDENTIFICATION"
 
+$deviceOwnership = "SCHOOL"
+$studentName = ""
 $laptopNumber = ""
+
+# Check if pre-configured from command line / URL query
 if ($ParamLaptopNumber) {
     $trimmedParam = $ParamLaptopNumber.ToString().Trim()
     if ($trimmedParam -match '^\d+$') {
         $laptopNumber = ([int]$trimmedParam).ToString("00")
-        Show-Property "Workstation Node" "Laptop $laptopNumber"
+        $deviceOwnership = "SCHOOL"
+        Show-Property "Workstation Node" "School Laptop $laptopNumber"
+    } elseif ($trimmedParam.ToUpper().StartsWith("BYOD") -or $trimmedParam.ToUpper().StartsWith("PERS")) {
+        $laptopNumber = $trimmedParam.ToUpper()
+        $deviceOwnership = "PERSONAL"
+        Show-Property "Workstation Node" "Personal Laptop ($laptopNumber)"
     }
 }
 
 if (-not $laptopNumber) {
     Write-Host ""
-    while ($true) {
-        Write-Host " ├── " -NoNewline -ForegroundColor Green
-        $rawInput = Read-Host "Assign Laptop Number (01 - 30)"
-        if ([string]::IsNullOrWhiteSpace($rawInput)) {
-            Write-Host " │   [!] Number cannot be empty." -ForegroundColor DarkGray
-            continue
+    Write-Host " ┌───[SELECT DEVICE CATEGORY]" -ForegroundColor Green
+    Write-Host " │   [1] School Laptop   (School Lab Workstation 01 - 30)" -ForegroundColor White
+    Write-Host " │   [2] Personal Laptop (Student's Own Device / BYOD)" -ForegroundColor Cyan
+    Write-Host " └───" -NoNewline -ForegroundColor Green
+    
+    $devChoice = Read-Host " Select Option [1 or 2, Default: 1]"
+    if ([string]::IsNullOrWhiteSpace($devChoice) -or $devChoice.Trim() -eq "1") {
+        $deviceOwnership = "SCHOOL"
+    } else {
+        $deviceOwnership = "PERSONAL"
+    }
+
+    if ($deviceOwnership -eq "SCHOOL") {
+        # Query available school laptops from Gateway
+        Show-ITProgress "Querying available school workstations" 10 15 25
+        $availableNums = @()
+        try {
+            $availRes = Invoke-RestMethod -Uri "$ServerBaseUrl/api/available-laptops" -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue
+            if ($availRes -and $availRes.availableNumbers) {
+                $availableNums = $availRes.availableNumbers
+            }
+        } catch {}
+
+        if ($availableNums.Count -gt 0) {
+            $availStr = ($availableNums | Select-Object -First 15) -join ", "
+            if ($availableNums.Count -gt 15) { $availStr += " ... ($($availableNums.Count) available)" }
+            Show-Property "Available Workstations" "$availStr"
         }
 
-        $trimmed = $rawInput.Trim()
-        if ($trimmed -match '^\d+$') {
-            $numVal = [int]$trimmed
-            if ($numVal -ge 1 -and $numVal -le 30) {
-                $laptopNumber = $numVal.ToString("00")
+        while ($true) {
+            Write-Host " ├── " -NoNewline -ForegroundColor Green
+            $rawInput = Read-Host "Assign School Laptop Number (01 - 30)"
+            if ([string]::IsNullOrWhiteSpace($rawInput)) {
+                Write-Host " │   [!] Number cannot be empty." -ForegroundColor DarkGray
+                continue
+            }
+
+            $trimmed = $rawInput.Trim()
+            if ($trimmed -match '^\d+$') {
+                $numVal = [int]$trimmed
+                if ($numVal -ge 1 -and $numVal -le 30) {
+                    $laptopNumber = $numVal.ToString("00")
+                    break
+                }
+            }
+            Write-Host " │   [!] Must be between 01 and 30." -ForegroundColor DarkGray
+        }
+    } else {
+        # Personal Device (BYOD)
+        Show-Property "Device Category" "Student Personal Laptop (BYOD)"
+        while ($true) {
+            Write-Host " ├── " -NoNewline -ForegroundColor Green
+            $rawName = Read-Host "Enter Student Full Name"
+            if (-not [string]::IsNullOrWhiteSpace($rawName)) {
+                $studentName = $rawName.Trim()
                 break
             }
+            Write-Host " │   [!] Name cannot be empty." -ForegroundColor DarkGray
         }
-        Write-Host " │   [!] Must be between 01 and 30." -ForegroundColor DarkGray
+        $laptopNumber = "BYOD-AUTO"
+        Show-Property "Student Owner" "$studentName"
     }
 }
 
+# Security Token
 $pairingToken = "JJ"
 if ($ParamPairingToken) {
     $pairingToken = $ParamPairingToken.ToString().Trim().ToUpper()
@@ -230,7 +279,7 @@ if ($ParamPairingToken) {
     Show-Property "Security Key" "$pairingToken"
 }
 
-Show-ITProgress "Exchanging registration handshake with Gateway" 24 35 65
+Show-ITProgress "Exchanging registration handshake with Gateway" 14 20 40
 
 $hostname = $env:COMPUTERNAME
 $registerUrl = "$ServerBaseUrl/api/agents/register"
@@ -240,6 +289,8 @@ $registerPayload = @{
     pairingToken = $pairingToken
     token = $pairingToken
     hostname = $hostname
+    deviceOwnership = $deviceOwnership
+    studentName = $studentName
 } | ConvertTo-Json -Compress
 
 try {
@@ -261,11 +312,13 @@ if (-not $regResponse.success) {
     Show-FailAndExit "Server rejected registration: $($regResponse.error)"
 }
 
+$laptopNumber = if ($regResponse.laptopNumber) { $regResponse.laptopNumber } else { $laptopNumber }
+$studentName = if ($regResponse.studentName) { $regResponse.studentName } else { $studentName }
 $deviceId = if ($regResponse.deviceId) { $regResponse.deviceId } else { "device_$laptopNumber" }
 $deviceToken = if ($regResponse.deviceToken) { $regResponse.deviceToken } else { $regResponse.agentToken }
 $wsTarget = if ($regResponse.websocketUrl) { $regResponse.websocketUrl } else { $WebSocketUrl }
 
-Show-StepDone "Workstation authorized (Device ID: $deviceId)"
+Show-StepDone "Workstation authorized (ID: $laptopNumber • $deviceId)"
 
 # ====================================================================
 # [STEP 3] Deploy Local Agent & Windows Startup Service
@@ -283,13 +336,15 @@ $localConfig = @{
     laptopNumber = $laptopNumber
     deviceId = $deviceId
     deviceToken = $deviceToken
+    deviceOwnership = $deviceOwnership
+    studentName = $studentName
     agentVersion = "1.0.0"
     heartbeatIntervalMs = 5000
     installedAt = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
 } | ConvertTo-Json -Depth 4
 Set-Content -Path "$AgentInstallDir\config.json" -Value $localConfig -Encoding UTF8 -Force
 
-Show-ITProgress "Writing agent runtime binaries" 18 20 40
+Show-ITProgress "Writing agent runtime binaries" 12 15 30
 
 try {
     $agentPs1Code = (New-Object System.Net.WebClient).DownloadString("$ServerBaseUrl/agent.ps1")
@@ -310,7 +365,7 @@ if (-not (Test-Path "$AgentInstallDir\agent.ps1")) {
 $batContent = "@echo off`nstart /b `"`" powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$AgentInstallDir\agent.ps1`""
 Set-Content -Path "$AgentInstallDir\start-agent.bat" -Value $batContent -Encoding ASCII -Force
 
-Show-ITProgress "Configuring Windows background daemon & startup hook" 26 30 55
+Show-ITProgress "Configuring Windows background daemon & startup hook" 14 20 40
 
 # Stop existing running instance
 try {
@@ -347,7 +402,7 @@ Show-StepDone "Silent background service installed & active"
 # ====================================================================
 Show-StepHeader "04/04" "REAL-TIME TELEMETRY VERIFICATION"
 
-Show-ITProgress "Synchronizing live WebSocket channel" 28 35 70
+Show-ITProgress "Synchronizing live WebSocket channel" 14 20 40
 
 $wsTestPassed = $false
 try {
@@ -365,6 +420,8 @@ try {
             deviceId = $deviceId
             agentToken = $deviceToken
             deviceToken = $deviceToken
+            deviceOwnership = $deviceOwnership
+            studentName = $studentName
             hostname = $hostname
             agentVersion = "1.0.0"
         } | ConvertTo-Json -Compress
@@ -391,10 +448,12 @@ Write-Host ""
 Write-BoxBorderTop $BOX_INNER_WIDTH
 Write-BoxLine -Prefix "✔ " -PrefixColor Green -Content "WORKSTATION SYNCHRONIZED & READY FOR LAB SESSION" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxBorderDivider $BOX_INNER_WIDTH
-Write-BoxLine -Prefix "• Workstation Identifier :  " -PrefixColor DarkGray -Content "Laptop $laptopNumber ($deviceId)" -TextColor White -Width $BOX_INNER_WIDTH
-Write-BoxLine -Prefix "• Teacher Server Gateway :  " -PrefixColor DarkGray -Content "$ServerIP`:$ServerPort" -TextColor White -Width $BOX_INNER_WIDTH
+$categoryDisplay = if ($deviceOwnership -eq 'PERSONAL') { "Personal Device ($studentName)" } else { "School Workstation ($laptopNumber)" }
+Write-BoxLine -Prefix "• Device Category       :  " -PrefixColor DarkGray -Content "$categoryDisplay" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Workstation Identifier :  " -PrefixColor DarkGray -Content "$laptopNumber ($deviceId)" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Teacher Server Gateway :  " -PrefixColor DarkGray -Content "$($ServerIP):$($ServerPort)" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxLine -Prefix "• Telemetry Status       :  " -PrefixColor DarkGray -Content "ONLINE / ACTIVE" -TextColor Green -Width $BOX_INNER_WIDTH
-Write-BoxLine -Prefix "• Background Service     :  " -PrefixColor DarkGray -Content "Enabled" -TextColor White -Width $BOX_INNER_WIDTH
+Write-BoxLine -Prefix "• Background Service     :  " -PrefixColor DarkGray -Content "Enabled & Active" -TextColor White -Width $BOX_INNER_WIDTH
 Write-BoxBorderDivider $BOX_INNER_WIDTH
 Write-BoxLine -Content "Setup complete. The student can now use this laptop normally." -TextColor DarkGray -Width $BOX_INNER_WIDTH
 Write-BoxLine -Content "You may safely close this terminal window." -TextColor DarkGray -Width $BOX_INNER_WIDTH
