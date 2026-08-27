@@ -433,223 +433,231 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. TOP UTILITY STRIP (Official School Contact & Location)                 */}
+      {/* FIXED MASTER HEADER: UTILITY STRIP + NEWS NOTIFICATION + MAIN NAVBAR      */}
       {/* ========================================================================= */}
-      <div className="bg-zinc-950 text-zinc-300 text-[11.5px] border-b border-zinc-800 px-4 sm:px-8 py-2 flex items-center justify-between z-50 relative">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-rose-400 font-bold tracking-wide">
-            <Building className="w-3.5 h-3.5" />
-            <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
-          </span>
-          <span className="text-zinc-700 hidden md:inline">•</span>
-          <span className="text-zinc-400 hidden md:inline text-[11px]">
-            {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setLanguage(language === 'km' ? 'en' : 'km')}
-            className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer font-bold px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px]"
-          >
-            <Globe className="w-3.5 h-3.5 text-rose-400" />
-            <span>{language === 'km' ? 'English' : 'ភាសាខ្មែរ'}</span>
-          </button>
-          <span className="text-zinc-800">|</span>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthModalRole('student');
-              setShowAuthModal(true);
-            }}
-            className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
-          >
-            <LogIn className="w-3.5 h-3.5 text-rose-400" />
-            <span>{isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Portal'}</span>
-          </button>
-          <span className="text-zinc-800">|</span>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthModalRole('teacher');
-              setShowAuthModal(true);
-            }}
-            className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
-          >
-            <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* OFFICIAL SCHOOL NEWS TICKER ANNOUNCEMENT STRIP (50% DISCOUNT)             */}
-      {/* ========================================================================= */}
-      <div className="bg-gradient-to-r from-zinc-950 via-rose-950/90 to-zinc-950 text-white text-xs border-b border-rose-900/50 py-1.5 px-4 overflow-hidden relative z-40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-rose-600 text-white text-[10.5px] font-black uppercase tracking-wider font-mono shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              <span>{isKhmer ? 'ដំណឹងថ្មី' : 'NEWS'}</span>
+      <div className="sticky top-0 z-50 w-full shadow-sm">
+        
+        {/* 1. TOP UTILITY STRIP (Official School Contact & Location) */}
+        <div className="bg-zinc-950 text-zinc-300 text-[11.5px] border-b border-zinc-800 px-4 sm:px-8 py-1.5 sm:py-2 flex items-center justify-between relative z-50">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 text-rose-400 font-bold tracking-wide">
+              <Building className="w-3.5 h-3.5" />
+              <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
+            </span>
+            <span className="text-zinc-700 hidden md:inline">•</span>
+            <span className="text-zinc-400 hidden md:inline text-[11px]">
+              {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
             </span>
           </div>
 
-          <div className="flex-1 overflow-hidden relative">
-            <ul id="navbar-discount-ticker" className="news-ticker-list flex items-center whitespace-nowrap animate-marquee hover:[animation-play-state:paused] cursor-pointer">
-              <li className="inline-block px-4 shrink-0">
-                <a
-                  href="https://www.ciiscambodia.com/read/%E1%9E%9F%E1%9E%9B%E1%9E%9A%E1%9E%93%E1%9E%9F-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%9F-ciis-%E1%9E%9F%E1%9E%98%E1%9E%9F%E1%9E%9C%E1%9E%82%E1%9E%98%E1%9E%93%E1%9E%A2%E1%9E%94%E1%9E%A2%E1%9E%9A%E1%9E%9F%E1%9E%91%E1%9E%9A%E1%9E%94%E1%9E%9C%E1%9E%8F%E1%9E%9F%E1%9E%93%E1%9E%80%E1%9E%9B%E1%9E%86%E1%9E%93%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A6-%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A7-%E1%9E%9F%E1%9E%9B%E1%9E%94%E1%9E%89%E1%9E%85%E1%9E%91%E1%9E%98%E1%9E%9B%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A5%E1%9F%A0-%E1%9E%9F%E1%9E%98%E1%9E%9A%E1%9E%94%E1%9E%9F%E1%9E%9F%E1%9E%9F%E1%9E%95%E1%9E%91%E1%9E%9A%E1%9E%80%E1%9E%9A%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9E%9P%E1%9E%9F%E1%9E%9B%E1%9E%95%E1%9E%9F%E1%9E%84%E1%9E%84"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium"
-                >
-                  <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
-                    <span>01 September 2026</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
-                  </div>
-                  <span>
-                    សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
-                  </span>
-                </a>
-              </li>
-              <li className="inline-block px-4 shrink-0">
-                <a
-                  href="https://www.ciiscambodia.com/read/%E1%9E%9F%E1%9E%9B%E1%9E%9A%E1%9E%93%E1%9E%9F-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%9F-ciis-%E1%9E%9F%E1%9E%98%E1%9E%9F%E1%9E%9C%E1%9E%82%E1%9E%98%E1%9E%93%E1%9E%A2%E1%9E%94%E1%9E%A2%E1%9E%9A%E1%9E%9F%E1%9E%91%E1%9E%9A%E1%9E%94%E1%9E%9C%E1%9E%8F%E1%9E%9F%E1%9E%93%E1%9E%80%E1%9E%9B%E1%9E%86%E1%9E%93%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A6-%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A7-%E1%9E%9F%E1%9E%9B%E1%9E%94%E1%9E%89%E1%9E%85%E1%9E%91%E1%9E%98%E1%9E%9B%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A5%E1%9F%A0-%E1%9E%9F%E1%9E%98%E1%9E%9A%E1%9E%94%E1%9E%9F%E1%9E%9F%E1%9E%9F%E1%9E%95%E1%9E%91%E1%9E%9A%E1%9E%80%E1%9E%9A%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9E%9P%E1%9E%9F%E1%9E%9B%E1%9E%95%E1%9E%9F%E1%9E%84%E1%9E%84"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium"
-                >
-                  <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
-                    <span>01 September 2026</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
-                  </div>
-                  <span>
-                    សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <a
-            href="#announcement-discount"
-            onClick={(e) => scrollToSection(e, 'announcement-discount')}
-            className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-bold border border-rose-500/40 transition-colors shrink-0"
-          >
-            <span>{isKhmer ? 'បញ្ចុះតម្លៃ ៥០%' : '50% Discount'}</span>
-            <span>↓</span>
-          </a>
-
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 2. MAIN HEADER NAVIGATION WITH SMOOTH CINEMATIC SCROLL                    */}
-      {/* ========================================================================= */}
-      <header
-        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${isScrolled ? 'border-zinc-300 shadow-sm py-2.5' : 'border-zinc-200 py-3.5'
-          }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-
-          {/* Logo & School Name */}
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-rose-50 p-1.5 flex items-center justify-center border border-rose-200/90 shrink-0 shadow-xs">
-              <img src="/ciis-logo.svg" alt="CIIS Logo" className="w-full h-full object-contain" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-sm sm:text-base lg:text-lg font-black text-zinc-950 leading-tight truncate tracking-tight font-khmer-title">
-                {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
-              </h1>
-              <p className="text-[10.5px] sm:text-[11.5px] text-rose-900 font-bold truncate">
-                {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'National Standard K-12 & Advanced Computer Technology'}
-              </p>
-            </div>
-          </div>
-
-          {/* Clean Navigation Links with Slower Cinematic Scroll Motion */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-zinc-700">
-            <a
-              href="#about"
-              onClick={(e) => scrollToSection(e, 'about')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'អំពីសាលា' : 'About CIIS'}
-            </a>
-            <a
-              href="#programs"
-              onClick={(e) => scrollToSection(e, 'programs')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'កម្មវិធីសិក្សា' : 'Academic Tracks'}
-            </a>
-            <a
-              href="#lab"
-              onClick={(e) => scrollToSection(e, 'lab')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Lab'}
-            </a>
-            <a
-              href="#events"
-              onClick={(e) => scrollToSection(e, 'events')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'សកម្មភាពសាលា' : 'Events & Awards'}
-            </a>
-            <a
-              href="#faculty"
-              onClick={(e) => scrollToSection(e, 'faculty')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'លោកគ្រូអ្នកគ្រូ' : 'Faculty'}
-            </a>
-            <a
-              href="#contact"
-              onClick={(e) => scrollToSection(e, 'contact')}
-              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
-            >
-              {isKhmer ? 'ទំនាក់ទំនង' : 'Contact Us'}
-            </a>
-          </nav>
-
-          {/* Action CTAs */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {isAuthenticated && currentUser.id !== 'guest' && onReturnToPortal ? (
-              <button
-                type="button"
-                onClick={onReturnToPortal}
-                className="px-4 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>{isTeacher ? (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងគ្រូ' : 'Faculty Dashboard') : (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងសិស្ស' : 'Student Portal')}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthModalRole('student');
-                  setShowAuthModal(true);
-                }}
-                className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀន' : 'Enroll Now'}</span>
-              </button>
-            )}
-
+          <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(true)}
-              className="p-2 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100 rounded-xl lg:hidden transition-colors cursor-pointer"
-              aria-label="Menu"
+              onClick={() => setLanguage(language === 'km' ? 'en' : 'km')}
+              className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer font-bold px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px]"
             >
-              <Menu className="w-5 h-5" />
+              <Globe className="w-3.5 h-3.5 text-rose-400" />
+              <span>{language === 'km' ? 'English' : 'ភាសាខ្មែរ'}</span>
+            </button>
+            <span className="text-zinc-800">|</span>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthModalRole('student');
+                setShowAuthModal(true);
+              }}
+              className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+            >
+              <LogIn className="w-3.5 h-3.5 text-rose-400" />
+              <span>{isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Portal'}</span>
+            </button>
+            <span className="text-zinc-800">|</span>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthModalRole('teacher');
+                setShowAuthModal(true);
+              }}
+              className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+            >
+              <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
             </button>
           </div>
         </div>
-      </header>
+
+        {/* 2. FIXED NOTIFICATION TICKER BAR (Clicks Scroll Directly to Announcement Section) */}
+        <div className="bg-gradient-to-r from-zinc-950 via-rose-950/95 to-zinc-950 text-white text-xs border-b border-rose-900/50 py-1.5 px-4 overflow-hidden relative z-40">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-rose-600 text-white text-[10.5px] font-black uppercase tracking-wider font-mono shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span>{isKhmer ? 'ដំណឹងថ្មី' : 'NEWS'}</span>
+              </span>
+            </div>
+
+            <div className="flex-1 overflow-hidden relative">
+              <ul id="navbar-discount-ticker" className="news-ticker-list flex items-center whitespace-nowrap animate-marquee hover:[animation-play-state:paused] cursor-pointer">
+                <li className="inline-block px-4 shrink-0">
+                  <a
+                    href="#announcement-discount"
+                    onClick={(e) => scrollToSection(e, 'announcement-discount')}
+                    className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium cursor-pointer"
+                  >
+                    <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
+                      01 September 2026
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                    </div>
+                    <span>
+                      សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
+                    </span>
+                  </a>
+                </li>
+                <li className="inline-block px-4 shrink-0">
+                  <a
+                    href="#announcement-discount"
+                    onClick={(e) => scrollToSection(e, 'announcement-discount')}
+                    className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium cursor-pointer"
+                  >
+                    <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
+                      01 September 2026
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                    </div>
+                    <span>
+                      សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <a
+              href="#announcement-discount"
+              onClick={(e) => scrollToSection(e, 'announcement-discount')}
+              className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-bold border border-rose-500/40 transition-colors shrink-0 cursor-pointer"
+            >
+              <span>{isKhmer ? 'បញ្ចុះតម្លៃ ៥០%' : '50% Discount'}</span>
+              <span>↓</span>
+            </a>
+
+          </div>
+        </div>
+
+        {/* 3. MAIN NAVBAR HEADER NAVIGATION */}
+        <header
+          className={`bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${
+            isScrolled ? 'border-zinc-300 shadow-xs py-2' : 'border-zinc-200 py-3'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+
+            {/* Logo & School Name */}
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-rose-50 p-1.5 flex items-center justify-center border border-rose-200/90 shrink-0 shadow-xs">
+                <img src="/ciis-logo.svg" alt="CIIS Logo" className="w-full h-full object-contain" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base lg:text-lg font-black text-zinc-950 leading-tight truncate tracking-tight font-khmer-title">
+                  {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
+                </h1>
+                <p className="text-[10.5px] sm:text-[11.5px] text-rose-900 font-bold truncate">
+                  {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'National Standard K-12 & Advanced Computer Technology'}
+                </p>
+              </div>
+            </div>
+
+            {/* Clean Navigation Links with Slower Cinematic Scroll Motion */}
+            <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-zinc-700">
+              <a
+                href="#about"
+                onClick={(e) => scrollToSection(e, 'about')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'អំពីសាលា' : 'About CIIS'}
+              </a>
+              <a
+                href="#announcement-discount"
+                onClick={(e) => scrollToSection(e, 'announcement-discount')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer text-rose-900 font-black"
+              >
+                {isKhmer ? 'ដំណឹងបញ្ចុះតម្លៃ ៥០%' : '50% Promo'}
+              </a>
+              <a
+                href="#programs"
+                onClick={(e) => scrollToSection(e, 'programs')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'កម្មវិធីសិក្សា' : 'Academic Tracks'}
+              </a>
+              <a
+                href="#lab"
+                onClick={(e) => scrollToSection(e, 'lab')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Lab'}
+              </a>
+              <a
+                href="#events"
+                onClick={(e) => scrollToSection(e, 'events')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'សកម្មភាពសាលា' : 'Events & Awards'}
+              </a>
+              <a
+                href="#faculty"
+                onClick={(e) => scrollToSection(e, 'faculty')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'លោកគ្រូអ្នកគ្រូ' : 'Faculty'}
+              </a>
+              <a
+                href="#contact"
+                onClick={(e) => scrollToSection(e, 'contact')}
+                className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+              >
+                {isKhmer ? 'ទំនាក់ទំនង' : 'Contact Us'}
+              </a>
+            </nav>
+
+            {/* Action CTAs */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              {isAuthenticated && currentUser.id !== 'guest' && onReturnToPortal ? (
+                <button
+                  type="button"
+                  onClick={onReturnToPortal}
+                  className="px-4 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>{isTeacher ? (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងគ្រូ' : 'Faculty Dashboard') : (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងសិស្ស' : 'Student Portal')}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthModalRole('student');
+                    setShowAuthModal(true);
+                  }}
+                  className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀន' : 'Enroll Now'}</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                className="p-2 text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100 rounded-xl lg:hidden transition-colors cursor-pointer"
+                aria-label="Menu"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            </div>
+
+          </div>
+        </header>
+
+      </div>
 
       {/* Mobile Slide-Over Drawer */}
       {mobileMenuOpen && (
