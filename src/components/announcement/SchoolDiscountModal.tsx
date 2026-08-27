@@ -14,7 +14,7 @@ const COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
 
 export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
   isOpen: controlledIsOpen,
-  onClose: controlledOnClose,
+  onClose,
   onClaimDiscount,
 }) => {
   const { isKhmer } = useLanguage();
@@ -25,10 +25,8 @@ export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
     setMounted(true);
   }, []);
 
-  // 1-hour auto cooldown detection
+  // 1-hour auto cooldown detection on mount
   useEffect(() => {
-    if (controlledIsOpen !== undefined) return;
-
     try {
       const lastDismissed = localStorage.getItem(STORAGE_KEY);
       const now = Date.now();
@@ -43,8 +41,9 @@ export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
       const timer = setTimeout(() => setInternalIsOpen(true), 700);
       return () => clearTimeout(timer);
     }
-  }, [controlledIsOpen]);
+  }, []);
 
+  // Resolved open state
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
   const handleClose = () => {
@@ -53,10 +52,9 @@ export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
     } catch {
       // ignore
     }
-    if (controlledOnClose) {
-      controlledOnClose();
-    } else {
-      setInternalIsOpen(false);
+    setInternalIsOpen(false);
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -65,11 +63,14 @@ export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
     onClaimDiscount();
   };
 
-  // Body scroll lock & Escape key
+  // Ensure body scroll is never permanently locked
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
 
-    const originalOverflow = document.body.style.overflow;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -78,10 +79,17 @@ export const SchoolDiscountModal: React.FC<SchoolDiscountModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = originalOverflow || '';
+      document.body.style.overflow = previousOverflow || '';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen]);
+
+  // If unmounted or closed, make sure body style is restored
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   if (!isOpen || !mounted) return null;
 

@@ -1592,6 +1592,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
         isOpen={showPromoModalManual ? true : undefined}
         onClose={() => setShowPromoModalManual(false)}
         onClaimDiscount={() => {
+          setShowPromoModalManual(false);
           setAuthModalRole('student');
           setShowAuthModal(true);
         }}
