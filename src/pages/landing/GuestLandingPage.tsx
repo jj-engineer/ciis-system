@@ -23,8 +23,7 @@ import {
   Award,
   Users,
   Building,
-  Calendar,
-  Sparkles
+  Code2
 } from 'lucide-react';
 
 interface GalleryModalItem {
@@ -73,6 +72,40 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       setIsSubmittingInquiry(false);
       setInquirySubmitted(true);
     }, 600);
+  };
+
+  // Smooth, slower cinematic scroll motion for navigation clicks
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (!element) return;
+
+    const navOffset = 75;
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - navOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 850; // Slower, luxurious smooth scroll
+    let startTimestamp: number | null = null;
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth cubic ease-in-out curve
+      const ease = progress < 0.5
+        ? 4 * progress * progress * progress
+        : (progress - 1) * (2 * progress - 2) * (2 * progress - 2) + 1;
+
+      window.scrollTo(0, startPosition + distance * ease);
+
+      if (elapsed < duration) {
+        window.requestAnimationFrame(step);
+      }
+    };
+
+    window.requestAnimationFrame(step);
+    if (mobileMenuOpen) setMobileMenuOpen(false);
   };
 
   useScrollObserver('.scroll-reveal, .scroll-reveal-scale, .scroll-reveal-left, .scroll-reveal-right', [language, activeLabTab]);
@@ -124,12 +157,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     {
       id: 'secondary-computer',
       index: '03',
-      nameKh: 'ជំនាញកុំព្យូទ័រអនុវត្ត CIIS Lab 1',
-      nameEn: 'Hands-On Computer & Digital Lab',
+      nameKh: 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់',
+      nameEn: 'Advanced Computer Technology Program',
       tagKh: 'អនុវត្តលើម៉ាស៊ីនផ្ទាល់',
       tagEn: '100% Practical Lab',
-      descriptionKh: 'ការបណ្តុះបណ្តាលកុំព្យូទ័រលើម៉ាស៊ីនផ្ទាល់ក្នុងបន្ទប់ Lab 1 ដូចជា Touch Typing ខ្មែរ-អង់គ្លេស, Microsoft Office (Word, Excel, PowerPoint), ការរៀបចំឯកសារ និងជំនាញឌីជីថល។',
-      descriptionEn: 'Direct hands-on workstation training in Computer Lab 1 covering 10-Finger Touch Typing, Microsoft Word, Excel, PowerPoint, and modern digital office skills.',
+      descriptionKh: 'ការបណ្តុះបណ្តាលក្នុងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ ដូចជា Touch Typing ខ្មែរ-អង់គ្លេស, Microsoft Office (Word, Excel, PowerPoint), ការរៀបចំឯកសាររដ្ឋបាល និងជំនាញឌីជីថល។',
+      descriptionEn: 'Comprehensive advanced computer technology curriculum covering 10-Finger Touch Typing, Microsoft Word, Excel, PowerPoint, and modern digital office skills.',
       highlightsKh: ['បន្ទប់កុំព្យូទ័រ ៤០+ គ្រឿងផ្ទាល់ខ្លួន', 'Touch Typing ខ្មែរ & អង់គ្លេស', 'Microsoft Word, Excel & PowerPoint'],
       highlightsEn: ['40+ Dedicated Workstations', 'Khmer & English Touch Typing', 'Microsoft Word, Excel & PowerPoint']
     },
@@ -147,7 +180,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     }
   ];
 
-  // 5 Authentic Ceremony / Event Photos
+  // Authentic Ceremony / Event Photos
   const ceremonyEvents: GalleryModalItem[] = [
     {
       src: '/images/school/ciis-director-speech.jpg',
@@ -201,7 +234,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     }
   ];
 
-  // Authentic Class 1 Student Activities in Computer Lab 1 (Evening 1: 5:30 - 6:30 PM)
+  // Authentic Student Activities in Advanced Computer Tech Classes
   const lab1Activities: GalleryModalItem[] = [
     {
       src: '/images/activities/class-1/activity-1.jpg',
@@ -232,7 +265,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       badgeKh: 'កុំព្យូទ័រលេខ ០៨',
       badgeEn: 'STATION 08',
       titleKh: 'ការរៀនជាក្រុម ពិភាក្សាលំហាត់ និងជួយគ្នាទៅវិញទៅមក',
-      titleEn: 'Collaborative Practice & Peer Learning in Lab 1',
+      titleEn: 'Collaborative Practice & Peer Learning',
       descKh: 'សិស្សានុសិស្សអនុវត្តលំហាត់រួមគ្នា រៀនដោះស្រាយបញ្ហាបច្ចេកទេស និងជួយប្រាប់គ្នាពេលជួបកន្លែងពិបាកក្នុងកម្មវិធី Office។',
       descEn: 'Students working collaboratively, sharing solutions, and helping each other navigate complex software exercises.',
       category: 'lab',
@@ -253,16 +286,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     }
   ];
 
-  // Authentic Class 2 Student Activities in Computer Lab 1 (Evening 2: 6:40 - 7:40 PM)
   const lab2Activities: GalleryModalItem[] = [
     {
       src: '/images/activities/class-2/activity-1.jpg',
-      badgeKh: 'ទិដ្ឋភាពទូទៅ Lab 1',
-      badgeEn: 'FULL LAB OVERVIEW',
-      titleKh: 'ទិដ្ឋភាពរួមនៃថ្នាក់រៀនកុំព្យូទ័រ Lab 1 វេនល្ងាចទី២ (៦:៤០-៧:៤០)',
-      titleEn: 'Evening Shift 2 Classroom Overview in CIIS Lab 1',
-      descKh: 'បរិយាកាសសិក្សាជាក់ស្តែងក្នុងបន្ទប់ Lab 1 វេនទី២ (៦:៤០-៧:៤០) សិស្សានុសិស្សពេញបន្ទប់កំពុងផ្ចិតផ្ចង់រៀនលើកុំព្យូទ័រយួរដៃ ដោយមានលោកគ្រូណែនាំផ្ទាល់ពីមុខថ្នាក់។',
-      descEn: 'Authentic classroom atmosphere in Lab 1 during Evening Shift 2 (6:40-7:40 PM) with 100% individual workstation engagement and teacher guidance.',
+      badgeKh: 'ទិដ្ឋភាពថ្នាក់កុំព្យូទ័រ',
+      badgeEn: 'CLASSROOM OVERVIEW',
+      titleKh: 'ទិដ្ឋភាពរួមនៃថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ វេនល្ងាចទី២ (៦:៤០-៧:៤០)',
+      titleEn: 'Evening Shift 2 Classroom Overview in CIIS Computer Lab',
+      descKh: 'បរិយាកាសសិក្សាជាក់ស្តែងក្នុងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ វេនទី២ (៦:៤០-៧:៤០) សិស្សានុសិស្សពេញបន្ទប់កំពុងផ្ចិតផ្ចង់រៀនលើកុំព្យូទ័រយួរដៃ ដោយមានលោកគ្រូណែនាំផ្ទាល់ពីមុខថ្នាក់។',
+      descEn: 'Authentic classroom atmosphere during Evening Shift 2 (6:40-7:40 PM) with 100% individual workstation engagement and teacher guidance.',
       category: 'lab',
       classShiftKh: 'វេនទី២ (៦:៤០-៧:៤០)',
       classShiftEn: 'Shift 2 (6:40-7:40 PM)'
@@ -274,7 +306,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       titleKh: 'លោកគ្រូណែនាំការអនុវត្តលំហាត់ផ្ទាល់ និងពន្យល់មួយជំហានម្តងៗ',
       titleEn: 'Attentive Instructor Guidance & Step-by-Step Mentoring',
       descKh: 'លោកគ្រូពន្យល់លំហាត់ និងកែតម្រូវបច្ចេកទេសការងារលើកុំព្យូទ័រជូនសិស្សានុសិស្សយ៉ាងយកចិត្តទុកដាក់ ធានាថាសិស្សគ្រប់រូបយល់ច្បាស់និងអនុវត្តបានត្រឹមត្រូវ។',
-      descEn: 'Teacher providing personalized coaching, reviewing exercises, and answering student questions directly at workstations in Lab 1.',
+      descEn: 'Teacher providing personalized coaching, reviewing exercises, and answering student questions directly at workstations.',
       category: 'lab',
       classShiftKh: 'វេនទី២ (៦:៤០-៧:៤០)',
       classShiftEn: 'Shift 2 (6:40-7:40 PM)'
@@ -300,7 +332,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       descKh: 'សិស្សផ្ចិតផ្ចង់អានឯកសារមេរៀន និងអនុវត្តរៀបចំឯកសារលើកុំព្យូទ័រយួរដៃលេខ ០៧ ដោយមានការផ្តោតអារម្មណ៍ខ្ពស់។',
       descEn: 'Focused independent document creation, cross-referencing textbook instructions directly on laptop workstation 07.',
       category: 'lab',
-      classShiftKh: 'វេនទី២ (៦:៤០-៧:៤០)',
+      classShiftKh: 'វេនទី២ (៦:៤០-៧:芳០)',
       classShiftEn: 'Shift 2 (6:40-7:40 PM)'
     },
     {
@@ -339,7 +371,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     {
       id: 'shift-1',
       code: 'EV-01',
-      nameKh: 'ថ្នាក់កុំព្យូទ័រវេនល្ងាច ទី១',
+      nameKh: 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ វេនល្ងាច ទី១',
       nameEn: 'Evening Computer Shift 1',
       teacherKh: 'លោកគ្រូ នុន លាងឌី & ជឿន តេជៈ',
       teacherEn: 'Nun Langdy (Lead) & Choeurn Tekchas (Asst)',
@@ -355,7 +387,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     {
       id: 'shift-2',
       code: 'EV-02',
-      nameKh: 'ថ្នាក់កុំព្យូទ័រវេនល្ងាច ទី២',
+      nameKh: 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ វេនល្ងាច ទី២',
       nameEn: 'Evening Computer Shift 2',
       teacherKh: 'លោកគ្រូ នុន លាងឌី & ជឿន តេជៈ',
       teacherEn: 'Nun Langdy (Lead) & Choeurn Tekchas (Asst)',
@@ -371,7 +403,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
     {
       id: 'shift-3',
       code: 'MO-01',
-      nameKh: 'ថ្នាក់កុំព្យូទ័រថ្ងៃចន្ទ ព្រឹក',
+      nameKh: 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ ថ្ងៃចន្ទ ព្រឹក',
       nameEn: 'Monday Morning Intensive Shift',
       teacherKh: 'លោកគ្រូ តេន ចាន់ដារា & ជឿន តេជៈ',
       teacherEn: 'Ten Chandara (Lead) & Choeurn Tekchas (Asst)',
@@ -398,7 +430,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. TOP UTILITY STRIP (Official School Contact & Language)                 */}
+      {/* 1. TOP UTILITY STRIP (Official School Contact & Location)                 */}
       {/* ========================================================================= */}
       <div className="bg-zinc-950 text-zinc-300 text-[11.5px] border-b border-zinc-800 px-4 sm:px-8 py-2 flex items-center justify-between z-50 relative">
         <div className="flex items-center gap-3">
@@ -408,7 +440,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           </span>
           <span className="text-zinc-700 hidden md:inline">•</span>
           <span className="text-zinc-400 hidden md:inline text-[11px]">
-            {isKhmer ? 'ក្រុងកំពង់ឆ្នាំង ខេត្តកំពង់ឆ្នាំង ព្រះរាជាណាចក្រកម្ពុជា' : 'Kampong Chhnang Town, Cambodia'}
+            {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
           </span>
         </div>
 
@@ -442,13 +474,13 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             }}
             className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
           >
-            <span>{isKhmer ? 'គណនីគ្រូ' : 'Faculty Access'}</span>
+            <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
           </button>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. MAIN HEADER & INSTITUTIONAL NAVIGATION                                 */}
+      {/* 2. MAIN HEADER NAVIGATION WITH SMOOTH CINEMATIC SCROLL                    */}
       {/* ========================================================================= */}
       <header
         className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${
@@ -467,29 +499,53 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
               </h1>
               <p className="text-[10.5px] sm:text-[11.5px] text-rose-900 font-bold truncate">
-                {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់កុំព្យូទ័រអនុវត្ត Lab 1' : 'National Standard K-12 & Practical Computer Lab 1'}
+                {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'National Standard K-12 & Advanced Computer Technology'}
               </p>
             </div>
           </div>
 
-          {/* Clean Navigation Links */}
+          {/* Clean Navigation Links with Slower Cinematic Scroll Motion */}
           <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-zinc-700">
-            <a href="#about" className="hover:text-rose-950 transition-colors">
+            <a
+              href="#about"
+              onClick={(e) => scrollToSection(e, 'about')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
               {isKhmer ? 'អំពីសាលា' : 'About CIIS'}
             </a>
-            <a href="#programs" className="hover:text-rose-950 transition-colors">
+            <a
+              href="#programs"
+              onClick={(e) => scrollToSection(e, 'programs')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
               {isKhmer ? 'កម្មវិធីសិក្សា' : 'Academic Tracks'}
             </a>
-            <a href="#lab" className="hover:text-rose-950 transition-colors">
-              {isKhmer ? 'បន្ទប់កុំព្យូទ័រ Lab 1' : 'Computer Lab 1'}
+            <a
+              href="#lab"
+              onClick={(e) => scrollToSection(e, 'lab')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
+              {isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Lab'}
             </a>
-            <a href="#events" className="hover:text-rose-950 transition-colors">
+            <a
+              href="#events"
+              onClick={(e) => scrollToSection(e, 'events')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
               {isKhmer ? 'សកម្មភាពសាលា' : 'Events & Awards'}
             </a>
-            <a href="#faculty" className="hover:text-rose-950 transition-colors">
+            <a
+              href="#faculty"
+              onClick={(e) => scrollToSection(e, 'faculty')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
               {isKhmer ? 'លោកគ្រូអ្នកគ្រូ' : 'Faculty'}
             </a>
-            <a href="#contact" className="hover:text-rose-950 transition-colors">
+            <a
+              href="#contact"
+              onClick={(e) => scrollToSection(e, 'contact')}
+              className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
+            >
               {isKhmer ? 'ទំនាក់ទំនង' : 'Contact Us'}
             </a>
           </nav>
@@ -500,7 +556,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               <button
                 type="button"
                 onClick={onReturnToPortal}
-                className="px-4 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                className="px-4 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>{isTeacher ? (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងគ្រូ' : 'Faculty Dashboard') : (isKhmer ? 'ផ្ទាំងគ្រប់គ្រងសិស្ស' : 'Student Portal')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -512,7 +568,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   setAuthModalRole('student');
                   setShowAuthModal(true);
                 }}
-                className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm hover:scale-[1.02]"
+                className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀន' : 'Enroll Now'}</span>
@@ -561,17 +617,17 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
               <nav className="space-y-1 text-xs font-bold text-zinc-700">
                 {[
-                  { href: '#about', label: isKhmer ? 'អំពីសាលា CIIS' : 'About CIIS' },
-                  { href: '#programs', label: isKhmer ? 'កម្មវិធីសិក្សាទាំង ៤ កម្រិត' : 'Academic Programs' },
-                  { href: '#lab', label: isKhmer ? 'បន្ទប់កុំព្យូទ័រ Lab 1 (៤០+ គ្រឿង)' : 'Computer Lab 1' },
-                  { href: '#events', label: isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាព' : 'Events & Awards' },
-                  { href: '#faculty', label: isKhmer ? 'លោកគ្រូអ្នកគ្រូ & គរុកោសល្យ' : 'Distinguished Faculty' },
-                  { href: '#contact', label: isKhmer ? 'ទំនាក់ទំនង & ទីតាំងសាលា' : 'Contact & Campus Visit' }
+                  { href: '#about', id: 'about', label: isKhmer ? 'អំពីសាលា CIIS' : 'About CIIS' },
+                  { href: '#programs', id: 'programs', label: isKhmer ? 'កម្មវិធីសិក្សាទាំង ៤ កម្រិត' : 'Academic Programs' },
+                  { href: '#lab', id: 'lab', label: isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Lab' },
+                  { href: '#events', id: 'events', label: isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាព' : 'Events & Awards' },
+                  { href: '#faculty', id: 'faculty', label: isKhmer ? 'លោកគ្រូអ្នកគ្រូ & គរុកោសល្យ' : 'Distinguished Faculty' },
+                  { href: '#contact', id: 'contact', label: isKhmer ? 'ទំនាក់ទំនង & ទីតាំងសាលា' : 'Contact & Campus Visit' }
                 ].map((link) => (
                   <a
-                    key={link.href}
+                    key={link.id}
                     href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => scrollToSection(e, link.id)}
                     className="block px-3 py-2.5 rounded-xl hover:bg-zinc-100 hover:text-rose-950 transition-colors"
                   >
                     {link.label}
@@ -615,7 +671,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
             </span>
             <span className="px-3.5 py-1.5 rounded-full bg-rose-50 text-rose-950 border border-rose-200 text-xs font-bold shadow-2xs">
-              {isKhmer ? 'ក្រុងកំពង់ឆ្នាំង • កម្មវិធីជាតិ MoEYS & បន្ទប់កុំព្យូទ័រ Lab 1' : 'Kampong Chhnang Campus • MoEYS & Lab 1'}
+              {isKhmer ? 'រាជធានីភ្នំពេញ • កម្មវិធីជាតិ MoEYS & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Phnom Penh Campus • MoEYS & Advanced Computer Tech'}
             </span>
           </div>
 
@@ -644,8 +700,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
               <p className="text-sm sm:text-base text-zinc-700 leading-relaxed font-normal">
                 {isKhmer
-                  ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស ផ្តល់ការអប់រំពេញលេញចាប់ពីថ្នាក់មត្តេយ្យសិក្សា ដល់ថ្នាក់ទី១២ (ត្រៀមបាក់ឌុប BacII) ភាសាអង់គ្លេសអន្តរជាតិ IELTS និងបន្ទប់កុំព្យូទ័រអនុវត្តជាក់ស្តែង Lab 1 បំពាក់កុំព្យូទ័រយួរដៃ ៤០+ គ្រឿងផ្ទាល់ខ្លួន ដើម្បីបណ្តុះបណ្តាលសិស្សានុសិស្សឱ្យមានអនាគតភ្លឺស្វាង និងមានជំនាញពិតប្រាកដ។'
-                  : 'CIIS delivers comprehensive educational pathways spanning Kindergarten to Grade 12 (National BacII Exam), International English & IELTS, alongside hands-on digital training on 40+ dedicated Dell workstations in Computer Lab 1.'}
+                  ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស ផ្តល់ការអប់រំពេញលេញចាប់ពីថ្នាក់មត្តេយ្យសិក្សា ដល់ថ្នាក់ទី១២ (ត្រៀមបាក់ឌុប BacII) ភាសាអង់គ្លេសអន្តរជាតិ IELTS និងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ បំពាក់កុំព្យូទ័រយួរដៃ ៤០+ គ្រឿងផ្ទាល់ខ្លួន ដើម្បីបណ្តុះបណ្តាលសិស្សានុសិស្សឱ្យមានអនាគតភ្លឺស្វាង និងមានជំនាញពិតប្រាកដ។'
+                  : 'CIIS delivers comprehensive educational pathways spanning Kindergarten to Grade 12 (National BacII Exam), International English & IELTS, alongside advanced computer technology training on 40+ dedicated Dell workstations.'}
               </p>
 
               {/* Action Buttons */}
@@ -656,7 +712,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     setAuthModalRole('student');
                     setShowAuthModal(true);
                   }}
-                  className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02]"
+                  className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <UserPlus className="w-4 h-4 text-rose-300" />
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនឥឡូវនេះ' : 'Apply for Enrollment'}</span>
@@ -665,7 +721,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
                 <a
                   href="#programs"
-                  className="py-3.5 px-6 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-zinc-200 shadow-2xs transition-all cursor-pointer"
+                  onClick={(e) => scrollToSection(e, 'programs')}
+                  className="py-3.5 px-6 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-zinc-200 shadow-2xs transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>{isKhmer ? 'ស្វែងយល់កម្មវិធីសិក្សា' : 'Explore Programs'}</span>
                   <span className="text-rose-900">→</span>
@@ -674,19 +731,19 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
               {/* 4 Highlights Strip */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-zinc-200">
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/80">
+                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
                   <div className="text-lg sm:text-xl font-black text-zinc-950">40+</div>
                   <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'កុំព្យូទ័រ Lab 1' : 'Workstations'}</div>
                 </div>
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/80">
+                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
                   <div className="text-lg sm:text-xl font-black text-zinc-950">K – 12</div>
                   <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'កម្មវិធីជាតិ MoEYS' : 'National Standard'}</div>
                 </div>
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/80">
+                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
                   <div className="text-lg sm:text-xl font-black text-zinc-950">100%</div>
                   <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'អនុវត្តលើម៉ាស៊ីន' : 'Hands-on Lab'}</div>
                 </div>
-                <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200/80">
+                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
                   <div className="text-lg sm:text-xl font-black text-zinc-950">IELTS</div>
                   <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'ភាសាអន្តរជាតិ' : 'English Track'}</div>
                 </div>
@@ -697,12 +754,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             <div className="scroll-reveal-right delay-100 lg:col-span-6 space-y-4">
               
               {/* Primary Featured Card: Real CIIS Multi-Story Campus Building */}
-              <div className="relative rounded-3xl overflow-hidden border-2 border-zinc-200 shadow-xl group bg-zinc-950">
+              <div className="relative rounded-3xl overflow-hidden border-2 border-zinc-200 shadow-xl group bg-zinc-950 hover:shadow-2xl hover:border-rose-400 transition-all duration-500">
                 <div className="aspect-[16/10] w-full overflow-hidden">
                   <img
                     src="/images/school/ciis-main-building.jpg"
                     alt="CIIS International School Campus Building"
-                    className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>
                 
@@ -714,7 +771,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     {isKhmer ? 'អគារសិក្សាផ្លូវការ CIIS' : 'Official CIIS Campus Building'}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-black/70 text-white text-xs font-bold border border-white/20">
-                    {isKhmer ? 'ខេត្តកំពង់ឆ្នាំង' : 'Kampong Chhnang'}
+                    {isKhmer ? 'រាជធានីភ្នំពេញ' : 'Phnom Penh'}
                   </span>
                 </div>
 
@@ -723,7 +780,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     {isKhmer ? 'បរិវេណសាលារៀន និងអគារសិក្សា ៤ ជាន់' : 'CIIS 4-Story Academic Campus'}
                   </h3>
                   <p className="text-[11.5px] text-zinc-300 line-clamp-1">
-                    {isKhmer ? 'មត្តេយ្យសិក្សា • បឋមសិក្សា • មធ្យមសិក្សា • ថ្នាក់កុំព្យូទ័រ & IELTS' : 'Kindergarten • Primary • Secondary • Computer Lab 1 & IELTS'}
+                    {isKhmer ? 'មត្តេយ្យសិក្សា • បឋមសិក្សា • មធ្យមសិក្សា • ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ & IELTS' : 'Kindergarten • Primary • Secondary • Computer Tech & IELTS'}
                   </p>
                 </div>
               </div>
@@ -734,7 +791,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 {/* Director Speech Card */}
                 <div
                   onClick={() => setSelectedGalleryItem(ceremonyEvents[0])}
-                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer"
+                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer hover:shadow-xl hover:border-rose-400 transition-all duration-300 hover:scale-[1.02]"
                 >
                   <div className="aspect-[4/3] w-full overflow-hidden">
                     <img
@@ -761,12 +818,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 {/* Real Lab 1 Station Card */}
                 <div
                   onClick={() => setSelectedGalleryItem(lab1Activities[0])}
-                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer"
+                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer hover:shadow-xl hover:border-rose-400 transition-all duration-300 hover:scale-[1.02]"
                 >
                   <div className="aspect-[4/3] w-full overflow-hidden">
                     <img
                       src="/images/activities/class-1/activity-1.jpg"
-                      alt="CIIS Computer Lab 1 Student Workstations"
+                      alt="CIIS Advanced Computer Technology Student Workstations"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -774,7 +831,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
                   <div className="absolute top-2.5 left-2.5">
                     <span className="px-2.5 py-0.5 rounded-full bg-rose-950/90 text-white text-[10px] font-bold border border-rose-500/30">
-                      {isKhmer ? 'ថ្នាក់កុំព្យូទ័រ Lab 1' : 'Computer Lab 1'}
+                      {isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Tech'}
                     </span>
                   </div>
 
@@ -810,8 +867,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             </h3>
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
               {isKhmer
-                ? 'សាលារៀន CIIS ផ្តល់ការអប់រំគ្រប់ជ្រុងជ្រោយ ចាប់ពីកុមារតូច បឋមសិក្សា វិទ្យាល័យ ដល់ជំនាញកុំព្យូទ័រជាក់ស្តែង និងភាសាអង់គ្លេស IELTS។'
-                : 'Delivering structured pathways from early childhood foundation to national K-12 standards, digital computer workstations, and international IELTS readiness.'}
+                ? 'សាលារៀន CIIS ផ្តល់ការអប់រំគ្រប់ជ្រុងជ្រោយ ចាប់ពីកុមារតូច បឋមសិក្សា វិទ្យាល័យ ដល់ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ និងភាសាអង់គ្លេស IELTS។'
+                : 'Delivering structured pathways from early childhood foundation to national K-12 standards, advanced computer technology, and international IELTS readiness.'}
             </p>
           </div>
 
@@ -819,7 +876,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             {academicLevels.map((lvl) => (
               <div
                 key={lvl.id}
-                className="scroll-reveal-scale p-6 rounded-3xl bg-white border border-zinc-200 shadow-xs hover:shadow-xl hover:border-rose-900/40 transition-all duration-300 flex flex-col justify-between space-y-5"
+                className="scroll-reveal-scale p-6 rounded-3xl bg-white border border-zinc-200 shadow-xs hover:shadow-xl hover:border-rose-900/40 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between space-y-5"
               >
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
@@ -868,7 +925,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. COMPUTER LAB 1 WORKSTATIONS & SHIFT SCHEDULES                          */}
+      {/* 5. ADVANCED COMPUTER TECH SHIFTS & CLASSROOM ACTIVITIES                   */}
       {/* ========================================================================= */}
       <section id="lab" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
@@ -877,15 +934,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
                 <Laptop className="w-3.5 h-3.5 text-rose-800" />
-                <span>{isKhmer ? 'បន្ទប់កុំព្យូទ័រ CIIS LAB 1' : 'COMPUTER LAB 1 WORKSTATIONS'}</span>
+                <span>{isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'ADVANCED COMPUTER TECH'}</span>
               </div>
               <h3 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight font-khmer-title">
-                {isKhmer ? 'សកម្មភាពសិស្ស & ថ្នាក់កុំព្យូទ័រ Lab 1' : 'Computer Lab 1 Shifts & Student Activities'}
+                {isKhmer ? 'កាលវិភាគ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'Advanced Computer Technology Shifts'}
               </h3>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 max-w-lg leading-relaxed font-normal">
               {isKhmer
-                ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងបន្ទប់ Lab 1 វេនទី១ (៥:៣០-៦:៣០) និងវេនទី២ (៦:៤០-៧:៤០) សិស្សានុសិស្សម្នាក់ៗមានកុំព្យូទ័រយួរដៃ Dell ប្រើប្រាស់ផ្ទាល់ខ្លួន។'
+                ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ វេនទី១ (៥:៣០-៦:៣០) និងវេនទី២ (៦:៤០-៧:៤០) សិស្សានុសិស្សម្នាក់ៗមានកុំព្យូទ័រយួរដៃ Dell ប្រើប្រាស់ផ្ទាល់ខ្លួន។'
                 : 'Authentic photos from Evening Shift 1 and Shift 2. Every student works on an individual workstation guided step-by-step by lab instructors.'}
             </p>
           </div>
@@ -895,7 +952,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             {labShifts.map((shift) => (
               <div
                 key={shift.id}
-                className="scroll-reveal-scale p-6 rounded-3xl bg-[#f8fafc] border border-zinc-200 hover:border-rose-900/40 transition-all duration-300 flex flex-col justify-between space-y-5"
+                className="scroll-reveal-scale p-6 rounded-3xl bg-[#f8fafc] border border-zinc-200 hover:border-rose-900/40 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between space-y-5"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs">
@@ -951,7 +1008,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           <div className="space-y-6 pt-6">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <h4 className="text-lg font-black text-zinc-950 font-khmer-title">
-                {isKhmer ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងបន្ទប់ Lab 1' : 'Authentic Lab 1 Classroom Photos'}
+                {isKhmer ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងថ្នាក់កុំព្យូទ័រ' : 'Authentic Computer Class Photos'}
               </h4>
 
               <div className="flex items-center gap-2 flex-wrap text-xs">
@@ -996,12 +1053,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 <div
                   key={idx}
                   onClick={() => setSelectedGalleryItem(act)}
-                  className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[300px]"
+                  className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[290px]"
                 >
                   <img
                     src={act.src}
                     alt={act.titleEn}
-                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all" />
@@ -1045,7 +1102,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
                 <Award className="w-3.5 h-3.5 text-rose-800" />
-                <span>{isKhmer ? 'ពិធីប្រគល់វិញ្ញាបនបត្រ & សកម្មភាពសាលា' : 'CEREMONIES & STUDENT AWARDS'}</span>
+                <span>{isKhmer ? 'ពិធីប្រគល់វិញ្ញាបនបត្រ & សកម្មភាពសិស្ស' : 'CEREMONIES & STUDENT AWARDS'}</span>
               </div>
               <h3 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight font-khmer-title">
                 {isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាពសិស្ស' : 'Ceremonies, Awards & Campus Life'}
@@ -1058,17 +1115,18 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* Symmetrically balanced grid with responsive aspect ratios */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {ceremonyEvents.map((evt, idx) => (
               <div
                 key={idx}
                 onClick={() => setSelectedGalleryItem(evt)}
-                className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 transition-all duration-300 cursor-pointer flex flex-col justify-end min-h-[300px]"
+                className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col justify-end min-h-[300px] sm:min-h-[320px]"
               >
                 <img
                   src={evt.src}
                   alt={evt.titleEn}
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all" />
@@ -1099,7 +1157,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </section>
 
       {/* ========================================================================= */}
-      {/* 7. DISTINGUISHED FACULTY DIRECTORY                                        */}
+      {/* 7. DISTINGUISHED FACULTY DIRECTORY (3 Profile Cards Matched Perfectly)    */}
       {/* ========================================================================= */}
       <section id="faculty" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
@@ -1107,7 +1165,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           <div className="scroll-reveal space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
               <Users className="w-3.5 h-3.5 text-rose-800" />
-              <span>{isKhmer ? 'លោកគ្រូ អ្នកគ្រូ & គរុកោសល្យ' : 'DISTINGUISHED FACULTY'}</span>
+              <span>{isKhmer ? 'លោកគ្រូអ្នកគ្រូ & គរុកោសល្យ' : 'DISTINGUISHED FACULTY'}</span>
             </div>
             <h3 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight font-khmer-title">
               {isKhmer ? 'លោកគ្រូអ្នកគ្រូផ្នែកកុំព្យូទ័រ & គរុកោសល្យ' : 'Distinguished Faculty & Instructors'}
@@ -1119,40 +1177,44 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {TEACHERS_DATA.map((teacher) => (
+          {/* Balanced 3-Column Grid Matched Perfectly for the 3 Teachers */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+            {TEACHERS_DATA.slice(0, 3).map((teacher) => (
               <div
                 key={teacher.id}
                 onClick={() => setSelectedTeacher(teacher)}
-                className="scroll-reveal-scale p-5 rounded-3xl bg-[#f8fafc] border border-zinc-200 hover:border-rose-900/40 transition-all duration-200 cursor-pointer space-y-4 group text-left shadow-2xs hover:shadow-lg"
+                className="scroll-reveal-scale p-6 rounded-3xl bg-[#f8fafc] border border-zinc-200 hover:border-rose-900/40 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer space-y-4 group text-left flex flex-col justify-between"
               >
-                <div className="aspect-square w-full rounded-2xl overflow-hidden bg-zinc-100 relative border border-zinc-200">
-                  <img
-                    src={teacher.image || '/ciis-logo.svg'}
-                    alt={teacher.nameEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                  <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full bg-zinc-950/90 text-white text-[10px] font-bold">
-                    {isKhmer ? teacher.badgeKh : teacher.badgeEn}
+                <div className="space-y-4">
+                  <div className="aspect-square w-full rounded-2xl overflow-hidden bg-zinc-100 relative border border-zinc-200">
+                    <img
+                      src={teacher.image || '/ciis-logo.svg'}
+                      alt={teacher.nameEn}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full bg-zinc-950/90 text-white text-[10.5px] font-bold">
+                      {isKhmer ? teacher.badgeKh : teacher.badgeEn}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h5 className="text-base sm:text-lg font-black text-zinc-950 group-hover:text-rose-950 transition-colors truncate font-khmer-title">
+                      {isKhmer ? teacher.nameKh : teacher.nameEn}
+                    </h5>
+                    <p className="text-xs text-rose-900 font-bold truncate">
+                      {isKhmer ? teacher.subjectKh : teacher.subjectEn}
+                    </p>
+                    <p className="text-[11.5px] text-zinc-500 truncate pt-0.5 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-zinc-400 shrink-0" />
+                      <span>{isKhmer ? teacher.scheduleKh : teacher.scheduleEn}</span>
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <h5 className="text-sm sm:text-base font-black text-zinc-950 group-hover:text-rose-950 transition-colors truncate font-khmer-title">
-                    {isKhmer ? teacher.nameKh : teacher.nameEn}
-                  </h5>
-                  <p className="text-xs text-rose-900 font-bold truncate">
-                    {isKhmer ? teacher.subjectKh : teacher.subjectEn}
-                  </p>
-                  <p className="text-[11px] text-zinc-500 truncate pt-0.5">
-                    {isKhmer ? teacher.scheduleKh : teacher.scheduleEn}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-zinc-200/80 flex items-center justify-between text-xs text-zinc-600 group-hover:text-rose-950 font-bold">
-                  <span>{isKhmer ? 'មើលព័ត៌មានលម្អិត' : 'View Profile'}</span>
-                  <span>→</span>
+                <div className="pt-3 border-t border-zinc-200/80 flex items-center justify-between text-xs text-zinc-700 group-hover:text-rose-950 font-bold">
+                  <span>{isKhmer ? 'មើលព័ត៌មានលម្អិត & ប្រវត្តិរូប' : 'View Full Profile'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             ))}
@@ -1190,19 +1252,19 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 {/* Campus Address Card */}
                 <div
                   onClick={() => setShowMapModal(true)}
-                  className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs hover:border-rose-900/40 transition-colors cursor-pointer space-y-1.5"
+                  className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-2xs hover:border-rose-900/40 hover:shadow-md transition-all cursor-pointer space-y-1.5 group"
                 >
                   <div className="flex items-center justify-between text-zinc-900 font-bold">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-rose-800" />
                       <span>{isKhmer ? 'អាសយដ្ឋានទីតាំងសាលា' : 'Campus Address'}</span>
                     </div>
-                    <span className="text-[11px] text-rose-900 font-bold">View Google Maps ↗</span>
+                    <span className="text-[11px] text-rose-900 font-bold group-hover:underline">View Google Maps ↗</span>
                   </div>
                   <p className="text-zinc-600 text-xs leading-relaxed">
                     {isKhmer
-                      ? 'ក្រុងកំពង់ឆ្នាំង ខេត្តកំពង់ឆ្នាំង ព្រះរាជាណាចក្រកម្ពុជា'
-                      : 'Kampong Chhnang Town, Kampong Chhnang Province, Kingdom of Cambodia'}
+                      ? '#01, ផ្លូវបេតុង, សង្កាត់កំបូល, ខណ្ឌកំបូល, រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា'
+                      : '#01, St. Betong, Sangkat Kambol, Khan Kambol, Phnom Penh, Cambodia'}
                   </p>
                 </div>
 
@@ -1298,7 +1360,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                       onChange={(e) => setInquiryForm({ ...inquiryForm, program: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 focus:border-zinc-900 text-zinc-900 outline-none transition-colors cursor-pointer"
                     >
-                      <option value="computer-lab">{isKhmer ? 'ជំនាញកុំព្យូទ័រ Lab 1 (Touch Typing, Word, Excel)' : 'Practical Computer Lab 1'}</option>
+                      <option value="computer-lab">{isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'Advanced Computer Technology Program'}</option>
                       <option value="kindergarten">{isKhmer ? 'ថ្នាក់មត្តេយ្យសិក្សា (Kindergarten)' : 'Early Childhood & Kindergarten'}</option>
                       <option value="grade-1-12">{isKhmer ? 'ចំណេះទូទៅ ថ្នាក់ទី១ - ទី១២ (MoEYS)' : 'General Education: Grades 1 to 12'}</option>
                       <option value="ielts">{isKhmer ? 'ភាសាអង់គ្លេសទូទៅ & IELTS' : 'International English & IELTS'}</option>
@@ -1321,7 +1383,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   <button
                     type="submit"
                     disabled={isSubmittingInquiry}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99]"
                   >
                     {isSubmittingInquiry ? (
                       <span>{isKhmer ? 'កំពុងផ្ញើ...' : 'Sending...'}</span>
@@ -1342,25 +1404,28 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </section>
 
       {/* ========================================================================= */}
-      {/* 9. INSTITUTIONAL FOOTER                                                   */}
+      {/* 9. INSTITUTIONAL FOOTER WITH EMBEDDED DEVELOPER INFO                      */}
       {/* ========================================================================= */}
       <footer className="bg-zinc-950 text-zinc-400 py-12 text-xs border-t border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-left">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-zinc-900 p-1 flex items-center justify-center border border-zinc-800">
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-zinc-800/80">
+            {/* CIIS Logo & School Brand */}
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-zinc-900 p-1.5 flex items-center justify-center border border-zinc-800 shrink-0">
                 <img src="/ciis-logo.svg" alt="CIIS Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-white font-bold text-sm font-khmer-title">
                   {isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
                 </div>
-                <div className="text-[11px] text-rose-400">
+                <div className="text-[11.5px] text-rose-400">
                   Empowering Futures Through Excellence & Applied Technology
                 </div>
               </div>
             </div>
 
+            {/* Quick Access Links */}
             <div className="flex items-center gap-4 text-xs">
               <button
                 type="button"
@@ -1368,32 +1433,49 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   setAuthModalRole('student');
                   setShowAuthModal(true);
                 }}
-                className="hover:text-white transition-colors cursor-pointer"
+                className="text-zinc-300 hover:text-white transition-colors cursor-pointer font-bold"
               >
                 {isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Login'}
               </button>
-              <span className="text-zinc-800">•</span>
+              <span className="text-zinc-700">•</span>
               <button
                 type="button"
                 onClick={() => {
                   setAuthModalRole('teacher');
                   setShowAuthModal(true);
                 }}
-                className="hover:text-white transition-colors cursor-pointer"
+                className="text-zinc-300 hover:text-white transition-colors cursor-pointer font-bold"
               >
                 {isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}
               </button>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-500">
-            <div>
-              &copy; {new Date().getFullYear()} CIIS International School. All Rights Reserved.
+          {/* Bottom Row: Legal Copyright, Location & Developer Credit */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
+            <div className="space-y-1 text-center md:text-left">
+              <p>© {new Date().getFullYear()} CIIS International School. All Rights Reserved.</p>
+              <p className="text-zinc-400 font-medium">
+                {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
+              </p>
             </div>
-            <div>
-              Kampong Chhnang Town, Kingdom of Cambodia
+
+            {/* Developer Credit */}
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-zinc-400">
+              <Code2 className="w-3.5 h-3.5 text-rose-400" />
+              <span>Developed with dedication by</span>
+              <a
+                href="https://portfolio-jame7.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-rose-400 hover:text-rose-300 font-bold inline-flex items-center gap-1 hover:underline"
+              >
+                <span>Choeurn Tekchas (JJ-DEV)</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
+
         </div>
       </footer>
 
@@ -1484,7 +1566,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             </div>
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-600">Kampong Chhnang, Cambodia</span>
+              <span className="text-zinc-600">Phnom Penh, Cambodia</span>
               <button
                 type="button"
                 onClick={() => setShowMapModal(false)}
