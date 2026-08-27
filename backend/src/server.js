@@ -33,6 +33,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { ComputerDatabase } from './database.js';
 import { startWatchdog } from './watchdog.js';
 import { analyzeExcelImage } from './aiExcelService.js';
+import { sendChatMessage } from './aiChatService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -523,7 +524,7 @@ const server = http.createServer(async (req, res) => {
   // ==================================================================
 
   // Status check (check if GEMINI_API_KEY is configured on server)
-  if (pathname === '/api/ai/excel/status' && req.method === 'GET') {
+  if ((pathname === '/api/ai/status' || pathname === '/api/ai/excel/status') && req.method === 'GET') {
     const hasKey = !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== '' && process.env.GEMINI_API_KEY !== 'your_gemini_api_key');
     const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -532,6 +533,53 @@ const server = http.createServer(async (req, res) => {
       configured: hasKey,
       model
     }));
+    return;
+  }
+
+  // AI Chat Assistant (Excel, Word, PowerPoint, CIIS School System)
+  if (pathname === '/api/ai/chat' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const { messages, category, customContext } = body || {};
+
+      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          error: 'INVALID_PAYLOAD',
+          message: 'Messages array is required.'
+        }));
+        return;
+      }
+
+      console.log(`[AI Chat] Received query (category: ${category || 'general'}, messages: ${messages.length})...`);
+      const chatResult = await sendChatMessage({
+        messages,
+        category,
+        customContext
+      });
+
+      if (chatResult.success) {
+        console.log(`[AI Chat] Response generated via ${chatResult.modelUsed}.`);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(chatResult));
+      } else {
+        console.warn(`[AI Chat] Failed: ${chatResult.error} - ${chatResult.message}`);
+        const statusCode = chatResult.error === 'INVALID_API_KEY' ? 401 :
+                           chatResult.error === 'RATE_LIMITED' ? 429 :
+                           chatResult.error === 'GEMINI_API_KEY_MISSING' ? 503 : 400;
+        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(chatResult));
+      }
+    } catch (err) {
+      console.error('[AI Chat] Server Error:', err);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: false,
+        error: 'SERVER_ERROR',
+        message: err.message || 'An unexpected error occurred during chat.'
+      }));
+    }
     return;
   }
 
