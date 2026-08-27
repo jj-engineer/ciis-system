@@ -407,6 +407,36 @@ function sanitizeAnalysisOutput(rawJson) {
 }
 
 /**
+ * Helper: sleep for a given number of milliseconds
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Call Gemini API with retry + exponential backoff for rate limits (429)
+ */
+async function callGeminiApiWithRetry(apiKey, modelName, promptText, imageBase64, mimeType, maxRetries = 3) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const result = await callGeminiApi(apiKey, modelName, promptText, imageBase64, mimeType);
+
+    if (result.success) {
+      return result;
+    }
+
+    // If rate limited and we have retries left, wait with exponential backoff
+    if (result.statusCode === 429 && attempt < maxRetries) {
+      const delayMs = Math.min(2000 * Math.pow(2, attempt), 16000); // 2s, 4s, 8s, max 16s
+      await sleep(delayMs);
+      continue;
+    }
+
+    // For non-retryable errors or last attempt, return the error
+    return result;
+  }
+}
+
+/**
  * Main Analysis Entry Point
  */
 export async function analyzeExcelImage({ base64Data, mimeType, solveMode = 'all' }) {
@@ -438,9 +468,11 @@ export async function analyzeExcelImage({ base64Data, mimeType, solveMode = 'all
   const uniqueModels = [...new Set(modelsToTry)];
 
   let lastError = null;
+  let allRateLimited = true;
 
   for (const model of uniqueModels) {
-    const apiResult = await callGeminiApi(apiKey.trim(), model, promptText, cleanBase64, validatedMime);
+    // Use retry with backoff — each model gets up to 3 retries for 429 errors
+    const apiResult = await callGeminiApiWithRetry(apiKey.trim(), model, promptText, cleanBase64, validatedMime, 3);
 
     if (apiResult.success) {
       try {
@@ -452,6 +484,7 @@ export async function analyzeExcelImage({ base64Data, mimeType, solveMode = 'all
         };
       } catch (parseErr) {
         lastError = `Failed to parse structured model response: ${parseErr.message}`;
+        allRateLimited = false;
         // continue to next model if JSON was malformed
       }
     } else {
@@ -466,14 +499,23 @@ export async function analyzeExcelImage({ base64Data, mimeType, solveMode = 'all
         };
       }
 
+      // If rate limited (429), try the next fallback model instead of giving up
       if (apiResult.statusCode === 429) {
-        return {
-          success: false,
-          error: 'RATE_LIMITED',
-          message: 'Gemini API rate limit or quota exceeded. Please wait a moment and try again.'
-        };
+        // allRateLimited stays true — continue to next model
+        continue;
       }
+
+      allRateLimited = false;
     }
+  }
+
+  // If every model was rate limited after all retries
+  if (allRateLimited) {
+    return {
+      success: false,
+      error: 'RATE_LIMITED',
+      message: 'Gemini API rate limit exceeded across all models. Please wait 1-2 minutes and try again.'
+    };
   }
 
   return {
