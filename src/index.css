@@ -29,16 +29,15 @@
 }
 
 @layer base {
-  html,
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: #f8fafc;
     color: #0f172a;
     min-height: 100vh;
-    height: auto;
-    overflow-x: hidden;
-    overflow-y: auto !important;
     font-family: 'Kantumruy Pro', 'Battambang', 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
-    -webkit-overflow-scrolling: touch;
   }
 
   /* When Khmer language is selected: Use Bayon for titles/headings and Kantumruy Pro for body text */
