@@ -85,6 +85,12 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
+  // State: Auto-retry countdown for rate limits
+  const [retryCountdown, setRetryCountdown] = useState<number>(0);
+  const [retryAttempt, setRetryAttempt] = useState<number>(0);
+  const retryTimerRef = useRef<any>(null);
+  const maxAutoRetries = 3;
+
   // State: UI Interactions
   const [copiedCellId, setCopiedCellId] = useState<string | null>(null);
   const [allCopied, setAllCopied] = useState<boolean>(false);
@@ -104,13 +110,14 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
     }).catch(() => {});
   }, []);
 
-  // Cleanup object URLs
+  // Cleanup object URLs and timers
   useEffect(() => {
     return () => {
       if (imagePreviewUrl && imagePreviewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(imagePreviewUrl);
       }
       if (stageTimerRef.current) clearInterval(stageTimerRef.current);
+      if (retryTimerRef.current) clearInterval(retryTimerRef.current);
     };
   }, [imagePreviewUrl]);
 
@@ -169,10 +176,40 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // Cancel any active auto-retry countdown
+  const cancelAutoRetry = () => {
+    if (retryTimerRef.current) {
+      clearInterval(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+    setRetryCountdown(0);
+  };
+
+  // Start auto-retry countdown (for rate limit errors)
+  const startAutoRetryCountdown = (seconds: number, attempt: number) => {
+    cancelAutoRetry();
+    setRetryCountdown(seconds);
+    setRetryAttempt(attempt);
+
+    retryTimerRef.current = setInterval(() => {
+      setRetryCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(retryTimerRef.current);
+          retryTimerRef.current = null;
+          // Trigger retry
+          handleStartAnalysis(attempt);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   // Run AI Analysis
-  const handleStartAnalysis = async () => {
+  const handleStartAnalysis = async (currentRetryAttempt: number = 0) => {
     if (!selectedFile || isAnalyzing) return;
 
+    cancelAutoRetry();
     setIsAnalyzing(true);
     setErrorMessage(null);
     setErrorCode(null);
@@ -197,6 +234,7 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
 
       if (response.success && response.data) {
         setAnalysisResult(response.data);
+        setRetryAttempt(0);
         if (response.modelUsed) setActiveModel(response.modelUsed);
 
         // Auto-expand first 2 calculations
@@ -207,12 +245,24 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
         setExpandedRowIds(initialExpanded);
       } else {
         setErrorCode(response.error || 'ANALYSIS_FAILED');
-        setErrorMessage(
-          response.message ||
-            (isKhmer
-              ? 'មិនអាចវិភាគរូបភាពបានទេ។ សូមព្យាយាមម្តងទៀតជាមួយរូបភាពដែលច្បាស់ជាងនេះ។'
-              : 'AI analysis could not be completed. Please try again with a clearer screenshot.')
-        );
+
+        // If rate limited and we have auto-retries left, start countdown
+        if (response.error === 'RATE_LIMITED' && currentRetryAttempt < maxAutoRetries) {
+          const waitSeconds = 30;
+          setErrorMessage(
+            isKhmer
+              ? `Gemini API កំពុងមានការប្រើប្រាស់ច្រើន។ កំពុងព្យាយាមម្តងទៀតក្នុងរយៈពេល ${waitSeconds} វិនាទី... (ការព្យាយាមទី ${currentRetryAttempt + 1}/${maxAutoRetries})`
+              : `Gemini API rate limited. Auto-retrying in ${waitSeconds}s... (Attempt ${currentRetryAttempt + 1}/${maxAutoRetries})`
+          );
+          startAutoRetryCountdown(waitSeconds, currentRetryAttempt + 1);
+        } else {
+          setErrorMessage(
+            response.message ||
+              (isKhmer
+                ? 'មិនអាចវិភាគរូបភាពបានទេ។ សូមព្យាយាមម្តងទៀតជាមួយរូបភាពដែលច្បាស់ជាងនេះ។'
+                : 'AI analysis could not be completed. Please try again with a clearer screenshot.')
+          );
+        }
       }
     } catch (err: any) {
       if (stageTimerRef.current) clearInterval(stageTimerRef.current);
@@ -493,7 +543,7 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
                 <button
                   type="button"
                   disabled={isAnalyzing}
-                  onClick={handleStartAnalysis}
+                  onClick={() => handleStartAnalysis()}
                   className={`w-full py-3.5 px-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm ${
                     isAnalyzing
                       ? 'bg-zinc-800 text-zinc-300 cursor-not-allowed opacity-90'
@@ -571,16 +621,45 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
 
           {/* B. Error Banner */}
           {errorMessage && !isAnalyzing && (
-            <div className="bg-rose-50 border border-rose-200 p-5 rounded-3xl space-y-3 animate-fade-slide-up">
+            <div className={`${errorCode === 'RATE_LIMITED' && retryCountdown > 0 ? 'bg-amber-50 border-amber-200' : 'bg-rose-50 border-rose-200'} border p-5 rounded-3xl space-y-3 animate-fade-slide-up`}>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                  <AlertTriangle className="w-4 h-4" />
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  errorCode === 'RATE_LIMITED' && retryCountdown > 0
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-rose-100 text-rose-700'
+                }`}>
+                  {errorCode === 'RATE_LIMITED' && retryCountdown > 0 ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4" />
+                  )}
                 </div>
                 <div className="space-y-1 flex-1">
-                  <h4 className="text-xs font-black text-rose-900 uppercase tracking-wide">
-                    {isKhmer ? 'មិនអាចវិភាគបានទេ' : 'Analysis Notice'}
+                  <h4 className={`text-xs font-black uppercase tracking-wide ${
+                    errorCode === 'RATE_LIMITED' && retryCountdown > 0 ? 'text-amber-900' : 'text-rose-900'
+                  }`}>
+                    {errorCode === 'RATE_LIMITED' && retryCountdown > 0
+                      ? (isKhmer ? 'កំពុងរង់ចាំព្យាយាមម្តងទៀត...' : 'Auto-retrying...')
+                      : (isKhmer ? 'មិនអាចវិភាគបានទេ' : 'Analysis Notice')}
                   </h4>
-                  <p className="text-xs text-rose-700 leading-relaxed">{errorMessage}</p>
+                  <p className={`text-xs leading-relaxed ${
+                    errorCode === 'RATE_LIMITED' && retryCountdown > 0 ? 'text-amber-700' : 'text-rose-700'
+                  }`}>{errorMessage}</p>
+
+                  {/* Countdown timer for rate limit auto-retry */}
+                  {errorCode === 'RATE_LIMITED' && retryCountdown > 0 && (
+                    <div className="mt-2 flex items-center gap-3">
+                      <div className="flex-1 bg-amber-100 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-amber-500 h-full rounded-full transition-all duration-1000 ease-linear"
+                          style={{ width: `${(retryCountdown / 30) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-amber-800 tabular-nums min-w-[28px] text-right">
+                        {retryCountdown}s
+                      </span>
+                    </div>
+                  )}
 
                   {errorCode === 'GEMINI_API_KEY_MISSING' && (
                     <div className="mt-2 p-3 bg-white/80 rounded-xl border border-rose-200/80 text-[11px] text-zinc-700 font-mono">
@@ -593,14 +672,25 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({ setActiveTab }
                 </div>
               </div>
 
-              <div className="flex justify-end pt-1">
+              <div className="flex justify-end gap-2 pt-1">
+                {/* Cancel auto-retry button */}
+                {errorCode === 'RATE_LIMITED' && retryCountdown > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => { cancelAutoRetry(); setRetryAttempt(0); }}
+                    className="px-3.5 py-1.5 rounded-xl bg-zinc-200 hover:bg-zinc-300 text-zinc-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>{isKhmer ? 'បោះបង់' : 'Cancel'}</span>
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={handleStartAnalysis}
+                  onClick={() => { cancelAutoRetry(); setRetryAttempt(0); handleStartAnalysis(0); }}
                   className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>{isKhmer ? 'ព្យាយាមម្តងទៀត' : 'Try Again'}</span>
+                  <span>{isKhmer ? 'ព្យាយាមភ្លាមៗ' : 'Retry Now'}</span>
                 </button>
               </div>
             </div>
