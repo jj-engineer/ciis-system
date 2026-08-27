@@ -163,6 +163,80 @@
   animation: indeterminate-bar 1.5s infinite ease-in-out;
 }
 
+@keyframes periodic-glow {
+  0%, 75%, 100% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
+  }
+  85% {
+    box-shadow: 0 0 0 8px rgba(225, 29, 72, 0.22);
+  }
+  92% {
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.10);
+  }
+}
+
+@keyframes periodic-nudge {
+  0%, 75%, 100% {
+    transform: translateX(0);
+  }
+  85% {
+    transform: translateX(5px);
+  }
+  92% {
+    transform: translateX(1px);
+  }
+}
+
+@keyframes periodic-pop {
+  0%, 75%, 100% {
+    transform: scale(1);
+  }
+  85% {
+    transform: scale(1.04);
+  }
+  92% {
+    transform: scale(1.01);
+  }
+}
+
+.animate-periodic-glow {
+  animation: periodic-glow 3.5s ease-in-out infinite;
+}
+
+.animate-periodic-nudge {
+  animation: periodic-nudge 3.5s ease-in-out infinite;
+}
+
+.animate-periodic-pop {
+  animation: periodic-pop 3.5s ease-in-out infinite;
+}
+
+@keyframes pointer-nudge {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes beacon-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(225, 29, 72, 0);
+  }
+}
+
+.animate-pointer-nudge {
+  animation: pointer-nudge 1.6s ease-in-out infinite;
+}
+
+.animate-beacon-glow {
+  animation: beacon-glow 3.5s ease-in-out infinite;
+}
+
 .animate-float-subtle {
   animation: float-subtle 4s ease-in-out infinite;
 }

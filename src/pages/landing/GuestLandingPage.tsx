@@ -3,6 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { TEACHERS_DATA, TeacherProfile } from '../../services/teacherData';
 import { TeacherDetailModal } from '../../components/teachers/TeacherDetailModal';
+import { SchoolDiscountAnnouncement } from '../../components/announcement/SchoolDiscountAnnouncement';
+import { SchoolDiscountModal } from '../../components/announcement/SchoolDiscountModal';
 import { useScrollObserver } from '../../hooks/useScrollObserver';
 import {
   Globe,
@@ -53,6 +55,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  const [showPromoModalManual, setShowPromoModalManual] = useState(false);
 
   // Inquiry Form State
   const [inquiryForm, setInquiryForm] = useState({
@@ -847,6 +850,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
           </div>
 
+          {/* School 50% Tuition Discount Official Announcement Section */}
+          <SchoolDiscountAnnouncement
+            onClaimDiscount={() => {
+              setAuthModalRole('student');
+              setShowAuthModal(true);
+            }}
+            onOpenModalPoster={() => setShowPromoModalManual(true)}
+          />
+
         </div>
       </section>
 
@@ -1574,6 +1586,16 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           </div>
         </div>
       )}
+
+      {/* School 50% Tuition Discount Announcement Pop-up Modal (1-hour cooldown detection) */}
+      <SchoolDiscountModal
+        isOpen={showPromoModalManual ? true : undefined}
+        onClose={() => setShowPromoModalManual(false)}
+        onClaimDiscount={() => {
+          setAuthModalRole('student');
+          setShowAuthModal(true);
+        }}
+      />
 
     </div>
   );
