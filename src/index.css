@@ -29,11 +29,16 @@
 }
 
 @layer base {
+  html,
   body {
     background-color: #f8fafc;
     color: #0f172a;
     min-height: 100vh;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto !important;
     font-family: 'Kantumruy Pro', 'Battambang', 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* When Khmer language is selected: Use Bayon for titles/headings and Kantumruy Pro for body text */
@@ -209,6 +214,25 @@
 
 .animate-periodic-pop {
   animation: periodic-pop 3.5s ease-in-out infinite;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 24s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 @keyframes pointer-nudge {

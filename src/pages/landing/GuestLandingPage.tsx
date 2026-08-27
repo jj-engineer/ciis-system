@@ -483,6 +483,68 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </div>
 
       {/* ========================================================================= */}
+      {/* OFFICIAL SCHOOL NEWS TICKER ANNOUNCEMENT STRIP (50% DISCOUNT)             */}
+      {/* ========================================================================= */}
+      <div className="bg-gradient-to-r from-zinc-950 via-rose-950/90 to-zinc-950 text-white text-xs border-b border-rose-900/50 py-1.5 px-4 overflow-hidden relative z-40">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-rose-600 text-white text-[10.5px] font-black uppercase tracking-wider font-mono shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span>{isKhmer ? 'ដំណឹងថ្មី' : 'NEWS'}</span>
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-hidden relative">
+            <ul id="navbar-discount-ticker" className="news-ticker-list flex items-center whitespace-nowrap animate-marquee hover:[animation-play-state:paused] cursor-pointer">
+              <li className="inline-block px-4 shrink-0">
+                <a
+                  href="https://www.ciiscambodia.com/read/%E1%9E%9F%E1%9E%9B%E1%9E%9A%E1%9E%93%E1%9E%9F-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%9F-ciis-%E1%9E%9F%E1%9E%98%E1%9E%9F%E1%9E%9C%E1%9E%82%E1%9E%98%E1%9E%93%E1%9E%A2%E1%9E%94%E1%9E%A2%E1%9E%9A%E1%9E%9F%E1%9E%91%E1%9E%9A%E1%9E%94%E1%9E%9C%E1%9E%8F%E1%9E%9F%E1%9E%93%E1%9E%80%E1%9E%9B%E1%9E%86%E1%9E%93%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A6-%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A7-%E1%9E%9F%E1%9E%9B%E1%9E%94%E1%9E%89%E1%9E%85%E1%9E%91%E1%9E%98%E1%9E%9B%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A5%E1%9F%A0-%E1%9E%9F%E1%9E%98%E1%9E%9A%E1%9E%94%E1%9E%9F%E1%9E%9F%E1%9E%9F%E1%9E%95%E1%9E%91%E1%9E%9A%E1%9E%80%E1%9E%9A%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9E%9P%E1%9E%9F%E1%9E%9B%E1%9E%95%E1%9E%9F%E1%9E%84%E1%9E%84"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium"
+                >
+                  <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
+                    <span>01 September 2026</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                  </div>
+                  <span>
+                    សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
+                  </span>
+                </a>
+              </li>
+              <li className="inline-block px-4 shrink-0">
+                <a
+                  href="https://www.ciiscambodia.com/read/%E1%9E%9F%E1%9E%9B%E1%9E%9A%E1%9E%93%E1%9E%9F-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%99-%E1%9E%A2%E1%9E%9F-ciis-%E1%9E%9F%E1%9E%98%E1%9E%9F%E1%9E%9C%E1%9E%82%E1%9E%98%E1%9E%93%E1%9E%A2%E1%9E%94%E1%9E%A2%E1%9E%9A%E1%9E%9F%E1%9E%91%E1%9E%9A%E1%9E%94%E1%9E%9C%E1%9E%8F%E1%9E%9F%E1%9E%93%E1%9E%80%E1%9E%9B%E1%9E%86%E1%9E%93%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A6-%E1%9F%A2%E1%9F%A0%E1%9F%A2%E1%9F%A7-%E1%9E%9F%E1%9E%9B%E1%9E%94%E1%9E%89%E1%9E%85%E1%9E%91%E1%9E%98%E1%9E%9B%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9F%A5%E1%9F%A0-%E1%9E%9F%E1%9E%98%E1%9E%9A%E1%9E%94%E1%9E%9F%E1%9E%9F%E1%9E%9F%E1%9E%95%E1%9E%91%E1%9E%9A%E1%9E%80%E1%9E%9A%E1%9E%9F%E1%9E%80%E1%9E%9F%E1%9E%9P%E1%9E%9F%E1%9E%9B%E1%9E%95%E1%9E%9F%E1%9E%84%E1%9E%84"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-rose-300 transition-colors inline-flex items-center gap-2 font-medium"
+                >
+                  <div className="datenews inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-900/80 text-rose-200 text-[10.5px] font-bold border border-rose-500/30">
+                    <span>01 September 2026</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />
+                  </div>
+                  <span>
+                    សាលារៀនស៊ី អាយ អាយ អេស (CIIS) សូមស្វាគមន៏។អបអរសាទរបវេសនកាលឆ្នាំសិក្សា២០២៦-២០២៧ សាលាបញ្ចុះតម្លៃសិក្សា៥០% សម្រាប់សិស្សផ្ទេរការសិក្សាពីសាលាផ្សេងៗ។
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="#announcement-discount"
+            onClick={(e) => scrollToSection(e, 'announcement-discount')}
+            className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-bold border border-rose-500/40 transition-colors shrink-0"
+          >
+            <span>{isKhmer ? 'បញ្ចុះតម្លៃ ៥០%' : '50% Discount'}</span>
+            <span>↓</span>
+          </a>
+
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
       {/* 2. MAIN HEADER NAVIGATION WITH SMOOTH CINEMATIC SCROLL                    */}
       {/* ========================================================================= */}
       <header
@@ -1587,16 +1649,18 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
         </div>
       )}
 
-      {/* School 50% Tuition Discount Announcement Pop-up Modal (1-hour cooldown detection) */}
-      <SchoolDiscountModal
-        isOpen={showPromoModalManual ? true : undefined}
-        onClose={() => setShowPromoModalManual(false)}
-        onClaimDiscount={() => {
-          setShowPromoModalManual(false);
-          setAuthModalRole('student');
-          setShowAuthModal(true);
-        }}
-      />
+      {/* School 50% Tuition Discount Announcement Modal (explicit trigger) */}
+      {showPromoModalManual && (
+        <SchoolDiscountModal
+          isOpen={showPromoModalManual}
+          onClose={() => setShowPromoModalManual(false)}
+          onClaimDiscount={() => {
+            setShowPromoModalManual(false);
+            setAuthModalRole('student');
+            setShowAuthModal(true);
+          }}
+        />
+      )}
 
     </div>
   );
