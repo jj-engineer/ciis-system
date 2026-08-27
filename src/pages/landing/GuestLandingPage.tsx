@@ -433,58 +433,60 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       </div>
 
       {/* ========================================================================= */}
-      {/* FIXED MASTER HEADER: UTILITY STRIP + NEWS NOTIFICATION + MAIN NAVBAR      */}
+      {/* 1. TOP UTILITY STRIP (Scrolls away naturally as page scrolls)             */}
+      {/* ========================================================================= */}
+      <div className="bg-zinc-950 text-zinc-300 text-[11.5px] border-b border-zinc-800 px-4 sm:px-8 py-1.5 sm:py-2 flex items-center justify-between relative z-40">
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 text-rose-400 font-bold tracking-wide">
+            <Building className="w-3.5 h-3.5" />
+            <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
+          </span>
+          <span className="text-zinc-700 hidden md:inline">•</span>
+          <span className="text-zinc-400 hidden md:inline text-[11px]">
+            {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setLanguage(language === 'km' ? 'en' : 'km')}
+            className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer font-bold px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px]"
+          >
+            <Globe className="w-3.5 h-3.5 text-rose-400" />
+            <span>{language === 'km' ? 'English' : 'ភាសាខ្មែរ'}</span>
+          </button>
+          <span className="text-zinc-800">|</span>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthModalRole('student');
+              setShowAuthModal(true);
+            }}
+            className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+          >
+            <LogIn className="w-3.5 h-3.5 text-rose-400" />
+            <span>{isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Portal'}</span>
+          </button>
+          <span className="text-zinc-800">|</span>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthModalRole('teacher');
+              setShowAuthModal(true);
+            }}
+            className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+          >
+            <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* FIXED MASTER STICKY HEADER: NEWS NOTIFICATION TICKER + MAIN NAVBAR        */}
       {/* ========================================================================= */}
       <div className="sticky top-0 z-50 w-full shadow-sm">
         
-        {/* 1. TOP UTILITY STRIP (Official School Contact & Location) */}
-        <div className="bg-zinc-950 text-zinc-300 text-[11.5px] border-b border-zinc-800 px-4 sm:px-8 py-1.5 sm:py-2 flex items-center justify-between relative z-50">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-rose-400 font-bold tracking-wide">
-              <Building className="w-3.5 h-3.5" />
-              <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
-            </span>
-            <span className="text-zinc-700 hidden md:inline">•</span>
-            <span className="text-zinc-400 hidden md:inline text-[11px]">
-              {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setLanguage(language === 'km' ? 'en' : 'km')}
-              className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer font-bold px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px]"
-            >
-              <Globe className="w-3.5 h-3.5 text-rose-400" />
-              <span>{language === 'km' ? 'English' : 'ភាសាខ្មែរ'}</span>
-            </button>
-            <span className="text-zinc-800">|</span>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthModalRole('student');
-                setShowAuthModal(true);
-              }}
-              className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
-            >
-              <LogIn className="w-3.5 h-3.5 text-rose-400" />
-              <span>{isKhmer ? 'ចូលគណនីសិស្ស' : 'Student Portal'}</span>
-            </button>
-            <span className="text-zinc-800">|</span>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthModalRole('teacher');
-                setShowAuthModal(true);
-              }}
-              className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
-            >
-              <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
-            </button>
-          </div>
-        </div>
-
         {/* 2. FIXED NOTIFICATION TICKER BAR (Clicks Scroll Directly to Announcement Section) */}
         <div className="bg-gradient-to-r from-zinc-950 via-rose-950/95 to-zinc-950 text-white text-xs border-b border-rose-900/50 py-1.5 px-4 overflow-hidden relative z-40">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
