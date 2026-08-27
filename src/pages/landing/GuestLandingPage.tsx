@@ -91,7 +91,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       if (!startTimestamp) startTimestamp = timestamp;
       const elapsed = timestamp - startTimestamp;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Smooth cubic ease-in-out curve
       const ease = progress < 0.5
         ? 4 * progress * progress * progress
@@ -483,12 +483,11 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* 2. MAIN HEADER NAVIGATION WITH SMOOTH CINEMATIC SCROLL                    */}
       {/* ========================================================================= */}
       <header
-        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${
-          isScrolled ? 'border-zinc-300 shadow-sm py-2.5' : 'border-zinc-200 py-3.5'
-        }`}
+        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${isScrolled ? 'border-zinc-300 shadow-sm py-2.5' : 'border-zinc-200 py-3.5'
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-          
+
           {/* Logo & School Name */}
           <div className="flex items-center gap-3.5 min-w-0">
             <div className="w-11 h-11 rounded-2xl bg-rose-50 p-1.5 flex items-center justify-center border border-rose-200/90 shrink-0 shadow-xs">
@@ -657,13 +656,13 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* 3. HERO SECTION — WORLD-CLASS SCHOOL SHOWCASE                             */}
       {/* ========================================================================= */}
       <section id="about" className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-24 border-b border-zinc-200 bg-white">
-        
+
         {/* Subtle Background Glow Elements */}
         <div className="absolute top-0 right-1/3 w-[500px] h-[500px] bg-rose-50/60 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-[450px] h-[450px] bg-pink-50/50 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12 text-left">
-          
+
           {/* Top Institutional Badge */}
           <div className="scroll-reveal flex flex-wrap items-center gap-2.5">
             <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-950 text-white text-xs font-bold shadow-2xs">
@@ -677,7 +676,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
           {/* Master Hero Grid: Left Narrative + Right Real School Photography Showcase */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            
+
             {/* Left Column: Vision & Admissions CTAs */}
             <div className="scroll-reveal-left lg:col-span-6 space-y-6">
               <h2 className="text-3xl sm:text-5xl lg:text-[54px] font-black text-zinc-950 tracking-tight leading-[1.16] font-khmer-title">
@@ -685,7 +684,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   <>
                     ស្ថាប័នអប់រំស្តង់ដារគុណភាព <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-950 via-rose-800 to-pink-700">
-                      ចំណេះដឹងទូទៅ & បច្ចេកវិទ្យាអនុវត្ត
+                      ចំណេះដឹងទូទៅ & បច្ចេកវិទ្យា
                     </span>
                   </>
                 ) : (
@@ -752,7 +751,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
             {/* Right Column: Dynamic Authentic School Photo Grid */}
             <div className="scroll-reveal-right delay-100 lg:col-span-6 space-y-4">
-              
+
               {/* Primary Featured Card: Real CIIS Multi-Story Campus Building */}
               <div className="relative rounded-3xl overflow-hidden border-2 border-zinc-200 shadow-xl group bg-zinc-950 hover:shadow-2xl hover:border-rose-400 transition-all duration-500">
                 <div className="aspect-[16/10] w-full overflow-hidden">
@@ -762,7 +761,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>
-                
+
                 {/* Gradient Fade & Badges */}
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent pointer-events-none" />
 
@@ -787,7 +786,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
               {/* Secondary Duo Cards: Director Keynote Speech & Computer Lab 1 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
+
                 {/* Director Speech Card */}
                 <div
                   onClick={() => setSelectedGalleryItem(ceremonyEvents[0])}
@@ -801,7 +800,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-                  
+
                   <div className="absolute top-2.5 left-2.5">
                     <span className="px-2.5 py-0.5 rounded-full bg-rose-950/90 text-white text-[10px] font-bold border border-rose-500/30">
                       {isKhmer ? 'សុន្ទរកថានាយកសាលា' : 'Director Keynote'}
@@ -856,7 +855,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <section id="programs" className="py-16 sm:py-24 border-b border-zinc-200 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
-          
+
           <div className="scroll-reveal space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
               <GraduationCap className="w-3.5 h-3.5 text-rose-800" />
@@ -929,7 +928,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <section id="lab" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
-          
+
           <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-6">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
@@ -1015,33 +1014,30 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 <button
                   type="button"
                   onClick={() => setActiveLabTab('all')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    activeLabTab === 'all'
+                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'all'
                       ? 'bg-zinc-950 text-white shadow-xs'
                       : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
-                  }`}
+                    }`}
                 >
                   {isKhmer ? 'រូបភាពទាំងអស់' : 'All Photos'} ({lab1Activities.length + lab2Activities.length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveLabTab('class-1')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    activeLabTab === 'class-1'
+                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-1'
                       ? 'bg-rose-950 text-white shadow-xs'
                       : 'bg-rose-50 hover:bg-rose-100 text-rose-950 border border-rose-200'
-                  }`}
+                    }`}
                 >
                   {isKhmer ? 'វេនទី១ (៥:៣០-៦:៣០)' : 'Shift 1'} ({lab1Activities.length})
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveLabTab('class-2')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
-                    activeLabTab === 'class-2'
+                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-2'
                       ? 'bg-rose-950 text-white shadow-xs'
                       : 'bg-rose-50 hover:bg-rose-100 text-rose-950 border border-rose-200'
-                  }`}
+                    }`}
                 >
                   {isKhmer ? 'វេនទី២ (៦:៤០-៧:៤០)' : 'Shift 2'} ({lab2Activities.length})
                 </button>
@@ -1097,7 +1093,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <section id="events" className="py-16 sm:py-24 border-b border-zinc-200 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
-          
+
           <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-6">
             <div className="space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
@@ -1161,7 +1157,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <section id="faculty" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
-          
+
           <div className="scroll-reveal space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
               <Users className="w-3.5 h-3.5 text-rose-800" />
@@ -1228,9 +1224,9 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <section id="contact" className="py-16 sm:py-24 border-b border-zinc-200 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            
+
             {/* Left: Campus Info */}
             <div className="space-y-6">
               <div className="space-y-2">
@@ -1408,7 +1404,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       <footer className="bg-zinc-950 text-zinc-400 py-12 text-xs border-t border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-left">
-          
+
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-zinc-800/80">
             {/* CIIS Logo & School Brand */}
             <div className="flex items-center gap-3.5">
