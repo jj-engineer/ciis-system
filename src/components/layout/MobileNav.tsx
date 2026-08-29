@@ -92,7 +92,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, setActiveTab, o
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all cursor-pointer min-w-[56px] min-h-[46px] ${
+              className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all cursor-pointer min-w-[56px] min-h-[46px] spring-press ${
                 isActive
                   ? 'bg-pink-50 text-pink-900 font-black scale-105 shadow-2xs'
                   : 'text-slate-500 hover:text-slate-900 active:scale-95'
@@ -128,7 +128,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, setActiveTab, o
       {/* Backdrop with smooth opacity fade */}
       <div
         className={`md:hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 ease-out ${
-          drawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          drawerOpen ? 'opacity-100 pointer-events-auto animate-backdrop' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setDrawerOpen(false)}
       />
@@ -207,7 +207,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, setActiveTab, o
                   style={{
                     transitionDelay: drawerOpen ? `${idx * 20}ms` : '0ms'
                   }}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer nav-spring ${
                     isActive
                       ? 'bg-gradient-to-r from-pink-100 via-pink-50 to-white text-pink-950 font-black border border-pink-200 shadow-xs translate-x-1'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:translate-x-1'

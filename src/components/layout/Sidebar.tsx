@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }
 
   return (
-    <aside className="w-60 sm:w-64 bg-white border-r border-zinc-200/90 flex flex-col h-full shrink-0 select-none shadow-sm z-30 relative overflow-hidden font-sans">
+    <aside className="w-60 sm:w-64 bg-white border-r border-zinc-200/90 flex flex-col h-full shrink-0 select-none shadow-sm z-30 relative overflow-hidden font-sans animate-slide-in-left">
       
       {/* 1. BRAND HEADER */}
       <div className="p-5 flex items-center gap-3 border-b border-zinc-100 bg-white">
@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="px-3 pt-3 pb-1">
           <button
             onClick={onVisitWebsite}
-            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-zinc-100/80 hover:bg-zinc-200/70 border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 text-xs font-black transition-all cursor-pointer shadow-2xs group"
+            className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-zinc-100/80 hover:bg-zinc-200/70 border border-zinc-200/80 text-zinc-700 hover:text-zinc-950 text-xs font-black transition-all cursor-pointer shadow-2xs group spring-press"
             title={isKhmer ? 'ត្រឡប់ទៅគេហទំព័រដើមវិញ' : 'Back to Public Website'}
           >
             <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className="w-full flex items-center justify-between p-2 pl-2.5 rounded-xl text-xs font-semibold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 border border-transparent transition-all duration-150 group cursor-pointer"
+              className="w-full flex items-center justify-between p-2 pl-2.5 rounded-xl text-xs font-semibold text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 border border-transparent transition-all duration-150 group cursor-pointer nav-spring"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-400 group-hover:text-zinc-800 group-hover:bg-zinc-200/60 transition-colors shrink-0">
@@ -197,7 +197,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Minimalist Logout Button */}
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-500 hover:text-pink-950 hover:bg-pink-50 transition-all cursor-pointer text-xs font-black tracking-wider uppercase group hover:translate-x-1"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-500 hover:text-pink-950 hover:bg-pink-50 transition-all cursor-pointer text-xs font-black tracking-wider uppercase group hover:translate-x-1 spring-press"
         >
           <LogOut className="w-4 h-4 text-zinc-400 group-hover:text-pink-900 group-hover:scale-110 transition-transform" />
           <span>{isKhmer ? 'ចាកចេញ' : 'LOGOUT'}</span>

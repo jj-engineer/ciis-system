@@ -25,7 +25,8 @@ import {
   Award,
   Users,
   Building,
-  Code2
+  Code2,
+  Maximize2
 } from 'lucide-react';
 
 interface GalleryModalItem {
@@ -51,6 +52,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherProfile | null>(null);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryModalItem | null>(null);
   const [activeLabTab, setActiveLabTab] = useState<'all' | 'class-1' | 'class-2'>('all');
+  const [activePhotoMotionIndex, setActivePhotoMotionIndex] = useState<number>(0);
+  const [isMotionPaused, setIsMotionPaused] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -369,6 +372,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           lab1Activities[3],
         ];
 
+  // Continuous 2-second motion animation cycle across all computer classroom activity photos
+  useEffect(() => {
+    if (isMotionPaused) return;
+    const motionInterval = setInterval(() => {
+      setActivePhotoMotionIndex((prev) => (prev + 1) % displayedLabActivities.length);
+    }, 2000);
+    return () => clearInterval(motionInterval);
+  }, [displayedLabActivities.length, isMotionPaused]);
+
   // 3 Computer Lab Shifts
   const labShifts = [
     {
@@ -443,7 +455,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           </span>
           <span className="text-zinc-700 hidden md:inline">•</span>
           <span className="text-zinc-400 hidden md:inline text-[11px]">
-            {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh Capital, Kingdom of Cambodia'}
+            {isKhmer ? 'រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា' : 'Phnom Penh, Cambodia'}
           </span>
         </div>
 
@@ -477,7 +489,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
             }}
             className="text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-bold"
           >
-            <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Faculty Access'}</span>
+            <span>{isKhmer ? 'ចូលគណនីគ្រូ' : 'Teacher Portal'}</span>
           </button>
         </div>
       </div>
@@ -486,15 +498,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* FIXED MASTER STICKY HEADER: NEWS NOTIFICATION TICKER + MAIN NAVBAR        */}
       {/* ========================================================================= */}
       <div className="sticky top-0 z-50 w-full shadow-sm">
-        
+
         {/* 2. FIXED NOTIFICATION TICKER BAR (Clicks Scroll Directly to Announcement Section) */}
         <div className="bg-gradient-to-r from-zinc-950 via-rose-950/95 to-zinc-950 text-white text-xs border-b border-rose-900/50 py-1.5 px-4 overflow-hidden relative z-40">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-            
+
             <div className="flex items-center gap-2 shrink-0">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-rose-600 text-white text-[10.5px] font-black uppercase tracking-wider font-mono shadow-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                <span>{isKhmer ? 'ដំណឹងថ្មី' : 'NEWS'}</span>
+                <span>{isKhmer ? 'ដំណឹងថ្មី' : 'LATEST NEWS'}</span>
               </span>
             </div>
 
@@ -547,9 +559,8 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
         {/* 3. MAIN NAVBAR HEADER NAVIGATION */}
         <header
-          className={`bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${
-            isScrolled ? 'border-zinc-300 shadow-xs py-2' : 'border-zinc-200 py-3'
-          }`}
+          className={`bg-white/95 backdrop-blur-md border-b transition-all duration-300 ${isScrolled ? 'border-zinc-300 shadow-xs py-2' : 'border-zinc-200 py-3'
+            }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
 
@@ -563,7 +574,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   {isKhmer ? 'សាលារៀនអន្តរជាតិ សុី អាយ អាយ អេស' : 'CIIS INTERNATIONAL SCHOOL'}
                 </h1>
                 <p className="text-[10.5px] sm:text-[11.5px] text-rose-900 font-bold truncate">
-                  {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'National Standard K-12 & Advanced Computer Technology'}
+                  {isKhmer ? 'កម្មវិធីចំណេះទូទៅជាតិ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'National K-12 Curriculum & Advanced Computer Tech'}
                 </p>
               </div>
             </div>
@@ -575,7 +586,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 onClick={(e) => scrollToSection(e, 'about')}
                 className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
               >
-                {isKhmer ? 'អំពីសាលា' : 'About CIIS'}
+                {isKhmer ? 'អំពីសាលា' : 'About'}
               </a>
               <a
                 href="#announcement-discount"
@@ -589,7 +600,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 onClick={(e) => scrollToSection(e, 'programs')}
                 className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
               >
-                {isKhmer ? 'កម្មវិធីសិក្សា' : 'Academic Tracks'}
+                {isKhmer ? 'កម្មវិធីសិក្សា' : 'Programs'}
               </a>
               <a
                 href="#lab"
@@ -603,7 +614,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 onClick={(e) => scrollToSection(e, 'events')}
                 className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
               >
-                {isKhmer ? 'សកម្មភាពសាលា' : 'Events & Awards'}
+                {isKhmer ? 'សកម្មភាពសាលា' : 'Events'}
               </a>
               <a
                 href="#faculty"
@@ -617,7 +628,7 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 onClick={(e) => scrollToSection(e, 'contact')}
                 className="hover:text-rose-950 transition-colors py-1 cursor-pointer"
               >
-                {isKhmer ? 'ទំនាក់ទំនង' : 'Contact Us'}
+                {isKhmer ? 'ទំនាក់ទំនង' : 'Contact'}
               </a>
             </nav>
 
@@ -692,11 +703,11 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               <nav className="space-y-1 text-xs font-bold text-zinc-700">
                 {[
                   { href: '#about', id: 'about', label: isKhmer ? 'អំពីសាលា CIIS' : 'About CIIS' },
-                  { href: '#programs', id: 'programs', label: isKhmer ? 'កម្មវិធីសិក្សាទាំង ៤ កម្រិត' : 'Academic Programs' },
+                  { href: '#programs', id: 'programs', label: isKhmer ? 'កម្មវិធីសិក្សាទាំង ៤ កម្រិត' : 'Programs' },
                   { href: '#lab', id: 'lab', label: isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Lab' },
-                  { href: '#events', id: 'events', label: isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាព' : 'Events & Awards' },
-                  { href: '#faculty', id: 'faculty', label: isKhmer ? 'លោកគ្រូអ្នកគ្រូ & គរុកោសល្យ' : 'Distinguished Faculty' },
-                  { href: '#contact', id: 'contact', label: isKhmer ? 'ទំនាក់ទំនង & ទីតាំងសាលា' : 'Contact & Campus Visit' }
+                  { href: '#events', id: 'events', label: isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាព' : 'Events' },
+                  { href: '#faculty', id: 'faculty', label: isKhmer ? 'លោកគ្រូអ្នកគ្រូ & គរុកោសល្យ' : 'Faculty' },
+                  { href: '#contact', id: 'contact', label: isKhmer ? 'ទំនាក់ទំនង & ទីតាំងសាលា' : 'Contact' }
                 ].map((link) => (
                   <a
                     key={link.id}
@@ -730,212 +741,184 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       {/* 3. HERO SECTION — WORLD-CLASS SCHOOL SHOWCASE                             */}
       {/* ========================================================================= */}
-      <section id="about" className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-24 border-b border-zinc-200 bg-white">
+      <section id="about" className="relative overflow-hidden bg-zinc-100 border-b border-zinc-200">
 
-        {/* Subtle Background Glow Elements */}
-        <div className="absolute top-0 right-1/3 w-[500px] h-[500px] bg-rose-50/60 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-[450px] h-[450px] bg-pink-50/50 rounded-full blur-3xl pointer-events-none" />
+        {/* Full-Width School Campus Background (CIIS Main Building) */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <img
+            src="/images/school/ciis-main-building.jpg"
+            alt="CIIS International School Campus Building"
+            className="w-full h-full object-cover object-center lg:object-right"
+          />
+          {/* Smooth Luxury Editorial Scrim for High Contrast & Text Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 sm:via-white/90 lg:via-white/80 to-white/40 lg:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80" />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12 text-left">
+        {/* Hero Grid Container: Left Narrative + Right President Keynote Card */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-14 pb-24 sm:pt-18 sm:pb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center text-left">
 
-          {/* Top Institutional Badge */}
-          <div className="scroll-reveal flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-950 text-white text-xs font-bold shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
-              <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស' : 'CIIS International School'}</span>
-            </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-rose-50 text-rose-950 border border-rose-200 text-xs font-bold shadow-2xs">
-              {isKhmer ? 'រាជធានីភ្នំពេញ • កម្មវិធីជាតិ MoEYS & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Phnom Penh Campus • MoEYS & Advanced Computer Tech'}
-            </span>
-          </div>
+            {/* Left Column: Old Authentic School Narrative Text Brought Back */}
+            <div className="lg:col-span-7 space-y-6">
 
-          {/* Master Hero Grid: Left Narrative + Right Real School Photography Showcase */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+              {/* Institution Badge */}
+              <div className="scroll-reveal inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50/95 backdrop-blur-md border border-rose-200/90 text-rose-950 text-xs font-bold shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-rose-800" />
+                <span>{isKhmer ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស • CIIS' : 'CIIS INTERNATIONAL SCHOOL'}</span>
+              </div>
 
-            {/* Left Column: Vision & Admissions CTAs */}
-            <div className="scroll-reveal-left lg:col-span-6 space-y-6">
-              <h2 className="text-3xl sm:text-5xl lg:text-[54px] font-black text-zinc-950 tracking-tight leading-[1.16] font-khmer-title">
+              {/* Master Headline */}
+              <h2 className="scroll-reveal text-3xl sm:text-5xl lg:text-[54px] font-black text-zinc-950 tracking-tight leading-[1.16] font-khmer-title">
                 {isKhmer ? (
                   <>
                     ស្ថាប័នអប់រំស្តង់ដារគុណភាព <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-950 via-rose-800 to-pink-700">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-950 via-rose-900 to-rose-700">
                       ចំណេះដឹងទូទៅ & បច្ចេកវិទ្យា
                     </span>
                   </>
                 ) : (
                   <>
-                    Inspiring Academic Rigor, <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-950 via-rose-800 to-pink-700">
+                    Inspiring Academic Rigor <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-950 via-rose-900 to-rose-700">
                       Digital Mastery & Leadership
                     </span>
                   </>
                 )}
               </h2>
 
-              <p className="text-sm sm:text-base text-zinc-700 leading-relaxed font-normal">
+              {/* Subtitle Description Paragraph */}
+              <p className="scroll-reveal text-sm sm:text-base text-zinc-700 leading-relaxed font-normal max-w-xl">
                 {isKhmer
                   ? 'សាលារៀនអន្តរជាតិ ស៊ី អាយ អាយ អេស ផ្តល់ការអប់រំពេញលេញចាប់ពីថ្នាក់មត្តេយ្យសិក្សា ដល់ថ្នាក់ទី១២ (ត្រៀមបាក់ឌុប BacII) ភាសាអង់គ្លេសអន្តរជាតិ IELTS និងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ បំពាក់កុំព្យូទ័រយួរដៃ ៤០+ គ្រឿងផ្ទាល់ខ្លួន ដើម្បីបណ្តុះបណ្តាលសិស្សានុសិស្សឱ្យមានអនាគតភ្លឺស្វាង និងមានជំនាញពិតប្រាកដ។'
                   : 'CIIS delivers comprehensive educational pathways spanning Kindergarten to Grade 12 (National BacII Exam), International English & IELTS, alongside advanced computer technology training on 40+ dedicated Dell workstations.'}
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+              {/* Dual CTA Buttons */}
+              <div className="scroll-reveal flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
                 <button
                   type="button"
                   onClick={() => {
                     setAuthModalRole('student');
                     setShowAuthModal(true);
                   }}
-                  className="py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  className="py-3.5 px-6 rounded-2xl bg-zinc-950 hover:bg-rose-950 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] group"
                 >
                   <UserPlus className="w-4 h-4 text-rose-300" />
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនឥឡូវនេះ' : 'Apply for Enrollment'}</span>
-                  <ArrowRight className="w-4 h-4 text-rose-300" />
+                  <ArrowRight className="w-4 h-4 text-rose-300 group-hover:translate-x-1 transition-transform" />
                 </button>
 
                 <a
                   href="#programs"
                   onClick={(e) => scrollToSection(e, 'programs')}
-                  className="py-3.5 px-6 rounded-2xl bg-white hover:bg-zinc-50 text-zinc-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-zinc-200 shadow-2xs transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  className="py-3.5 px-6 rounded-2xl bg-white/95 backdrop-blur-md hover:bg-white text-zinc-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-zinc-300/90 shadow-2xs transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>{isKhmer ? 'ស្វែងយល់កម្មវិធីសិក្សា' : 'Explore Programs'}</span>
                   <span className="text-rose-900">→</span>
                 </a>
               </div>
 
-              {/* 4 Highlights Strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-zinc-200">
-                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
-                  <div className="text-lg sm:text-xl font-black text-zinc-950">40+</div>
-                  <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'កុំព្យូទ័រ Lab 1' : 'Workstations'}</div>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
-                  <div className="text-lg sm:text-xl font-black text-zinc-950">K – 12</div>
-                  <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'កម្មវិធីជាតិ MoEYS' : 'National Standard'}</div>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
-                  <div className="text-lg sm:text-xl font-black text-zinc-950">100%</div>
-                  <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'អនុវត្តលើម៉ាស៊ីន' : 'Hands-on Lab'}</div>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80 hover:border-rose-300 hover:shadow-xs transition-all duration-300">
-                  <div className="text-lg sm:text-xl font-black text-zinc-950">IELTS</div>
-                  <div className="text-[11px] text-rose-900 font-bold">{isKhmer ? 'ភាសាអន្តរជាតិ' : 'English Track'}</div>
-                </div>
-              </div>
             </div>
 
-            {/* Right Column: Dynamic Authentic School Photo Grid */}
-            <div className="scroll-reveal-right delay-100 lg:col-span-6 space-y-4">
+            {/* Right Column: President / Director Speech Photo (Kept Current Image) */}
+            <div className="scroll-reveal-right lg:col-span-5 flex justify-center lg:justify-end">
+              <div
+                onClick={() => setSelectedGalleryItem(ceremonyEvents[0])}
+                className="relative w-full max-w-md lg:max-w-none aspect-[4/3] rounded-3xl overflow-hidden border-2 border-white/80 shadow-2xl bg-zinc-900 cursor-pointer group hover:scale-[1.02] hover:shadow-2xl transition-all duration-500 backdrop-blur-xs"
+              >
+                <img
+                  src="/images/school/ciis-director-speech.jpg"
+                  alt="CIIS School President & Director Speech"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
 
-              {/* Primary Featured Card: Real CIIS Multi-Story Campus Building */}
-              <div className="relative rounded-3xl overflow-hidden border-2 border-zinc-200 shadow-xl group bg-zinc-950 hover:shadow-2xl hover:border-rose-400 transition-all duration-500">
-                <div className="aspect-[16/10] w-full overflow-hidden">
-                  <img
-                    src="/images/school/ciis-main-building.jpg"
-                    alt="CIIS International School Campus Building"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                </div>
+                {/* Subtle Luxury Scrim */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
 
-                {/* Gradient Fade & Badges */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent pointer-events-none" />
-
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-rose-950/90 text-white text-xs font-bold border border-rose-500/40 shadow-sm">
-                    {isKhmer ? 'អគារសិក្សាផ្លូវការ CIIS' : 'Official CIIS Campus Building'}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-black/70 text-white text-xs font-bold border border-white/20">
-                    {isKhmer ? 'រាជធានីភ្នំពេញ' : 'Phnom Penh'}
+                {/* Floating Top Badge */}
+                <div className="absolute top-3.5 left-3.5">
+                  <span className="px-3 py-1 rounded-full bg-rose-950/90 backdrop-blur-md text-white text-[11px] font-bold border border-rose-500/40 shadow-sm flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                    <span>{isKhmer ? 'ប្រសាសន៍ណែនាំគណៈគ្រប់គ្រង' : 'School Leadership Address'}</span>
                   </span>
                 </div>
 
-                <div className="absolute bottom-4 left-4 right-4 text-white space-y-1">
-                  <h3 className="text-sm sm:text-base font-black font-khmer-title">
-                    {isKhmer ? 'បរិវេណសាលារៀន និងអគារសិក្សា ៤ ជាន់' : 'CIIS 4-Story Academic Campus'}
-                  </h3>
-                  <p className="text-[11.5px] text-zinc-300 line-clamp-1">
-                    {isKhmer ? 'មត្តេយ្យសិក្សា • បឋមសិក្សា • មធ្យមសិក្សា • ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ & IELTS' : 'Kindergarten • Primary • Secondary • Computer Tech & IELTS'}
+                {/* Floating Bottom Caption */}
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white space-y-1">
+                  <h4 className="text-xs sm:text-sm font-black font-khmer-title leading-tight text-white drop-shadow-xs">
+                    {isKhmer ? 'សុន្ទរកថានាយកសាលា CIIS ក្នុងពិធីប្រគល់វិញ្ញាបនបត្រ' : 'CIIS School President Keynote Speech'}
+                  </h4>
+                  <p className="text-[11px] text-zinc-200 line-clamp-1 font-normal">
+                    {isKhmer ? 'ការលើកទឹកចិត្ត និងទស្សនវិស័យអប់រំសម្រាប់សិស្សានុសិស្ស' : 'Academic Vision & Student Empowerment'}
                   </p>
                 </div>
               </div>
-
-              {/* Secondary Duo Cards: Director Keynote Speech & Computer Lab 1 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                {/* Director Speech Card */}
-                <div
-                  onClick={() => setSelectedGalleryItem(ceremonyEvents[0])}
-                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer hover:shadow-xl hover:border-rose-400 transition-all duration-300 hover:scale-[1.02]"
-                >
-                  <div className="aspect-[4/3] w-full overflow-hidden">
-                    <img
-                      src="/images/school/ciis-director-speech.jpg"
-                      alt="CIIS School Director Speech"
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-
-                  <div className="absolute top-2.5 left-2.5">
-                    <span className="px-2.5 py-0.5 rounded-full bg-rose-950/90 text-white text-[10px] font-bold border border-rose-500/30">
-                      {isKhmer ? 'សុន្ទរកថានាយកសាលា' : 'Director Keynote'}
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                    <h4 className="text-xs font-bold truncate font-khmer-title">
-                      {isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & ប័ណ្ណសរសើរ' : 'Ceremony & Awards'}
-                    </h4>
-                  </div>
-                </div>
-
-                {/* Real Lab 1 Station Card */}
-                <div
-                  onClick={() => setSelectedGalleryItem(lab1Activities[0])}
-                  className="relative rounded-2xl overflow-hidden border border-zinc-200 shadow-md group bg-zinc-950 cursor-pointer hover:shadow-xl hover:border-rose-400 transition-all duration-300 hover:scale-[1.02]"
-                >
-                  <div className="aspect-[4/3] w-full overflow-hidden">
-                    <img
-                      src="/images/activities/class-1/activity-1.jpg"
-                      alt="CIIS Advanced Computer Technology Student Workstations"
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-
-                  <div className="absolute top-2.5 left-2.5">
-                    <span className="px-2.5 py-0.5 rounded-full bg-rose-950/90 text-white text-[10px] font-bold border border-rose-500/30">
-                      {isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Computer Tech'}
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                    <h4 className="text-xs font-bold truncate font-khmer-title">
-                      {isKhmer ? '៤០+ គ្រឿង • Touch Typing & Office' : '40+ Stations • Touch Typing'}
-                    </h4>
-                  </div>
-                </div>
-
-              </div>
-
             </div>
 
           </div>
-
-          {/* School 50% Tuition Discount Official Announcement Section */}
-          <SchoolDiscountAnnouncement
-            onClaimDiscount={() => {
-              setAuthModalRole('student');
-              setShowAuthModal(true);
-            }}
-            onOpenModalPoster={() => setShowPromoModalManual(true)}
-          />
-
         </div>
+
       </section>
 
-      {/* ========================================================================= */}
-      {/* 4. ACADEMIC PROGRAMS SECTION (4 CORE TRACKS)                              */}
+      {/* Floating Bottom Metric Stats Bar */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-20 -mt-10 sm:-mt-14 mb-10">
+        <div className="scroll-reveal-scale rounded-3xl bg-white border border-zinc-200/90 shadow-xl p-5 sm:p-7 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-left">
+
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 shadow-2xs">
+              <Laptop className="w-6 h-6 text-rose-800" />
+            </div>
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight font-sans">40+</div>
+              <div className="text-xs text-zinc-600 font-medium">{isKhmer ? 'កុំព្យូទ័រ Dell ផ្ទាល់ខ្លួន' : 'Dell Workstations'}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 shadow-2xs">
+              <GraduationCap className="w-6 h-6 text-rose-800" />
+            </div>
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight font-sans">K – 12</div>
+              <div className="text-xs text-zinc-600 font-medium">{isKhmer ? 'ចំណេះទូទៅជាតិ MoEYS' : 'National Standard'}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 shadow-2xs">
+              <Award className="w-6 h-6 text-rose-800" />
+            </div>
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight font-sans">100%</div>
+              <div className="text-xs text-zinc-600 font-medium">{isKhmer ? 'អនុវត្តជាក់ស្តែងលើម៉ាស៊ីន' : 'Hands-on Practice'}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 shadow-2xs">
+              <Globe className="w-6 h-6 text-rose-800" />
+            </div>
+            <div>
+              <div className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight font-sans">IELTS</div>
+              <div className="text-xs text-zinc-600 font-medium">{isKhmer ? 'ភាសាអង់គ្លេសអន្តរជាតិ' : 'English Proficiency'}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* School 50% Tuition Discount Official Announcement Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
+        <SchoolDiscountAnnouncement
+          onClaimDiscount={() => {
+            setAuthModalRole('student');
+            setShowAuthModal(true);
+          }}
+          onOpenModalPoster={() => setShowPromoModalManual(true)}
+        />
+      </div>
+
       {/* ========================================================================= */}
       <section id="programs" className="py-16 sm:py-24 border-b border-zinc-200 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
@@ -1010,117 +993,182 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       {/* ========================================================================= */}
       {/* 5. ADVANCED COMPUTER TECH SHIFTS & CLASSROOM ACTIVITIES                   */}
       {/* ========================================================================= */}
-      <section id="lab" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
+      <section id="lab" className="relative py-20 sm:py-28 border-b border-zinc-200/80 bg-white overflow-hidden">
 
-          <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
+        {/* Ambient Subtle Luxury Glows */}
+        <div className="absolute top-10 right-10 w-[450px] h-[450px] bg-rose-50/50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-pink-50/40 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14 text-left">
+
+          {/* Section Luxury Header */}
+          <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200/80 pb-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-rose-950 text-xs font-bold shadow-2xs">
                 <Laptop className="w-3.5 h-3.5 text-rose-800" />
-                <span>{isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'ADVANCED COMPUTER TECH'}</span>
+                <span>{isKhmer ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ • CIIS LAB 1' : 'ADVANCED COMPUTER TECH • CIIS LAB 1'}</span>
               </div>
-              <h3 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight font-khmer-title">
-                {isKhmer ? 'កាលវិភាគ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់' : 'Advanced Computer Technology Shifts'}
+
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-950 tracking-tight font-khmer-title leading-tight">
+                {isKhmer ? 'កាលវិភាគ & ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រ' : 'Advanced Computer Shifts'}
               </h3>
+
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                {isKhmer
+                  ? 'ថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ បំពាក់កុំព្យូទ័រយួរដៃ Dell ៤០+ គ្រឿងផ្ទាល់ខ្លួន (សិស្ស ១ នាក់ = កុំព្យូទ័រ ១ គ្រឿង) ហ្វឹកហាត់ Touch Typing រៀបចំឯកសារ Word តារាងគណនា Excel និងស្លាយ PowerPoint ជាក់ស្តែង ១០០%។'
+                  : 'Delivering dedicated Dell workstations for every learner (1 Student : 1 Laptop), structured 10-finger typing benchmarks, advanced office suites, and attentive step-by-step mentoring.'}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-lg leading-relaxed font-normal">
-              {isKhmer
-                ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងថ្នាក់បច្ចេកវិទ្យាកុំព្យូទ័រកម្រិតខ្ពស់ វេនទី១ (៥:៣០-៦:៣០) និងវេនទី២ (៦:៤០-៧:៤០) សិស្សានុសិស្សម្នាក់ៗមានកុំព្យូទ័រយួរដៃ Dell ប្រើប្រាស់ផ្ទាល់ខ្លួន។'
-                : 'Authentic photos from Evening Shift 1 and Shift 2. Every student works on an individual workstation guided step-by-step by lab instructors.'}
-            </p>
+
+            {/* 3 Luxury Key Highlights */}
+            <div className="flex flex-wrap gap-2.5 text-xs">
+              <div className="px-3.5 py-2 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex items-center gap-2 font-bold text-zinc-800 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-rose-800" />
+                <span>{isKhmer ? 'ស្ថានីយ ៤០+ គ្រឿងផ្ទាល់ខ្លួន' : '40+ Dedicated Stations'}</span>
+              </div>
+              <div className="px-3.5 py-2 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex items-center gap-2 font-bold text-zinc-800 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-rose-800" />
+                <span>{isKhmer ? 'អនុវត្តលើម៉ាស៊ីន ១០០%' : '100% Practical Drills'}</span>
+              </div>
+            </div>
           </div>
 
-          {/* 3 Shifts Timetable Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 3 Shifts Luxury Timetable Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {labShifts.map((shift) => (
               <div
                 key={shift.id}
-                className="scroll-reveal-scale p-6 rounded-3xl bg-[#f8fafc] border border-zinc-200 hover:border-rose-900/40 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between space-y-5"
+                className="scroll-reveal-scale relative rounded-3xl bg-[#fcfcfd] border border-zinc-200/90 hover:border-rose-900/40 hover:shadow-2xl hover:scale-[1.015] transition-all duration-300 p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xs group overflow-hidden"
               >
-                <div className="space-y-3">
+                {/* Top Subtle Luxury Indicator Stripe */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-950 via-rose-800 to-pink-600 opacity-90" />
+
+                <div className="space-y-4 pt-1">
+                  {/* Shift Code & Status */}
                   <div className="flex items-center justify-between text-xs">
-                    <span className="px-2.5 py-1 rounded-xl bg-zinc-950 text-white font-bold">
+                    <span className="px-3 py-1 rounded-xl bg-zinc-950 text-white font-bold tracking-wide">
                       {shift.code}
                     </span>
-                    <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-950 border border-rose-200 font-bold">
-                      {isKhmer ? shift.statusKh : shift.statusEn}
+                    <span className="text-[11px] px-3 py-1 rounded-full bg-rose-50 text-rose-950 border border-rose-200 font-bold shadow-2xs flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-800" />
+                      <span>{isKhmer ? shift.statusKh : shift.statusEn}</span>
                     </span>
                   </div>
 
-                  <h4 className="text-base sm:text-lg font-black text-zinc-950 font-khmer-title">
+                  {/* Shift Title */}
+                  <h4 className="text-base sm:text-lg font-black text-zinc-950 font-khmer-title group-hover:text-rose-950 transition-colors leading-snug">
                     {isKhmer ? shift.nameKh : shift.nameEn}
                   </h4>
 
-                  <div className="text-xs text-zinc-700 space-y-1 pt-1">
-                    <div className="font-bold text-zinc-900 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-rose-800 shrink-0" />
+                  {/* Schedule Details Matrix */}
+                  <div className="space-y-2.5 pt-2 border-t border-zinc-100 text-xs">
+                    <div className="flex items-center gap-2.5 text-zinc-800 font-semibold bg-zinc-50/80 p-2.5 rounded-2xl border border-zinc-100">
+                      <Clock className="w-4 h-4 text-rose-800 shrink-0" />
                       <span>{isKhmer ? shift.timeKh : shift.timeEn}</span>
                     </div>
-                    <div className="text-zinc-600 flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-rose-800 shrink-0" />
-                      <span>{isKhmer ? shift.teacherKh : shift.teacherEn}</span>
+
+                    <div className="flex items-center gap-2.5 text-zinc-700 bg-zinc-50/80 p-2.5 rounded-2xl border border-zinc-100">
+                      <Users className="w-4 h-4 text-rose-800 shrink-0" />
+                      <span className="truncate">{isKhmer ? shift.teacherKh : shift.teacherEn}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 text-zinc-700 bg-zinc-50/80 p-2.5 rounded-2xl border border-zinc-100">
+                      <Laptop className="w-4 h-4 text-rose-800 shrink-0" />
+                      <span className="truncate">{isKhmer ? shift.roomKh : shift.roomEn}</span>
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-zinc-200/80 space-y-1.5 text-xs text-zinc-600">
-                    {(isKhmer ? shift.subjectsKh : shift.subjectsEn).map((sub, sIdx) => (
-                      <div key={sIdx} className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-800 shrink-0" />
-                        <span className="truncate">{sub}</span>
-                      </div>
-                    ))}
+                  {/* Course Subjects Pills */}
+                  <div className="pt-3 border-t border-zinc-100 space-y-2 text-xs">
+                    <div className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                      {isKhmer ? 'មុខវិជ្ជាអនុវត្តក្នុងវេននេះ' : 'Key Modules & Practicals'}
+                    </div>
+                    <div className="space-y-1.5">
+                      {(isKhmer ? shift.subjectsKh : shift.subjectsEn).map((sub, sIdx) => (
+                        <div key={sIdx} className="flex items-center gap-2 text-zinc-600">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-800 shrink-0" />
+                          <span className="truncate">{sub}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
+                {/* Enroll CTA */}
                 <button
                   type="button"
                   onClick={() => {
                     setAuthModalRole('student');
                     setShowAuthModal(true);
                   }}
-                  className="w-full py-2.5 rounded-2xl bg-zinc-950 hover:bg-rose-950 text-white text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  className="w-full py-3 rounded-2xl bg-zinc-950 hover:bg-rose-950 text-white text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99] group/btn"
                 >
                   <UserPlus className="w-3.5 h-3.5 text-rose-300" />
-                  <span>{isKhmer ? 'ចុះឈ្មោះវេននេះ' : 'Enroll in Shift'}</span>
+                  <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនវេននេះ' : 'Enroll in Shift'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-rose-300 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </div>
             ))}
           </div>
 
-          {/* Photo Gallery Filter Tabs & Real Activities */}
-          <div className="space-y-6 pt-6">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <h4 className="text-lg font-black text-zinc-950 font-khmer-title">
-                {isKhmer ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងថ្នាក់កុំព្យូទ័រ' : 'Authentic Computer Class Photos'}
-              </h4>
+          {/* ========================================================================= */}
+          {/* PHOTO GALLERY: AUTHENTIC COMPUTER CLASSROOM ACTIVITIES                    */}
+          {/* ========================================================================= */}
+          <div className="space-y-8 pt-8 border-t border-zinc-200/80">
 
-              <div className="flex items-center gap-2 flex-wrap text-xs">
+            {/* Gallery Header & Luxury Filter Segment */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-wrap">
+              <div>
+                <h4 className="text-xl sm:text-2xl font-black text-zinc-950 font-khmer-title tracking-tight flex items-center gap-2">
+                  <span>{isKhmer ? 'រូបភាពសកម្មភាពជាក់ស្តែងក្នុងថ្នាក់កុំព្យូទ័រ' : 'Authentic Computer Class Activities'}</span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-950 border border-rose-200 font-sans font-bold">
+                    {displayedLabActivities.length} {isKhmer ? 'សកម្មភាព' : 'Photos'}
+                  </span>
+                </h4>
+                <p className="text-xs text-zinc-500 pt-1">
+                  {isKhmer
+                    ? 'រូបភាពពិតប្រាកដចេញពីបន្ទប់កុំព្យូទ័រ Lab 1 វេនទី១ និងវេនទី២ (ផ្លាស់ប្តូរបង្ហាញស្វ័យប្រវត្តរៀងរាល់ ២វិនាទី)'
+                    : 'Authentic photos captured live during Shift 1 and Shift 2 (Auto-cycling motion showcase every 2 seconds).'}
+                </p>
+              </div>
+
+              {/* Luxury Filter Segment Control */}
+              <div className="inline-flex items-center p-1.5 rounded-2xl bg-zinc-100 border border-zinc-200/80 shadow-2xs text-xs">
                 <button
                   type="button"
-                  onClick={() => setActiveLabTab('all')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'all'
-                      ? 'bg-zinc-950 text-white shadow-xs'
-                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                  onClick={() => {
+                    setActiveLabTab('all');
+                    setActivePhotoMotionIndex(0);
+                  }}
+                  className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'all'
+                      ? 'bg-zinc-950 text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/60'
                     }`}
                 >
                   {isKhmer ? 'រូបភាពទាំងអស់' : 'All Photos'} ({lab1Activities.length + lab2Activities.length})
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveLabTab('class-1')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-1'
-                      ? 'bg-rose-950 text-white shadow-xs'
-                      : 'bg-rose-50 hover:bg-rose-100 text-rose-950 border border-rose-200'
+                  onClick={() => {
+                    setActiveLabTab('class-1');
+                    setActivePhotoMotionIndex(0);
+                  }}
+                  className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-1'
+                      ? 'bg-rose-950 text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-rose-950 hover:bg-rose-50'
                     }`}
                 >
                   {isKhmer ? 'វេនទី១ (៥:៣០-៦:៣០)' : 'Shift 1'} ({lab1Activities.length})
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveLabTab('class-2')}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-2'
-                      ? 'bg-rose-950 text-white shadow-xs'
-                      : 'bg-rose-50 hover:bg-rose-100 text-rose-950 border border-rose-200'
+                  onClick={() => {
+                    setActiveLabTab('class-2');
+                    setActivePhotoMotionIndex(0);
+                  }}
+                  className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${activeLabTab === 'class-2'
+                      ? 'bg-rose-950 text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-rose-950 hover:bg-rose-50'
                     }`}
                 >
                   {isKhmer ? 'វេនទី២ (៦:៤០-៧:៤០)' : 'Shift 2'} ({lab2Activities.length})
@@ -1128,116 +1176,352 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* ========================================================================= */}
+            {/* SIMPLE & CLEAN AUTO-ROTATING CLASSROOM PHOTO SHOWCASE                     */}
+            {/* Auto-cycles through all classroom images every 2 seconds with clean look  */}
+            {/* ========================================================================= */}
+            <div className="rounded-3xl border border-zinc-200 bg-white p-5 sm:p-7 space-y-4 text-left shadow-xs">
+
+              {/* Clean Header: Simple Text Title & Counter */}
+              <div className="flex items-center justify-between gap-3 text-xs border-b border-zinc-100 pb-3">
+                <span className="font-bold text-zinc-900 font-khmer-title text-sm">
+                  {isKhmer ? 'រូបភាពសកម្មភាពជាក់ស្តែង (បង្ហាញស្វ័យប្រវត្ត)' : 'Classroom Activities (Auto Showcase)'}
+                </span>
+                <span className="text-zinc-500 font-medium font-sans">
+                  {isKhmer
+                    ? `រូបភាពទី ${String(activePhotoMotionIndex + 1).padStart(2, '0')} នៃ ${String(displayedLabActivities.length).padStart(2, '0')}`
+                    : `Photo ${activePhotoMotionIndex + 1} of ${displayedLabActivities.length}`}
+                </span>
+              </div>
+
+              {/* Clean Image Display Container with Motion Slide Track */}
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200 cursor-pointer">
+                {/* Motion Sliding Track */}
+                <div
+                  className="flex w-full h-full transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${activePhotoMotionIndex * 100}%)` }}
+                >
+                  {displayedLabActivities.map((slide, sIdx) => (
+                    <div
+                      key={sIdx}
+                      className="w-full h-full min-w-full shrink-0 relative"
+                      onClick={() => setSelectedGalleryItem(slide)}
+                    >
+                      <img
+                        src={slide.src}
+                        alt={slide.titleEn}
+                        className="w-full h-full object-cover object-center"
+                        loading="lazy"
+                      />
+
+                      {/* Simple Badge on Top-Left */}
+                      <div className="absolute top-3 left-3">
+                        <span className="px-3 py-1 rounded-lg bg-white/95 text-zinc-900 font-bold text-xs border border-zinc-200 shadow-xs">
+                          {isKhmer ? slide.badgeKh : slide.badgeEn}
+                        </span>
+                      </div>
+
+                      {/* Simple Shift Badge on Top-Right */}
+                      <div className="absolute top-3 right-3">
+                        <span className="px-3 py-1 rounded-lg bg-zinc-900/90 text-white font-medium text-xs shadow-xs">
+                          {isKhmer ? slide.classShiftKh : slide.classShiftEn}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Simple Clean Caption with Smooth Motion */}
+              <div
+                key={activePhotoMotionIndex}
+                className="space-y-1 pt-1 animate-in fade-in duration-300"
+              >
+                <h5 className="text-base sm:text-lg font-bold text-zinc-950 font-khmer-title">
+                  {isKhmer ? displayedLabActivities[activePhotoMotionIndex]?.titleKh : displayedLabActivities[activePhotoMotionIndex]?.titleEn}
+                </h5>
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                  {isKhmer ? displayedLabActivities[activePhotoMotionIndex]?.descKh : displayedLabActivities[activePhotoMotionIndex]?.descEn}
+                </p>
+              </div>
+
+              {/* Simple Clean Dot Indicators */}
+              <div className="flex items-center justify-center gap-1.5 pt-2">
+                {displayedLabActivities.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={() => setActivePhotoMotionIndex(dotIdx)}
+                    className={`h-1.5 rounded-full transition-all cursor-pointer ${dotIdx === activePhotoMotionIndex
+                        ? 'w-6 bg-rose-900'
+                        : 'w-1.5 bg-zinc-300 hover:bg-zinc-400'
+                      }`}
+                    aria-label={`Go to photo ${dotIdx + 1}`}
+                  />
+                ))}
+              </div>
+
+            </div>
+
+            {/* Clean Architectural Photo Grid Below */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 pt-2">
               {displayedLabActivities.map((act, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedGalleryItem(act)}
-                  className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[290px]"
+                  className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-xs hover:shadow-2xl hover:border-rose-900/50 hover:scale-[1.02] transition-all duration-500 cursor-pointer flex flex-col justify-between min-h-[300px] sm:min-h-[320px]"
                 >
+                  {/* Photo Display */}
                   <img
                     src={act.src}
                     alt={act.titleEn}
                     className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all" />
 
+                  {/* Gradient Scrim */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all duration-300" />
+
+                  {/* Top Floating Glass Bar */}
                   <div className="relative z-10 p-4 flex items-center justify-between gap-2 text-xs">
-                    <span className="px-2.5 py-1 rounded-full bg-rose-950/90 text-white font-bold border border-rose-500/30">
+                    <span className="px-3 py-1 rounded-full bg-rose-950/90 backdrop-blur-md text-white font-bold border border-rose-500/40 shadow-sm text-[11px]">
                       {isKhmer ? act.badgeKh : act.badgeEn}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-black/70 text-zinc-300 font-bold border border-white/10 text-[11px]">
-                      {isKhmer ? (act.classShiftKh || 'វេនល្ងាច') : (act.classShiftEn || 'Shift')}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-zinc-300 font-bold border border-white/15 text-[10.5px]">
+                        {isKhmer ? (act.classShiftKh || 'វេនល្ងាច') : (act.classShiftEn || 'Shift')}
+                      </span>
+
+                      {/* Zoom Lightbox Trigger Button */}
+                      <div className="w-8 h-8 rounded-full bg-white/90 group-hover:bg-white text-zinc-950 flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+                        <Maximize2 className="w-3.5 h-3.5 text-zinc-900" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="relative z-10 p-5 space-y-1.5 text-white">
+                  {/* Bottom Caption Overlay */}
+                  <div className="relative z-10 p-5 sm:p-6 space-y-2 text-white">
                     <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
                       {isKhmer ? act.titleKh : act.titleEn}
                     </h4>
+
                     <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
                       {isKhmer ? act.descKh : act.descEn}
                     </p>
-                    <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1">
-                      <span>{isKhmer ? 'ចុចដើម្បីមើលរូបភាពធំ' : 'View High-Res Photo'}</span>
-                      <span>→</span>
+
+                    <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1.5 group-hover:text-rose-200 transition-colors">
+                      <span>{isKhmer ? 'ចុចដើម្បីមើលរូបភាពច្បាស់ (High-Res)' : 'Click to View Full Photo'}</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+
           </div>
 
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 6. CEREMONY & GRADUATION AWARDS GALLERY                                   */}
+      {/* 6. CEREMONY & GRADUATION AWARDS GALLERY (LUXURY CURATED SHOWCASE)          */}
       {/* ========================================================================= */}
-      <section id="events" className="py-16 sm:py-24 border-b border-zinc-200 bg-[#f8fafc]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
+      <section id="events" className="relative py-20 sm:py-28 border-b border-zinc-200/80 bg-[#f8fafc] overflow-hidden">
 
-          <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-950 text-xs font-bold">
+        {/* Ambient Subtle Luxury Glows */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-rose-50/60 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] bg-pink-50/40 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14 text-left">
+
+          {/* Section Luxury Header */}
+          <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200/80 pb-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-rose-950 text-xs font-bold shadow-2xs">
                 <Award className="w-3.5 h-3.5 text-rose-800" />
-                <span>{isKhmer ? 'ពិធីប្រគល់វិញ្ញាបនបត្រ & សកម្មភាពសិស្ស' : 'CEREMONIES & STUDENT AWARDS'}</span>
+                <span>{isKhmer ? 'សមិទ្ធផល & ពិធីប្រគល់វិញ្ញាបនបត្រ • CEREMONIES' : 'CEREMONIES, AWARDS & STUDENT MILESTONES'}</span>
               </div>
-              <h3 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight font-khmer-title">
+
+              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-black text-zinc-950 tracking-tight font-khmer-title leading-tight">
                 {isKhmer ? 'ពិធីចែកវិញ្ញាបនបត្រ & សកម្មភាពសិស្ស' : 'Ceremonies, Awards & Campus Life'}
               </h3>
+
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+                {isKhmer
+                  ? 'ទិដ្ឋភាពដ៏មានអត្ថន័យនៃពិធីចែកវិញ្ញាបនបត្របញ្ចប់ការសិក្សាថ្នាក់មត្តេយ្យ និងបឋមសិក្សា ការសម្តែងសិល្បៈវប្បធម៌ និងប្រសាសន៍ណែនាំដ៏ថ្លៃថ្លារបស់គណៈគ្រប់គ្រងសាលា CIIS ជាមួយមាតាបិតាសិស្ស។'
+                  : 'Commemorating student graduation ceremonies, academic distinctions, traditional cultural dance performances, and leadership keynote addresses.'}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-lg leading-relaxed font-normal">
-              {isKhmer
-                ? 'ទិដ្ឋភាពជាក់ស្តែងនៃពិធីចែកវិញ្ញាបនបត្របញ្ចប់ការសិក្សា ការសម្តែងសិល្បៈសិស្ស និងសុន្ទរកថារបស់គណៈគ្រប់គ្រងសាលា CIIS។'
-                : 'Commemorating graduation ceremonies, academic awards, cultural dance performances, and leadership keynote addresses.'}
-            </p>
+
+            {/* Quick Badge Counter */}
+            <div className="px-4 py-2 rounded-2xl bg-white border border-zinc-200/80 text-xs font-bold text-zinc-800 shadow-2xs flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-800" />
+              <span>{ceremonyEvents.length} {isKhmer ? 'ព្រឹត្តិការណ៍ផ្លូវការ' : 'Official Milestone Events'}</span>
+            </div>
           </div>
 
-          {/* Symmetrically balanced grid with responsive aspect ratios */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ceremonyEvents.map((evt, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedGalleryItem(evt)}
-                className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-950 shadow-xs hover:shadow-xl hover:border-rose-900/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer flex flex-col justify-end min-h-[300px] sm:min-h-[320px]"
-              >
-                <img
-                  src={evt.src}
-                  alt={evt.titleEn}
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all" />
+          {/* Curated Luxury Educational Showcase Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
 
-                <div className="absolute top-4 left-4 z-10 text-xs">
-                  <span className="px-2.5 py-1 rounded-full bg-rose-950/90 text-white font-bold border border-rose-500/30">
-                    {isKhmer ? evt.badgeKh : evt.badgeEn}
+            {/* Card 1: Featured Grand Card (Certificate & Appreciation Ceremony) */}
+            <div
+              onClick={() => setSelectedGalleryItem(ceremonyEvents[0])}
+              className="scroll-reveal-scale lg:col-span-2 group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-xs hover:shadow-2xl hover:border-rose-900/50 hover:scale-[1.01] transition-all duration-500 cursor-pointer flex flex-col justify-between min-h-[360px] sm:min-h-[400px]"
+            >
+              <img
+                src={ceremonyEvents[0].src}
+                alt={ceremonyEvents[0].titleEn}
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all duration-300" />
+
+              {/* Top Floating Glass Badges */}
+              <div className="relative z-10 p-5 flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-3.5 py-1.5 rounded-full bg-rose-950/90 backdrop-blur-md text-white font-bold border border-rose-500/40 text-xs shadow-sm flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5 text-amber-300" />
+                    <span>{isKhmer ? ceremonyEvents[0].badgeKh : ceremonyEvents[0].badgeEn}</span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-zinc-300 font-bold border border-white/15 text-[11px]">
+                    {isKhmer ? 'កម្មវិធីផ្លូវការ CIIS' : 'CIIS Official Event'}
                   </span>
                 </div>
 
-                <div className="relative z-10 p-5 space-y-1.5 text-white">
-                  <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
-                    {isKhmer ? evt.titleKh : evt.titleEn}
-                  </h4>
-                  <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
-                    {isKhmer ? evt.descKh : evt.descEn}
-                  </p>
-                  <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1">
-                    <span>{isKhmer ? 'ចុចដើម្បីមើលរូបភាពធំ' : 'View Full Image'}</span>
-                    <span>→</span>
-                  </div>
+                <div className="w-9 h-9 rounded-full bg-white/90 group-hover:bg-white text-zinc-950 flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+                  <Maximize2 className="w-4 h-4 text-zinc-900" />
                 </div>
               </div>
-            ))}
+
+              {/* Bottom Glass Caption */}
+              <div className="relative z-10 p-6 sm:p-8 space-y-2.5 text-white max-w-3xl">
+                <h4 className="text-lg sm:text-2xl font-black text-white leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
+                  {isKhmer ? ceremonyEvents[0].titleKh : ceremonyEvents[0].titleEn}
+                </h4>
+                <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-normal">
+                  {isKhmer ? ceremonyEvents[0].descKh : ceremonyEvents[0].descEn}
+                </p>
+                <div className="pt-2 text-xs text-rose-300 font-bold flex items-center gap-2 group-hover:text-rose-200 transition-colors">
+                  <span>{isKhmer ? 'ចុចដើម្បីពិនិត្យទិដ្ឋភាពពិធីពេញលេញ (High-Res)' : 'Click to View Full Ceremony Photo'}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: Cultural Dance Performance on Stage */}
+            <div
+              onClick={() => setSelectedGalleryItem(ceremonyEvents[1])}
+              className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-xs hover:shadow-2xl hover:border-rose-900/50 hover:scale-[1.02] transition-all duration-500 cursor-pointer flex flex-col justify-between min-h-[300px] sm:min-h-[320px]"
+            >
+              <img
+                src={ceremonyEvents[1].src}
+                alt={ceremonyEvents[1].titleEn}
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all duration-300" />
+
+              <div className="relative z-10 p-4 flex items-center justify-between gap-2 text-xs">
+                <span className="px-3 py-1 rounded-full bg-rose-950/90 backdrop-blur-md text-white font-bold border border-rose-500/40 text-[11px] shadow-sm">
+                  {isKhmer ? ceremonyEvents[1].badgeKh : ceremonyEvents[1].badgeEn}
+                </span>
+                <div className="w-8 h-8 rounded-full bg-white/90 group-hover:bg-white text-zinc-950 flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+                  <Maximize2 className="w-3.5 h-3.5 text-zinc-900" />
+                </div>
+              </div>
+
+              <div className="relative z-10 p-5 sm:p-6 space-y-2 text-white">
+                <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
+                  {isKhmer ? ceremonyEvents[1].titleKh : ceremonyEvents[1].titleEn}
+                </h4>
+                <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
+                  {isKhmer ? ceremonyEvents[1].descKh : ceremonyEvents[1].descEn}
+                </p>
+                <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1.5 group-hover:text-rose-200 transition-colors">
+                  <span>{isKhmer ? 'ចុចមើលរូបភាពច្បាស់ (High-Res)' : 'Click to View Photo'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Public Speaking & Vocal Performance in Traditional Attire */}
+            <div
+              onClick={() => setSelectedGalleryItem(ceremonyEvents[2])}
+              className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-xs hover:shadow-2xl hover:border-rose-900/50 hover:scale-[1.02] transition-all duration-500 cursor-pointer flex flex-col justify-between min-h-[300px] sm:min-h-[320px]"
+            >
+              <img
+                src={ceremonyEvents[2].src}
+                alt={ceremonyEvents[2].titleEn}
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all duration-300" />
+
+              <div className="relative z-10 p-4 flex items-center justify-between gap-2 text-xs">
+                <span className="px-3 py-1 rounded-full bg-rose-950/90 backdrop-blur-md text-white font-bold border border-rose-500/40 text-[11px] shadow-sm">
+                  {isKhmer ? ceremonyEvents[2].badgeKh : ceremonyEvents[2].badgeEn}
+                </span>
+                <div className="w-8 h-8 rounded-full bg-white/90 group-hover:bg-white text-zinc-950 flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+                  <Maximize2 className="w-3.5 h-3.5 text-zinc-900" />
+                </div>
+              </div>
+
+              <div className="relative z-10 p-5 sm:p-6 space-y-2 text-white">
+                <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
+                  {isKhmer ? ceremonyEvents[2].titleKh : ceremonyEvents[2].titleEn}
+                </h4>
+                <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
+                  {isKhmer ? ceremonyEvents[2].descKh : ceremonyEvents[2].descEn}
+                </p>
+                <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1.5 group-hover:text-rose-200 transition-colors">
+                  <span>{isKhmer ? 'ចុចមើលរូបភាពច្បាស់ (High-Res)' : 'Click to View Photo'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Card 4: School Leadership Keynote & Parent-School Partnership */}
+            <div
+              onClick={() => setSelectedGalleryItem(ceremonyEvents[3])}
+              className="scroll-reveal-scale group relative rounded-3xl overflow-hidden border border-zinc-200/90 bg-zinc-950 shadow-xs hover:shadow-2xl hover:border-rose-900/50 hover:scale-[1.02] transition-all duration-500 cursor-pointer flex flex-col justify-between min-h-[300px] sm:min-h-[320px] md:col-span-2 lg:col-span-2"
+            >
+              <img
+                src={ceremonyEvents[3].src}
+                alt={ceremonyEvents[3].titleEn}
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent group-hover:via-zinc-950/50 transition-all duration-300" />
+
+              <div className="relative z-10 p-4 flex items-center justify-between gap-2 text-xs">
+                <span className="px-3 py-1 rounded-full bg-rose-950/90 backdrop-blur-md text-white font-bold border border-rose-500/40 text-[11px] shadow-sm">
+                  {isKhmer ? ceremonyEvents[3].badgeKh : ceremonyEvents[3].badgeEn}
+                </span>
+                <div className="w-8 h-8 rounded-full bg-white/90 group-hover:bg-white text-zinc-950 flex items-center justify-center shadow-md transition-transform group-hover:scale-110">
+                  <Maximize2 className="w-3.5 h-3.5 text-zinc-900" />
+                </div>
+              </div>
+
+              <div className="relative z-10 p-5 sm:p-6 space-y-2 text-white">
+                <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-rose-200 transition-colors font-khmer-title">
+                  {isKhmer ? ceremonyEvents[3].titleKh : ceremonyEvents[3].titleEn}
+                </h4>
+                <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
+                  {isKhmer ? ceremonyEvents[3].descKh : ceremonyEvents[3].descEn}
+                </p>
+                <div className="pt-1 text-[11px] text-rose-300 font-bold flex items-center gap-1.5 group-hover:text-rose-200 transition-colors">
+                  <span>{isKhmer ? 'ចុចមើលរូបភាពច្បាស់ (High-Res)' : 'Click to View Photo'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 7. DISTINGUISHED FACULTY DIRECTORY (3 Profile Cards Matched Perfectly)    */}
       {/* ========================================================================= */}
       <section id="faculty" className="py-16 sm:py-24 border-b border-zinc-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
@@ -1570,30 +1854,44 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
         />
       )}
 
-      {/* High-Resolution Photo Lightbox Preview Modal */}
+      {/* High-Resolution Photo Lightbox Preview Modal (Luxury Clean Aesthetics) */}
       {selectedGalleryItem && (
         <div
-          className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-200"
           onClick={() => setSelectedGalleryItem(null)}
         >
           <div
-            className="relative max-w-4xl w-full rounded-3xl bg-zinc-950 border border-zinc-800 overflow-hidden shadow-2xl space-y-4 p-5 sm:p-6 text-left"
+            className="relative max-w-5xl w-full rounded-3xl bg-zinc-950/95 border border-zinc-800/90 overflow-hidden shadow-2xl space-y-5 p-5 sm:p-7 text-left backdrop-blur-md"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <span className="text-xs font-bold text-rose-400">
-                {isKhmer ? selectedGalleryItem.badgeKh : selectedGalleryItem.badgeEn}
-              </span>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-4">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="px-3.5 py-1 rounded-full bg-rose-950/90 text-rose-200 font-bold border border-rose-500/40 text-xs shadow-xs flex items-center gap-1.5">
+                  <span>{isKhmer ? selectedGalleryItem.badgeKh : selectedGalleryItem.badgeEn}</span>
+                </span>
+                {selectedGalleryItem.classShiftKh && (
+                  <span className="px-3 py-1 rounded-full bg-zinc-900 text-zinc-300 font-bold border border-zinc-800 text-xs">
+                    {isKhmer ? selectedGalleryItem.classShiftKh : selectedGalleryItem.classShiftEn}
+                  </span>
+                )}
+                <span className="px-3 py-1 rounded-full bg-zinc-900 text-zinc-400 text-xs">
+                  {selectedGalleryItem.category === 'lab' ? (isKhmer ? 'បន្ទប់កុំព្យូទ័រ Lab 1' : 'Computer Lab 1') : (isKhmer ? 'ព្រឹត្តិការណ៍សាលា' : 'School Milestone')}
+                </span>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setSelectedGalleryItem(null)}
-                className="p-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors cursor-pointer border border-zinc-800"
+                className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer border border-zinc-800 shadow-sm group"
+                aria-label="Close Lightbox"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
               </button>
             </div>
 
-            <div className="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center border border-zinc-800">
+            {/* High-Resolution Media Container */}
+            <div className="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-black/80 flex items-center justify-center border border-zinc-800/80 relative shadow-inner">
               <img
                 src={selectedGalleryItem.src}
                 alt={selectedGalleryItem.titleEn}
@@ -1601,11 +1899,12 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
               />
             </div>
 
-            <div className="space-y-1.5">
-              <h4 className="text-sm sm:text-base font-bold text-white font-khmer-title">
+            {/* Modal Caption Details */}
+            <div className="space-y-2 pt-1 border-t border-zinc-800/80">
+              <h4 className="text-base sm:text-xl font-black text-white font-khmer-title tracking-tight">
                 {isKhmer ? selectedGalleryItem.titleKh : selectedGalleryItem.titleEn}
               </h4>
-              <p className="text-xs text-zinc-300 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-normal">
                 {isKhmer ? selectedGalleryItem.descKh : selectedGalleryItem.descEn}
               </p>
             </div>

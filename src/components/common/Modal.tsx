@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
@@ -20,10 +20,26 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'lg'
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleClose = useCallback(() => {
+    // Check for reduced motion — skip exit animation
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      onClose();
+      return;
+    }
+    setIsClosing(true);
+    // Wait for scale-out animation to complete before unmounting
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 180);
+  }, [onClose]);
 
   // Manage body scroll lock safely
   useEffect(() => {
@@ -34,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
 
@@ -44,7 +60,7 @@ export const Modal: React.FC<ModalProps> = ({
       document.body.style.overflow = originalOverflow || '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen || !mounted) return null;
 
@@ -60,12 +76,12 @@ export const Modal: React.FC<ModalProps> = ({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] w-screen h-screen min-h-screen overflow-y-auto bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
-      onClick={onClose}
-      style={{ margin: 0, left: 0, top: 0, right: 0, bottom: 0 }}
+      className={`fixed inset-0 z-[9999] w-screen h-screen min-h-screen overflow-y-auto bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 ${isClosing ? 'opacity-0' : 'animate-backdrop'}`}
+      onClick={handleClose}
+      style={{ margin: 0, left: 0, top: 0, right: 0, bottom: 0, transition: isClosing ? 'opacity 0.18s ease' : undefined }}
     >
       <div 
-        className={`relative w-full ${widthClasses[maxWidth]} bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden transform transition-all duration-200 my-auto`}
+        className={`relative w-full ${widthClasses[maxWidth]} bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden my-auto ${isClosing ? 'animate-scale-out' : 'animate-scale-in'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -76,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-all hover:scale-105 cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -93,3 +109,4 @@ export const Modal: React.FC<ModalProps> = ({
 
   return createPortal(modalContent, document.body);
 };
+

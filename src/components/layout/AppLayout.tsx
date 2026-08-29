@@ -3,6 +3,7 @@ import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
 import { MobileNav } from './MobileNav';
 import { RoleSwitcherBanner } from '../common/RoleSwitcherBanner';
+import { PageTransition } from '../common/PageTransition';
 
 interface AppLayoutProps {
   activeTab: string;
@@ -42,9 +43,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           />
 
           <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 pb-24 md:pb-8">
-            <div key={activeTab} className="max-w-7xl mx-auto animate-fade-slide-up">
+            <PageTransition activeTab={activeTab}>
               {children}
-            </div>
+            </PageTransition>
           </main>
         </div>
       </div>

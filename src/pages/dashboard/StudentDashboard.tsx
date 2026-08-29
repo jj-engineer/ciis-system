@@ -59,7 +59,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
       {/* ========================================================================= */}
       {/* 1. TOP GREETING & HEADER BAR                                              */}
       {/* ========================================================================= */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-2">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-2 animate-fade-up stagger-1">
         {/* Left: Greeting & Bold Dashboard Title */}
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-zinc-100 text-zinc-900 border border-zinc-200 text-xs font-bold font-mono">
@@ -118,10 +118,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* LEFT COLUMN: Next Class Shift Card + Standings Leaderboard Table */}
-        <div className="lg:col-span-6 space-y-6">
+        <div className="lg:col-span-6 space-y-6 animate-fade-up stagger-2">
           
           {/* Card 1: Next Class Shift */}
-          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-5">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-5 hover-lift">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
                 {isKhmer ? 'វេនសិក្សាបន្ទាប់' : 'Next Class Shift'}
@@ -179,7 +179,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
           </div>
 
           {/* Card 2: Standings Leaderboard */}
-          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-4 hover-lift">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
               <div>
                 <h3 className="text-base font-bold text-zinc-950">
@@ -262,10 +262,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
         </div>
 
         {/* RIGHT COLUMN: Statistics Card + 2x2 Capsule Cards + Action Banner */}
-        <div className="lg:col-span-6 space-y-6">
+        <div className="lg:col-span-6 space-y-6 animate-fade-up stagger-3">
           
           {/* Card 1: Academic Statistics */}
-          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-5">
+          <div className="bg-white rounded-3xl p-6 border border-zinc-200 shadow-sm space-y-5 hover-lift">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
                 {isKhmer ? 'ស្ថិតិនៃការសិក្សាផ្ទាល់ខ្លួន' : 'Academic Statistics'}
@@ -314,7 +314,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
             {/* Capsule 1: Attendance Rate */}
             <div 
               onClick={() => setActiveTab('attendance')}
-              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group hover-lift"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-100 text-zinc-900 flex items-center justify-center shrink-0 border border-zinc-200">
                 <CheckSquare className="w-6 h-6" />
@@ -332,7 +332,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
             {/* Capsule 2: Touch Typing Best */}
             <div 
               onClick={() => setActiveTab('typing')}
-              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group hover-lift"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 border border-zinc-800">
                 <Keyboard className="w-6 h-6 text-zinc-100" />
@@ -350,7 +350,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
             {/* Capsule 3: Completed Tasks */}
             <div 
               onClick={() => setActiveTab('assignments')}
-              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group hover-lift"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-100 text-zinc-900 flex items-center justify-center shrink-0 border border-zinc-200">
                 <Award className="w-6 h-6 text-zinc-800" />
@@ -368,7 +368,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
             {/* Capsule 4: Overall GPA / Grade */}
             <div 
               onClick={() => setActiveTab('assignments')}
-              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group"
+              className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-xs hover:border-zinc-300 transition-all cursor-pointer flex items-center gap-4 group hover-lift"
             >
               <div className="w-12 h-12 rounded-2xl bg-zinc-100 text-zinc-900 flex items-center justify-center shrink-0 border border-zinc-200">
                 <Target className="w-6 h-6 text-zinc-800" />
@@ -400,7 +400,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ setActiveTab
             <div className="relative z-10 pt-1">
               <button
                 onClick={() => setActiveTab('typing')}
-                className="px-6 py-3 rounded-full bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs shadow-sm transition-all cursor-pointer inline-flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-white hover:bg-zinc-100 text-zinc-950 font-bold text-xs shadow-sm transition-all cursor-pointer inline-flex items-center gap-2 spring-press"
               >
                 <span>{isKhmer ? 'ចាប់ផ្តើមតេស្តវាយអក្សរ' : 'Start typing test now'}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-zinc-950" />

@@ -168,51 +168,42 @@
 }
 
 @keyframes periodic-glow {
-  0%, 75%, 100% {
+  0%, 100% {
     box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
   }
-  85% {
-    box-shadow: 0 0 0 8px rgba(225, 29, 72, 0.22);
-  }
-  92% {
-    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.10);
+  50% {
+    box-shadow: 0 0 0 8px rgba(225, 29, 72, 0.28);
   }
 }
 
 @keyframes periodic-nudge {
-  0%, 75%, 100% {
+  0%, 100% {
     transform: translateX(0);
   }
-  85% {
+  50% {
     transform: translateX(5px);
-  }
-  92% {
-    transform: translateX(1px);
   }
 }
 
 @keyframes periodic-pop {
-  0%, 75%, 100% {
+  0%, 100% {
     transform: scale(1);
   }
-  85% {
-    transform: scale(1.04);
-  }
-  92% {
-    transform: scale(1.01);
+  50% {
+    transform: scale(1.08);
   }
 }
 
 .animate-periodic-glow {
-  animation: periodic-glow 3.5s ease-in-out infinite;
+  animation: periodic-glow 0.8s ease-in-out infinite;
 }
 
 .animate-periodic-nudge {
-  animation: periodic-nudge 3.5s ease-in-out infinite;
+  animation: periodic-nudge 0.8s ease-in-out infinite;
 }
 
 .animate-periodic-pop {
-  animation: periodic-pop 3.5s ease-in-out infinite;
+  animation: periodic-pop 0.8s ease-in-out infinite;
 }
 
 @keyframes marquee-scroll {
@@ -277,8 +268,8 @@
 /* ========================================================================= */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(10px);
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
@@ -289,8 +280,8 @@
 
 .scroll-reveal-scale {
   opacity: 0;
-  transform: translateY(6px) scale(0.992);
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(8px) scale(0.99);
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
@@ -301,8 +292,8 @@
 
 .scroll-reveal-left {
   opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-10px);
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
@@ -313,8 +304,8 @@
 
 .scroll-reveal-right {
   opacity: 0;
-  transform: translateX(8px);
-  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(10px);
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
@@ -342,7 +333,18 @@
   .animate-float-subtle,
   .animate-pulse-subtle,
   .animate-fade-slide-up,
-  .card-hover-effect {
+  .animate-fade-up,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale-in,
+  .animate-scale-out,
+  .animate-backdrop,
+  .page-enter,
+  .page-exit,
+  .card-hover-effect,
+  .hover-lift,
+  .hover-glow,
+  .spring-press {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
@@ -682,6 +684,190 @@ button:active, [role="button"]:active {
 }
 .monkeytype-scroll::-webkit-scrollbar-thumb:hover {
   background: #e2b714;
+}
+
+/* ========================================================================= */
+/* PREMIUM UI MOTION SYSTEM — FADE-UP, SLIDE-IN, SCALE, SPRING, PAGE TRANS  */
+/* ========================================================================= */
+
+/* --- Fade-up entrance for cards & sections --- */
+@keyframes fadeUpStagger {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUpStagger 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+/* --- Sidebar slide-in from left --- */
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Panel slide-in from right --- */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Modal scale-in entrance --- */
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Modal scale-out exit --- */
+@keyframes scaleOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.animate-scale-out {
+  animation: scaleOut 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Backdrop overlay fade-in --- */
+@keyframes backdropFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-backdrop {
+  animation: backdropFadeIn 0.2s ease-out both;
+}
+
+/* --- Smooth page transition entrance --- */
+@keyframes pageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: pageEnter 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Dropdown / popover scale entrance --- */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-pop-in {
+  animation: popIn 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ========================================================================= */
+/* STAGGER DELAY SYSTEM (50ms increments via CSS custom properties)          */
+/* ========================================================================= */
+.stagger-1 { --stagger-delay: 0ms; }
+.stagger-2 { --stagger-delay: 60ms; }
+.stagger-3 { --stagger-delay: 120ms; }
+.stagger-4 { --stagger-delay: 180ms; }
+.stagger-5 { --stagger-delay: 240ms; }
+.stagger-6 { --stagger-delay: 300ms; }
+.stagger-7 { --stagger-delay: 360ms; }
+.stagger-8 { --stagger-delay: 420ms; }
+
+/* ========================================================================= */
+/* MICRO-INTERACTIONS: SPRING PRESS, HOVER LIFT, HOVER GLOW                 */
+/* ========================================================================= */
+
+/* Spring-like press effect for buttons & interactive elements */
+.spring-press {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.spring-press:hover {
+  transform: scale(1.02);
+}
+.spring-press:active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
+}
+
+/* Subtle hover lift for cards */
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Subtle glow effect for interactive buttons */
+.hover-glow {
+  transition: box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hover-glow:hover {
+  box-shadow: 0 0 0 3px rgba(80, 7, 36, 0.08), 0 4px 12px -2px rgba(80, 7, 36, 0.12);
+}
+
+/* Nav item spring slide */
+.nav-spring {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.15s ease;
+}
+.nav-spring:hover:not(.nav-spring-active) {
+  transform: translateX(3px);
 }
 
 

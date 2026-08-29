@@ -27,11 +27,11 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative p-5 rounded-3xl border transition-all ${
+      className={`relative p-5 rounded-3xl border transition-all hover-lift ${
         highlight
           ? 'bg-gradient-to-br from-pink-900 via-pink-950 to-black text-white border-pink-800/40 shadow-lg shadow-pink-950/20'
           : 'bg-white text-zinc-900 border-zinc-200/80 shadow-xs hover:shadow-md hover:border-pink-300'
-      } ${onClick ? 'cursor-pointer hover:scale-[1.01]' : ''}`}
+      } ${onClick ? 'cursor-pointer spring-press' : ''}`}
     >
       <div className="flex items-start justify-between mb-3">
         <span className={`text-xs font-bold uppercase tracking-wider ${highlight ? 'text-pink-200' : 'text-zinc-500'}`}>

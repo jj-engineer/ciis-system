@@ -145,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-modal border border-slate-100 py-3 z-50 animate-in fade-in zoom-in-95 duration-100">
+            <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-modal border border-slate-100 py-3 z-50 animate-pop-in">
               <div className="flex items-center justify-between px-4 pb-2 border-b border-slate-100">
                 <h4 className="font-bold text-slate-900 text-sm">
                   {isKhmer ? 'សេចក្តីជូនដំណឹង' : 'Notifications'}
@@ -236,7 +236,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* User Dropdown */}
               {showUserDropdown && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-modal border border-slate-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-modal border border-slate-100 py-2 z-50 animate-pop-in">
                   <div className="px-4 py-2 border-b border-slate-100">
                     <p className="text-xs font-bold text-slate-900">{currentUser.fullName}</p>
                     <p className="text-[10px] text-slate-400 font-mono truncate">{currentUser.email}</p>

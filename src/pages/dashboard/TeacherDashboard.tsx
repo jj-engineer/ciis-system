@@ -83,7 +83,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
       {/* ========================================================================= */}
       {/* 1. WELCOME HERO CARD                                                      */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm relative overflow-hidden text-left">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200 shadow-sm relative overflow-hidden text-left animate-fade-up stagger-1">
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
 
@@ -160,7 +160,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
           <button
             type="button"
             onClick={() => setActiveTab('attendance')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left spring-press"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
@@ -179,7 +179,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
           <button
             type="button"
             onClick={() => setActiveTab('lessons')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left spring-press"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
@@ -198,7 +198,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
           <button
             type="button"
             onClick={() => setActiveTab('lab')}
-            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left"
+            className="p-3.5 rounded-2xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-all cursor-pointer flex items-center justify-between group text-left spring-press"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center">
@@ -221,10 +221,10 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
       {/* ========================================================================= */}
       {/* 2. BRIEF SCHOOL & SYSTEM INFORMATION (Cascade Reveal)                     */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left animate-system-cards">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left animate-fade-up stagger-2">
 
         {/* Card A: About CIIS School */}
-        <div className="bg-white rounded-3xl p-6 border border-zinc-200/90 shadow-sm space-y-3.5 hover:border-pink-200/80 transition-all">
+        <div className="bg-white rounded-3xl p-6 border border-zinc-200/90 shadow-sm space-y-3.5 hover:border-pink-200/80 transition-all hover-lift">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-white p-1 flex items-center justify-center border border-pink-200 shadow-2xs shrink-0">
               <img src="/ciis-logo.svg" alt="CIIS Logo" className="w-full h-full object-contain" />
@@ -258,7 +258,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
         </div>
 
         {/* Card B: System Status & Highlights */}
-        <div className="bg-white rounded-3xl p-6 border border-zinc-200/90 shadow-sm space-y-3.5 hover:border-pink-200/80 transition-all">
+        <div className="bg-white rounded-3xl p-6 border border-zinc-200/90 shadow-sm space-y-3.5 hover:border-pink-200/80 transition-all hover-lift">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-black text-zinc-950 flex items-center gap-2">
               <Building2 className="w-4 h-4 text-pink-800" />
@@ -300,7 +300,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ setActiveTab
       {/* ========================================================================= */}
       {/* 3. ACTIVE FACULTY ACCOUNT & 1-CLICK SWITCHER (Smooth Base Entrance)        */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-zinc-200/90 shadow-sm text-left flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-system-footer">
+      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-zinc-200/90 shadow-sm text-left flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-up stagger-3">
 
         {/* Active Teacher Summary */}
         <div className="flex items-center gap-3">
