@@ -644,17 +644,14 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthModalRole('student');
-                    setShowAuthModal(true);
-                  }}
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToSection(e, 'contact')}
                   className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-950 via-rose-900 to-pink-900 hover:from-rose-900 hover:to-pink-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀន' : 'Enroll Now'}</span>
-                </button>
+                </a>
               )}
 
               <button
@@ -796,18 +793,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
 
               {/* Dual CTA Buttons */}
               <div className="scroll-reveal flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthModalRole('student');
-                    setShowAuthModal(true);
-                  }}
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToSection(e, 'contact')}
                   className="py-3.5 px-6 rounded-2xl bg-zinc-950 hover:bg-rose-950 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] group"
                 >
                   <UserPlus className="w-4 h-4 text-rose-300" />
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនឥឡូវនេះ' : 'Apply for Enrollment'}</span>
                   <ArrowRight className="w-4 h-4 text-rose-300 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </a>
 
                 <a
                   href="#programs"
@@ -912,8 +906,10 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
         <SchoolDiscountAnnouncement
           onClaimDiscount={() => {
-            setAuthModalRole('student');
-            setShowAuthModal(true);
+            const contactEl = document.getElementById('contact');
+            if (contactEl) {
+              contactEl.scrollIntoView({ behavior: 'smooth' });
+            }
           }}
           onOpenModalPoster={() => setShowPromoModalManual(true)}
         />
@@ -972,17 +968,14 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthModalRole('student');
-                    setShowAuthModal(true);
-                  }}
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToSection(e, 'contact')}
                   className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold bg-zinc-50 hover:bg-zinc-950 hover:text-white text-zinc-800 border border-zinc-200 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនកម្រិតនេះ' : 'Enroll in Track'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                </a>
               </div>
             ))}
           </div>
@@ -1095,18 +1088,15 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
                 </div>
 
                 {/* Enroll CTA */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthModalRole('student');
-                    setShowAuthModal(true);
-                  }}
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToSection(e, 'contact')}
                   className="w-full py-3 rounded-2xl bg-zinc-950 hover:bg-rose-950 text-white text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99] group/btn"
                 >
                   <UserPlus className="w-3.5 h-3.5 text-rose-300" />
                   <span>{isKhmer ? 'ចុះឈ្មោះចូលរៀនវេននេះ' : 'Enroll in Shift'}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-rose-300 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </a>
               </div>
             ))}
           </div>
@@ -1965,8 +1955,10 @@ export const GuestLandingPage: React.FC<GuestLandingPageProps> = ({ onReturnToPo
           onClose={() => setShowPromoModalManual(false)}
           onClaimDiscount={() => {
             setShowPromoModalManual(false);
-            setAuthModalRole('student');
-            setShowAuthModal(true);
+            const contactEl = document.getElementById('contact');
+            if (contactEl) {
+              contactEl.scrollIntoView({ behavior: 'smooth' });
+            }
           }}
         />
       )}
